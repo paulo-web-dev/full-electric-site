@@ -1,0 +1,32 @@
+{
+  "faq": [
+    { "p": "Precisa de CNH para andar nessas motos?",
+      "r": "Não. Nossos modelos se enquadram como equipamento de mobilidade individual autopropelido pela Resolução CONTRAN 996/2023, que dispensa CNH e ACC. Para se enquadrar, o veículo precisa ter no máximo 1.000 W de potência e 32 km/h de velocidade, além de respeitar limites de largura e entre-eixos. Toda venda sai com a documentação que comprova o enquadramento." },
+    { "p": "Precisa emplacar? Paga IPVA?",
+      "r": "Não. Autopropelido é dispensado de placa, emplacamento, Renavam, licenciamento anual e IPVA." },
+    { "p": "Onde posso circular em Curitiba?",
+      "r": "Preferencialmente em ciclovias e ciclofaixas. Onde não houver, em vias urbanas com velocidade regulamentada de até 40 km/h. Não é permitido circular em calçadas nem em vias de trânsito rápido." },
+    { "p": "Capacete é obrigatório?",
+      "r": "Sim, para condutor e passageiro, com selo Inmetro e elementos retrorrefletivos. Vendemos o capacete adequado junto com a moto, se você quiser sair pronto para rodar." },
+    { "p": "Qual a autonomia real?",
+      "r": "De 40 a 55 km por carga. O número varia conforme o peso do condutor, se há passageiro, o relevo do trajeto e o estilo de condução. Curitiba tem bastante ladeira, então preferimos falar a faixa honesta em vez de um número redondo." },
+    { "p": "Quanto custa carregar por mês?",
+      "r": "Cerca de R$ 24 por mês para um uso típico de 22 dias úteis. Uma carga completa fica em torno de R$ 1,50 na tomada comum. Os valores variam conforme a distribuidora e a bandeira tarifária." },
+    { "p": "Onde eu carrego a bateria?",
+      "r": "Em qualquer tomada comum de casa. A bateria é removível, então você pode tirar e levar para dentro do apartamento, sem precisar de instalação especial." },
+    { "p": "Sobe ladeira?",
+      "r": "Sim, com condutor e passageiro. Mas em vez de a gente afirmar, prefira testar: fazemos test drive gratuito e subimos uma ladeira de verdade junto com você." },
+    { "p": "Serve para trabalhar com delivery?",
+      "r": "Sim. O iFood aceita autopropelidos no cadastro, na modalidade Bicicleta Elétrica. Importante: o aplicativo monitora a velocidade máxima do veículo, então não fazemos e não recomendamos nenhum tipo de desbloqueio — isso pode bloquear a conta do entregador." },
+    { "p": "Como funciona a garantia?",
+      "r": "São 6 meses de garantia, com nota fiscal em seu nome. O atendimento é aqui em Curitiba, direto com quem vendeu." },
+    { "p": "Quanto tempo dura a bateria?",
+      "r": "[CONFIRMAR — número de ciclos e vida útil estimada, e valor de reposição]" },
+    { "p": "Vocês entregam? Em quanto tempo?",
+      "r": "Temos pronta entrega em Curitiba. Você pode retirar na loja ou combinar a entrega com a gente pelo WhatsApp." },
+    { "p": "Aceita cartão? Dá para parcelar?",
+      "r": "Sim, em até 18x no cartão, com juros e sujeito a análise de crédito. No PIX o valor é menor — fale com a gente para simular." },
+    { "p": "Posso fazer um test drive?",
+      "r": "Pode, e é gratuito, sem compromisso. Chame no WhatsApp e a gente agenda no horário que for melhor para você, inclusive no sábado." }
+  ]
+}

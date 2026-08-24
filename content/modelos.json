@@ -1,0 +1,78 @@
+{
+  "_leia": "Campos com 'confirmado': false NAO devem aparecer no site como fato. Use [CONFIRMAR] ou omita a linha inteira.",
+  "modelos": [
+    {
+      "slug": "s60",
+      "nome": "Full Electric S60",
+      "fabricante": "BOLIN Electric Motor",
+      "estilo": "Citycoco / chopper urbana",
+      "cor": "Preto fosco com detalhes em caramelo",
+      "destaque": true,
+      "prontaEntrega": true,
+      "resumo": "Pneus largos, banco corrido com encosto e baú redondo. A mais confortável da linha para o trânsito de Curitiba.",
+      "publico": ["Uso diário", "Trabalho", "Delivery"],
+      "preco": { "aPartirDe": 8499, "confirmado": true },
+      "specs": [
+        { "label": "Motor", "valor": "1.000 W brushless traseiro", "confirmado": true },
+        { "label": "Bateria", "valor": "Lítio 60V 21Ah (1,26 kWh), removível", "confirmado": true },
+        { "label": "Velocidade máxima", "valor": "32 km/h", "confirmado": true },
+        { "label": "Autonomia", "valor": "40 a 55 km por carga", "confirmado": true },
+        { "label": "Recarga", "valor": "Tomada comum de casa", "confirmado": true },
+        { "label": "Tempo de recarga", "valor": "5 a 8 horas", "confirmado": false },
+        { "label": "Freios", "valor": "Disco nas duas rodas", "confirmado": true },
+        { "label": "Suspensão", "valor": "Dianteira e traseira", "confirmado": true },
+        { "label": "Capacidade de carga", "valor": "[CONFIRMAR NO MANUAL]", "confirmado": false },
+        { "label": "Largura", "valor": "[MEDIR — limite legal 70 cm]", "confirmado": false },
+        { "label": "Entre-eixos", "valor": "[MEDIR — limite legal 130 cm]", "confirmado": false }
+      ],
+      "itensDeSerie": [
+        "Farol LED com anel de iluminação",
+        "Setas dianteiras e traseiras",
+        "Espelhos retrovisores",
+        "Baú traseiro",
+        "Banco corrido com encosto",
+        "Pneus largos (fat)"
+      ],
+      "fotos": [
+        { "src": "/modelos/s60/s60-01-frente-34.jpg", "alt": "Full Electric S60 preta vista de frente em três quartos", "principal": true },
+        { "src": "/modelos/s60/s60-02-frente-34-alt.jpg", "alt": "Full Electric S60 preta em três quartos, ângulo alternativo" },
+        { "src": "/modelos/s60/s60-03-frente-34-baixo.jpg", "alt": "Full Electric S60 preta vista em ângulo baixo" },
+        { "src": "/modelos/s60/s60-04-frontal.jpg", "alt": "Full Electric S60 vista frontal mostrando o pneu largo" },
+        { "src": "/modelos/s60/s60-05-frontal-detalhe.jpg", "alt": "Detalhe do farol LED e guidão da Full Electric S60" },
+        { "src": "/modelos/s60/s60-06-lateral.jpg", "alt": "Full Electric S60 preta vista de perfil" },
+        { "src": "/modelos/s60/s60-07-lateral-alt.jpg", "alt": "Full Electric S60 preta de perfil, ângulo alternativo" }
+      ]
+    },
+    {
+      "slug": "e30",
+      "nome": "Full Electric E30",
+      "fabricante": "BOLIN Electric Motor",
+      "estilo": "Scooter urbana",
+      "cor": "Branco",
+      "destaque": false,
+      "prontaEntrega": true,
+      "resumo": "Formato de scooter tradicional, mais leve e com baú de série. Ideal para quem quer praticidade no dia a dia.",
+      "publico": ["Uso diário", "Delivery"],
+      "preco": { "aPartirDe": null, "confirmado": false },
+      "specs": [
+        { "label": "Motor", "valor": "[CONFIRMAR]", "confirmado": false },
+        { "label": "Bateria", "valor": "[CONFIRMAR]", "confirmado": false },
+        { "label": "Velocidade máxima", "valor": "[CONFIRMAR]", "confirmado": false },
+        { "label": "Autonomia", "valor": "[CONFIRMAR]", "confirmado": false },
+        { "label": "Freios", "valor": "[CONFIRMAR]", "confirmado": false },
+        { "label": "Largura", "valor": "[MEDIR — limite legal 70 cm]", "confirmado": false },
+        { "label": "Entre-eixos", "valor": "[MEDIR — limite legal 130 cm]", "confirmado": false }
+      ],
+      "itensDeSerie": [
+        "Baú traseiro rígido",
+        "Farol LED",
+        "Porta-objetos frontal"
+      ],
+      "fotos": [
+        { "src": "/modelos/e30/e30-01-traseira-34.jpg", "alt": "Full Electric E30 branca vista traseira em três quartos", "principal": true },
+        { "src": "/modelos/e30/e30-02-traseira-34-alt.jpg", "alt": "Full Electric E30 branca, ângulo traseiro alternativo" },
+        { "src": "/modelos/e30/e30-03-bau-detalhe.jpg", "alt": "Detalhe do baú traseiro da Full Electric E30" }
+      ]
+    }
+  ]
+}

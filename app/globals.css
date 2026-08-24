@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+/*
+  Tokens da marca — ver CLAUDE.md §4.1.
+  REGRA CRÍTICA DE CONTRASTE (§4.2):
+  --lime-400 (#D2FC13) NUNCA como texto sobre fundo claro.
+  Só como fundo (texto --ink por cima) ou como texto sobre --ink/--surface.
+*/
+@theme {
+  --color-*: initial;
+
+  /* Marca — extraída do logo */
+  --color-lime-400: #d2fc13;
+  --color-lime-500: #b8e01a;
+  --color-lime-600: #8fb50d;
+
+  /* Neutros */
+  --color-ink: #0a0b0a;
+  --color-surface: #141613;
+  --color-line: #262925;
+  --color-paper: #ffffff;
+  --color-muted: #f4f6f3;
+  --color-text-2: #5a5f58;
+  --color-text-3: #9aa096;
+
+  /* Grupo (uso restrito: selo "empresa do grupo" no rodapé) */
+  --color-unyflex-blue: #00a3ff;
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Raios — CLAUDE.md §4.4 */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  /* Aliases no formato do CLAUDE.md, para uso fora do Tailwind */
+  --lime-400: #d2fc13;
+  --lime-500: #b8e01a;
+  --lime-600: #8fb50d;
+  --ink: #0a0b0a;
+  --surface: #141613;
+  --line: #262925;
+  --paper: #ffffff;
+  --muted: #f4f6f3;
+  --text-2: #5a5f58;
+  --text-3: #9aa096;
+  --unyflex-blue: #00a3ff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-feature-settings: "cv02", "cv03";
+}
+
+/* Números grandes sempre tabulares — CLAUDE.md §4.3 */
+.num-display {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+/* Foco visível para navegação por teclado */
+:focus-visible {
+  outline: 2px solid var(--lime-500);
+  outline-offset: 2px;
+}
+
+/* Halo radial atrás das motos em seções escuras — CLAUDE.md §4.5 */
+.photo-halo {
+  background: radial-gradient(
+    closest-side,
+    rgba(210, 252, 19, 0.16),
+    rgba(210, 252, 19, 0.05) 55%,
+    transparent 75%
+  );
+}

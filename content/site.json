@@ -1,0 +1,72 @@
+{
+  "marca": {
+    "nome": "Full Electric",
+    "nomeCompleto": "Full Electric — Motos Elétricas",
+    "tagline": "Motos elétricas em Curitiba, com pronta entrega.",
+    "logo": "/brand/logo-full-electric.jpg",
+    "grupo": "Empresa do grupo Unyflex"
+  },
+  "contato": {
+    "whatsapp": "5541988881253",
+    "whatsappFormatado": "(41) 98888-1253",
+    "_aviso": "CONFIRMAR: o cliente escreveu '+55 41 8888-1253' (8 digitos). O material impresso usa (41) 98888-1253. Confirme antes de publicar.",
+    "email": "[CONFIRMAR]",
+    "endereco": {
+      "logradouro": "[CONFIRMAR]",
+      "bairro": "[CONFIRMAR]",
+      "cidade": "Curitiba",
+      "uf": "PR",
+      "cep": "[CONFIRMAR]",
+      "mapsUrl": "[CONFIRMAR]"
+    },
+    "horarios": [
+      { "dias": "Segunda a sexta", "horario": "09h às 18h" },
+      { "dias": "Sábado", "horario": "09h às 13h" }
+    ]
+  },
+  "comercial": {
+    "precoMinimo": 8499,
+    "precoMinimoFormatado": "R$ 8.499",
+    "parcelas": 18,
+    "parcelamentoTexto": "em até 18x no cartão*",
+    "parcelamentoNota": "*com juros. Sujeito a análise e aprovação de crédito.",
+    "precoNota": "Valor \"a partir de\" referente ao modelo de entrada, sujeito a alteração sem aviso prévio e à disponibilidade de estoque.",
+    "garantiaMeses": 6,
+    "garantiaTexto": "6 meses de garantia",
+    "prontaEntrega": true
+  },
+  "legal": {
+    "enquadramento": "Equipamento de mobilidade individual autopropelido",
+    "norma": "Resolução CONTRAN 996/2023",
+    "textoCurto": "Equipamento de mobilidade individual autopropelido — Resolução CONTRAN 996/2023",
+    "dispensa": ["CNH", "ACC", "Placa", "Emplacamento", "Renavam", "Licenciamento", "IPVA"],
+    "criterios": [
+      { "item": "Potência nominal máxima", "limite": "1.000 W" },
+      { "item": "Velocidade máxima de fabricação", "limite": "32 km/h" },
+      { "item": "Largura máxima", "limite": "70 cm" },
+      { "item": "Distância entre eixos", "limite": "130 cm" },
+      { "item": "Equipamentos", "limite": "Velocímetro, campainha e sinalização noturna dianteira, traseira e lateral" }
+    ],
+    "dossie": [
+      "Nota fiscal em seu nome",
+      "Manual do proprietário",
+      "Ficha técnica do fabricante",
+      "Declaração de enquadramento na Res. CONTRAN 996/2023",
+      "Número de identificação do veículo"
+    ],
+    "avisoCirculacao": "Autopropelidos circulam preferencialmente em ciclovias e ciclofaixas. Na ausência delas, em vias urbanas com velocidade regulamentada de até 40 km/h. Capacete com selo Inmetro é obrigatório para condutor e passageiro."
+  },
+  "economia": {
+    "metodologia": "Base: 22 dias úteis/mês. Recarga completa de 1,26 kWh mais perdas, tarifa aproximada de R$ 1,00/kWh. Valores variam conforme distribuidora e bandeira tarifária.",
+    "comparativo": [
+      { "modal": "Ônibus", "detalhe": "2 passagens por dia útil", "custoMes": 264 },
+      { "modal": "Moto 125cc", "detalhe": "Combustível, óleo e revisão", "custoMes": 320 },
+      { "modal": "Full Electric", "detalhe": "Energia elétrica", "custoMes": 24 }
+    ]
+  },
+  "analytics": {
+    "ga4": "[CONFIRMAR]",
+    "metaPixel": "[CONFIRMAR]",
+    "gtm": "[CONFIRMAR]"
+  }
+}
