@@ -40,7 +40,16 @@ export function permitido(
   Cada proxy confiável acrescenta ao FIM da lista o IP de quem falou com ele;
   tudo o que vem antes foi enviado pelo cliente e pode ser forjado. Com N
   proxies confiáveis na frente (TRUST_PROXY_HOPS=N), o IP real é o N-ésimo a
-  contar do fim. Atrás do Caddy no mesmo servidor, N=1.
+  contar do fim.
+
+  Em produção o site está atrás do Traefik da VPS, e só dele: N=1. Detalhe
+  que confunde: o Traefik NÃO acrescenta o próprio IP à lista — ele acrescenta
+  o IP de quem falou com ele, que é o visitante. Na configuração padrão
+  (forwardedHeaders sem trustedIPs) ele ainda descarta qualquer X-Forwarded-For
+  vindo de fora e entrega a lista com um único item, o IP real. Nos dois casos
+  o último item é o visitante, e N=1 lê exatamente esse. Só vira 2 se entrar
+  outro proxy na frente do Traefik (ex.: Cloudflare) E o Traefik for
+  configurado para confiar nele (docs/DEPLOY.md, seção "IP real").
 
   Sem a variável (ou com valor inválido / menor que 1) mantém o comportamento
   original: o primeiro IP da lista. Atrás de proxy isso é perigoso — todo mundo

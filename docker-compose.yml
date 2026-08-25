@@ -1,4 +1,10 @@
-# Produção em servidor próprio — ver docs/DEPLOY.md.
+# Produção em VPS compartilhada — ver docs/DEPLOY.md.
+#
+# O proxy reverso e o TLS são do Traefik v2 JÁ EXISTENTE na VPS (ele ocupa as
+# portas 80/443 e atende outros sites). Este compose NÃO publica porta
+# nenhuma: o Traefik alcança o container pela rede interna n8n_default e
+# descobre o serviço pelas labels abaixo (exposedByDefault=false lá).
+#
 # O Compose lê o .env desta pasta automaticamente, tanto para os `args` de
 # build (NEXT_PUBLIC_*, que entram no bundle) quanto para o env_file de runtime.
 services:
@@ -13,14 +19,30 @@ services:
     image: full-electric-site:latest
     container_name: full-electric-app
     env_file: .env
-    # Só o Caddy (no host) fala com a app; nada exposto na rede externa.
-    ports:
-      - "127.0.0.1:3000:3000"
     restart: unless-stopped
+    networks:
+      - n8n_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=n8n_default"
+      # HTTP (:80) → redireciona para HTTPS. O desafio ACME do resolver `le`
+      # (httpChallenge no entrypoint web) é atendido pelo Traefik antes do router.
+      - "traefik.http.routers.full-electric-web.rule=Host(`fulleletric.unysystens.com.br`)"
+      - "traefik.http.routers.full-electric-web.entrypoints=web"
+      - "traefik.http.routers.full-electric-web.middlewares=full-electric-redirect"
+      - "traefik.http.middlewares.full-electric-redirect.redirectscheme.scheme=https"
+      # HTTPS (:443) com certificado Let's Encrypt
+      - "traefik.http.routers.full-electric.rule=Host(`fulleletric.unysystens.com.br`)"
+      - "traefik.http.routers.full-electric.entrypoints=websecure"
+      - "traefik.http.routers.full-electric.tls=true"
+      - "traefik.http.routers.full-electric.tls.certresolver=le"
+      # Porta do Next standalone DENTRO do container (não é 80 como no lps-unyflex)
+      - "traefik.http.services.full-electric.loadbalancer.server.port=3000"
     volumes:
       - next-cache:/app/.next/cache
     healthcheck:
-      # A imagem slim não tem curl/wget; o próprio Node faz a chamada.
+      # Roda dentro do container, por isso 127.0.0.1:3000 funciona mesmo sem
+      # porta publicada. A imagem slim não tem curl/wget; o próprio Node chama.
       test:
         [
           "CMD",
@@ -38,6 +60,12 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
+
+networks:
+  # Rede do Traefik existente na VPS. Criada pelo compose do n8n; aqui só
+  # nos conectamos a ela. `docker network ls` deve listá-la antes do up.
+  n8n_default:
+    external: true
 
 volumes:
   # Cache das imagens otimizadas (/_next/image) — sobrevive a rebuilds

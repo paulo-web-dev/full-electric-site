@@ -216,7 +216,8 @@ Espelha a estrutura da Unyflex Digital, adaptada para produto físico.
 
 ```
 Next.js 15 (App Router) · TypeScript · Tailwind CSS v4
-Deploy: servidor próprio — Docker (output standalone) atrás do Caddy.
+Deploy: VPS compartilhada — Docker (output standalone) atrás do Traefik v2 já
+        existente (rede n8n_default, TLS via resolver `le`). Sem porta publicada.
         `git pull → docker compose build → up -d`. Ver docs/DEPLOY.md.
 Banco: Postgres via Prisma (Neon ou próprio) — SOMENTE para o CRM de leads (/admin).
 Sem CMS. Todo o conteúdo do site público segue em JSON versionado.
@@ -296,7 +297,7 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
 - **Fora do escopo da v1 (não construir sem pedido):** múltiplos usuários,
   permissões, automação de e-mail, calendário, faturamento.
 - **Env obrigatórias em produção:** `DATABASE_URL`, `DIRECT_URL`,
-  `ADMIN_PASSWORD`, `SESSION_SECRET`, `TRUST_PROXY_HOPS` (=1 atrás do Caddy).
+  `ADMIN_PASSWORD`, `SESSION_SECRET`, `TRUST_PROXY_HOPS` (=1 atrás do Traefik).
   Ver `.env.example`.
 - **`NEXT_PUBLIC_*` são de build**, não de runtime: entram como `ARG` no
   Dockerfile e exigem rebuild da imagem para mudar (README).

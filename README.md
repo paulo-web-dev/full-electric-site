@@ -7,7 +7,7 @@ em `CLAUDE.md` — leitura obrigatória antes de alterar qualquer coisa.
 ## Stack
 
 Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · Prisma + Postgres
-(só para o CRM) · Docker em servidor próprio, atrás do Caddy.
+(só para o CRM) · Docker em VPS compartilhada, atrás do Traefik já existente.
 
 Conteúdo do site público em `content/*.json`, sem CMS.
 
@@ -52,7 +52,7 @@ Todas em `.env.example`, com comentários. Há dois grupos, e a diferença impor
 
 ## Deploy
 
-Passo a passo completo, Caddyfile, rollback e backup: **`docs/DEPLOY.md`**.
+Passo a passo completo, labels do Traefik, rollback e backup: **`docs/DEPLOY.md`**.
 
 Resumo:
 
