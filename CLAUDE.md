@@ -84,6 +84,21 @@ sinalize e peça confirmação explícita.
 - Nunca invente número de ficha técnica. Se não estiver em `content/modelos.json`
   com `"confirmado": true`, escreva `[CONFIRMAR]` e liste em `docs/PENDENCIAS.md`.
 
+### 3.7 LGPD — dados pessoais de leads
+- O site coleta dados pessoais (formulário → banco do CRM). Isso cria obrigações:
+  - **Consentimento**: o formulário só envia com o checkbox de consentimento
+    marcado, com link para `/politica-de-privacidade`. Nunca remova o checkbox.
+  - **Finalidade única**: dado de lead serve para atendimento comercial. Nunca
+    adicione uso novo (remarketing, enriquecimento, venda de base) sem atualizar
+    a política E recolher novo consentimento.
+  - **Direito de eliminação**: a exclusão do lead na ficha (`/admin/leads/[id]`)
+    é definitiva e em cascata (notas juntas). Nunca transforme em "soft delete".
+  - **Minimização**: não adicione campos novos ao formulário/CRM sem necessidade
+    real e sem refletir na política de privacidade.
+  - **Retenção**: a política promete apagar após 12 meses do último contato.
+  - `/politica-de-privacidade` deve ser mantida em sincronia com o que o código
+    efetivamente coleta. Mudou a coleta → muda a política, na mesma tarefa.
+
 ---
 
 ## 4. IDENTIDADE VISUAL
@@ -168,7 +183,8 @@ Espelha a estrutura da Unyflex Digital, adaptada para produto físico.
 | `/contato` | Formulário + mapa + horários | P0 |
 | `/precisa-de-cnh` | Conteúdo educativo sobre CONTRAN 996 (SEO) | P1 |
 | `/para-entregadores` | LP para motoboy / iFood | P1 |
-| `/politica-de-privacidade` | LGPD (obrigatório p/ rodar anúncios) | P0 |
+| `/politica-de-privacidade` | LGPD (obrigatório p/ rodar anúncios) — **no ar** | P0 |
+| `/admin/*` | CRM de leads (ver §6.4) — protegido, noindex | P0 |
 
 ### 5.2 Seções da Home (nesta ordem)
 
@@ -200,21 +216,24 @@ Espelha a estrutura da Unyflex Digital, adaptada para produto físico.
 
 ```
 Next.js 15 (App Router) · TypeScript · Tailwind CSS v4
-Deploy: Vercel
-Sem banco de dados. Sem CMS. Conteúdo em JSON versionado.
+Deploy: servidor próprio — Docker (output standalone) atrás do Caddy.
+        `git pull → docker compose build → up -d`. Ver docs/DEPLOY.md.
+Banco: Postgres via Prisma (Neon ou próprio) — SOMENTE para o CRM de leads (/admin).
+Sem CMS. Todo o conteúdo do site público segue em JSON versionado.
 ```
 
 ### 6.1 Estrutura de pastas alvo
 
 ```
 app/
-  layout.tsx            fontes, metadata, GTM
+  layout.tsx            fontes, metadata, Analytics (GA4 + Pixel)
   page.tsx              home
   modelos/[slug]/page.tsx
   contato/page.tsx
   precisa-de-cnh/page.tsx
   para-entregadores/page.tsx
   api/lead/route.ts     recebe o formulário
+  api/health/route.ts   healthcheck do container (sem tocar no banco)
 components/
   ui/                   Button, Card, Chip, Accordion, Section
   sections/             Hero, Modelos, Economia, Legal, Passos, FAQ, ...
@@ -234,7 +253,9 @@ public/                 brand/ · modelos/ · referencia/
   **Nada de string solta no meio do JSX.**
 - Imagens sempre via `next/image`, com `alt` descritivo em português.
 - Acessibilidade: navegação por teclado, `aria-label` em ícones, foco visível.
-- Sem dependência nova sem justificar. Tailwind + lucide-react bastam.
+- Sem dependência nova sem justificar. Tailwind + lucide-react bastam
+  (`sharp` está no package.json só porque o otimizador de imagem do Next
+  precisa dele em servidor próprio — não importar no código).
 
 ### 6.3 Links de WhatsApp
 
@@ -247,15 +268,52 @@ waLink("modelo", "S60")  // "Olá! Tenho interesse na Full Electric S60."
 waLink("entregador")     // "Olá! Sou entregador e quero saber sobre a moto para trabalhar."
 ```
 
-### 6.4 Formulário
+### 6.4 Módulo admin — CRM de leads
+
+Gerenciador de leads em `/admin`, protegido por middleware (`middleware.ts`):
+nenhuma rota `/admin` ou `/api/admin` responde sem sessão válida, e todas saem
+com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
+
+- **Banco:** Postgres via Prisma (`prisma/schema.prisma`, client em
+  `lib/db.ts`). `DATABASE_URL` para runtime, `DIRECT_URL` para migrations.
+  Toda alteração de schema vira migration versionada (`npx prisma migrate dev
+  --name ...`); o container aplica `migrate deploy` no entrypoint antes de
+  subir e não sobe se falhar. Nunca `db push` em produção.
+- **Auth:** senha única (`ADMIN_PASSWORD`) → cookie httpOnly assinado com HMAC
+  (`SESSION_SECRET`, lógica em `lib/adminAuth.ts`), sessão de 7 dias. Sem
+  multiusuário, sem `localStorage`.
+- **Modelo de dados:** `Lead` (nome, telefone, email?, modeloInteresse, uso,
+  horarioPreferido, origem, utmSource?, utmMedium?, utmCampaign?, status,
+  proximoContatoEm?, valorVenda?, dataVenda?, criadoEm, atualizadoEm) e `Nota`
+  (leadId, texto, criadoEm, cascade no delete). Status: NOVO → CONTATADO →
+  TEST_DRIVE_AGENDADO → NEGOCIANDO → VENDIDO | PERDIDO (`lib/crm.ts`).
+  `valorVenda`/`dataVenda` só são editáveis com status VENDIDO e alimentam o
+  card "Vendas no mês" do painel (soma por `dataVenda` no mês corrente).
+- **Telas:** `/admin/login` · `/admin` (painel: contagens, semana, conversão,
+  follow-ups vencidos, vendas no mês) · `/admin/leads` (busca, filtros, CSV) ·
+  `/admin/leads/[id]` (ficha, notas, status, próximo contato, venda, WhatsApp,
+  exclusão LGPD).
+- **Fora do escopo da v1 (não construir sem pedido):** múltiplos usuários,
+  permissões, automação de e-mail, calendário, faturamento.
+- **Env obrigatórias em produção:** `DATABASE_URL`, `DIRECT_URL`,
+  `ADMIN_PASSWORD`, `SESSION_SECRET`, `TRUST_PROXY_HOPS` (=1 atrás do Caddy).
+  Ver `.env.example`.
+- **`NEXT_PUBLIC_*` são de build**, não de runtime: entram como `ARG` no
+  Dockerfile e exigem rebuild da imagem para mudar (README).
+
+### 6.5 Formulário
 
 Segue o padrão que a BOLIN já usa no grupo: ao enviar, **grava o lead** (rota
 `/api/lead`) **e abre o WhatsApp com a mensagem montada**. Campos:
 
-`nome` · `whatsapp` · `modelo de interesse` · `uso pretendido` (trabalho /
-delivery / pessoal) · `melhor horário para test drive`
+`nome` · `whatsapp` · `e-mail (opcional)` · `modelo de interesse` ·
+`uso pretendido` (trabalho / delivery / pessoal) · `melhor horário para test
+drive` · checkbox de consentimento LGPD (obrigatório, com link para
+`/politica-de-privacidade`)
 
-Máximo 5 campos. Sem e-mail obrigatório. Validação com máscara de telefone BR.
+E-mail nunca obrigatório. Validação com máscara de telefone BR. O envio também
+captura, de forma invisível, a origem da seção e os UTMs da URL
+(`utm_source/medium/campaign`) e grava tudo no CRM via `/api/lead`.
 
 ---
 
@@ -286,11 +344,9 @@ Antes de dizer que uma tarefa terminou, confira:
 
 ## 9. PENDÊNCIAS QUE BLOQUEIAM O LANÇAMENTO
 
-Estão detalhadas em `docs/PENDENCIAS.md`. As três críticas:
+Estão detalhadas em `docs/PENDENCIAS.md`. As críticas:
 
-1. **Confirmar o WhatsApp.** O cliente escreveu "+55 41 8888-1253" (8 dígitos),
-   mas o número usado no material impresso é **(41) 98888-1253**. O código assume
-   `5541988881253`. **Confirme antes de publicar.**
+1. ~~Confirmar o WhatsApp.~~ **Confirmado em 24/08/2026: `5541988881253`.**
 2. **Medir a largura e o entre-eixos de cada modelo.** O enquadramento como
    autopropelido exige largura ≤ 70 cm e entre-eixos ≤ 130 cm. Fichas técnicas
    públicas de citycoco mostram 75 cm de largura. Se estourar, **todo o discurso
