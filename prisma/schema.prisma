@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum LeadStatus {
+  NOVO
+  CONTATADO
+  TEST_DRIVE_AGENDADO
+  NEGOCIANDO
+  VENDIDO
+  PERDIDO
+}
+
+model Lead {
+  id               String     @id @default(cuid())
+  nome             String
+  telefone         String
+  email            String?
+  modeloInteresse  String
+  uso              String
+  horarioPreferido String
+  origem           String
+  utmSource        String?
+  utmMedium        String?
+  utmCampaign      String?
+  status           LeadStatus @default(NOVO)
+  proximoContatoEm DateTime?
+  valorVenda       Decimal?   @db.Decimal(10, 2)
+  dataVenda        DateTime?
+  criadoEm         DateTime   @default(now())
+  atualizadoEm     DateTime   @updatedAt
+  notas            Nota[]
+
+  @@index([status])
+  @@index([criadoEm])
+  @@index([proximoContatoEm])
+}
+
+model Nota {
+  id       String   @id @default(cuid())
+  leadId   String
+  lead     Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  texto    String
+  criadoEm DateTime @default(now())
+
+  @@index([leadId])
+}
