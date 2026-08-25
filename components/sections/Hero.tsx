@@ -79,6 +79,8 @@ export default function Hero() {
               width={384}
               height={512}
               priority
+              fetchPriority="high"
+              sizes="(max-width: 768px) 80vw, 384px"
               className="relative w-full rounded-[20px] object-cover"
             />
           </div>

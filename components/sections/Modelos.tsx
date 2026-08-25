@@ -41,6 +41,7 @@ export default function Modelos() {
                   alt={foto.alt}
                   width={384}
                   height={512}
+                  sizes="(max-width: 768px) 50vw, 200px"
                   className="h-64 w-auto rounded-[14px] object-cover"
                 />
               </div>
@@ -92,17 +93,13 @@ export default function Modelos() {
                   >
                     Tenho interesse
                   </Button>
-                  {modelo.preco.confirmado && (
-                    <Button
-                      href={waLink("preco")}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="whatsapp"
-                      className="flex-1"
-                    >
-                      Simular parcelamento
-                    </Button>
-                  )}
+                  <Button
+                    href={`/modelos/${modelo.slug}`}
+                    variant="secondary"
+                    className="flex-1"
+                  >
+                    Ver ficha completa
+                  </Button>
                 </div>
               </div>
             </Card>

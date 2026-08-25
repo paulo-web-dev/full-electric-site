@@ -44,6 +44,41 @@ export interface DadosFormulario {
   horario: string;
 }
 
+/**
+ * Descobre a origem de um link wa.me gerado por waLink, a partir da mensagem
+ * codificada na URL. Usado pelo rastreio de cliques — assim nenhum call site
+ * precisa carregar atributo extra.
+ */
+export function origemDoLink(href: string): string {
+  let mensagem: string;
+  try {
+    mensagem = new URL(href).searchParams.get("text") ?? "";
+  } catch {
+    return "desconhecida";
+  }
+  for (const [origem, texto] of Object.entries(MENSAGENS)) {
+    if (origem !== "modelo" && mensagem === texto) return origem;
+  }
+  if (mensagem.startsWith("Olá! Tenho interesse na Full Electric")) {
+    return "modelo";
+  }
+  if (mensagem.startsWith("Olá! Me chamo")) return "formulario";
+  return "desconhecida";
+}
+
+/**
+ * Link para O LOJISTA chamar UM LEAD (usado no admin) — o destino é o
+ * telefone do cliente, não o da loja.
+ */
+export function waLinkParaLead(telefone: string, nome: string): string {
+  let digitos = telefone.replace(/\D/g, "");
+  if (digitos.length === 10 || digitos.length === 11) digitos = `55${digitos}`;
+  const mensagem =
+    `Olá, ${nome}! Aqui é da Full Electric Motos Elétricas, de Curitiba. ` +
+    `Recebemos seu interesse pelo site — podemos conversar?`;
+  return `https://wa.me/${digitos}?text=${encodeURIComponent(mensagem)}`;
+}
+
 export function waLinkFormulario(dados: DadosFormulario): string {
   const mensagem =
     `Olá! Me chamo ${dados.nome}. Tenho interesse na ${dados.modelo} ` +

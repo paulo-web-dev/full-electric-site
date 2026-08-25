@@ -1,53 +1,79 @@
 import { getSite } from "@/lib/content";
 import { waLink } from "@/lib/whatsapp";
+import { siteUrl } from "@/lib/site";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import Hero from "@/components/sections/Hero";
 import BarraNumeros from "@/components/sections/BarraNumeros";
 import Modelos from "@/components/sections/Modelos";
 import Economia from "@/components/sections/Economia";
+import Dores from "@/components/sections/Dores";
+import Legal from "@/components/sections/Legal";
+import Passos from "@/components/sections/Passos";
+import PorEscrito from "@/components/sections/PorEscrito";
+import Formulario from "@/components/sections/Formulario";
+import Faq from "@/components/sections/Faq";
+import CtaFinal from "@/components/sections/CtaFinal";
 
 export default function Home() {
   const site = getSite();
+
+  /* Horários espelham content/site.json → contato.horarios */
+  const schemaLocalBusiness = {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    name: site.marca.nomeCompleto,
+    description: site.marca.tagline,
+    url: siteUrl(),
+    image: `${siteUrl()}${site.marca.logo}`,
+    telephone: `+${site.contato.whatsapp}`,
+    priceRange: `a partir de ${site.comercial.precoMinimoFormatado}`,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: site.contato.endereco.cidade,
+      addressRegion: site.contato.endereco.uf,
+      addressCountry: "BR",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Saturday",
+        opens: "09:00",
+        closes: "13:00",
+      },
+    ],
+  };
 
   return (
     <>
       <Header />
       <main>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schemaLocalBusiness),
+          }}
+        />
         <Hero />
         <BarraNumeros />
         <Modelos />
         <Economia />
-        {/*
-          Próximas seções (CLAUDE.md §5.2, aguardando aprovação das 4 primeiras):
-          Você se identifica? · É legal? · Como funciona · Prova social ·
-          Formulário · FAQ · CTA final
-        */}
+        <Dores />
+        <Legal />
+        <Passos />
+        <PorEscrito />
+        <Formulario />
+        <Faq />
+        <CtaFinal />
       </main>
-
-      {/* Rodapé provisório — versão completa entra com as seções restantes */}
-      <footer className="border-t border-line bg-ink pb-24 pt-10 text-paper md:pb-10">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-5 md:flex-row md:items-center md:justify-between md:px-8">
-          <div>
-            <p className="text-sm font-extrabold uppercase tracking-wide">
-              Full <span className="text-lime-400">Electric</span>
-            </p>
-            <p className="mt-1 text-[13px] text-text-3">{site.marca.tagline}</p>
-          </div>
-          <div className="text-[13px] text-text-3">
-            <p>WhatsApp: {site.contato.whatsappFormatado}</p>
-            {site.contato.horarios.map((h) => (
-              <p key={h.dias}>
-                {h.dias}: {h.horario}
-              </p>
-            ))}
-          </div>
-          <p className="max-w-xs text-[13px] leading-relaxed text-text-3">
-            {site.legal.textoCurto}
-          </p>
-        </div>
-      </footer>
-
+      <Footer />
       <WhatsAppFab href={waLink("flutuante")} />
     </>
   );

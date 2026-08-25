@@ -4,10 +4,11 @@ import { waLink } from "@/lib/whatsapp";
 import Button from "@/components/ui/Button";
 
 const NAV = [
-  { href: "#modelos", label: "Modelos" },
-  { href: "#economia", label: "Economia" },
-  { href: "#legal", label: "É legal?" },
-  { href: "#faq", label: "Dúvidas" },
+  { href: "/#modelos", label: "Modelos" },
+  { href: "/#economia", label: "Economia" },
+  { href: "/#legal", label: "É legal?" },
+  { href: "/#faq", label: "Dúvidas" },
+  { href: "/contato", label: "Contato" },
 ];
 
 export default function Header() {
@@ -15,7 +16,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-ink/95 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-5 md:px-8">
-        <a href="#" className="flex items-center gap-3" aria-label="Full Electric — início">
+        <a href="/" className="flex items-center gap-3" aria-label="Full Electric — início">
           <Image
             src={site.marca.logo}
             alt="Logo da Full Electric Motos Elétricas"
