@@ -1,0 +1,6 @@
+# Shell scripts e arquivos lidos dentro do container precisam de LF,
+# mesmo quando editados no Windows.
+*.sh text eol=lf
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
+*.sql text eol=lf

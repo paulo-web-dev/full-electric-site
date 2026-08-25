@@ -1,0 +1,44 @@
+# Produção em servidor próprio — ver docs/DEPLOY.md.
+# O Compose lê o .env desta pasta automaticamente, tanto para os `args` de
+# build (NEXT_PUBLIC_*, que entram no bundle) quanto para o env_file de runtime.
+services:
+  app:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+        NEXT_PUBLIC_WHATSAPP: ${NEXT_PUBLIC_WHATSAPP:-}
+        NEXT_PUBLIC_GA4_ID: ${NEXT_PUBLIC_GA4_ID:-}
+        NEXT_PUBLIC_META_PIXEL_ID: ${NEXT_PUBLIC_META_PIXEL_ID:-}
+    image: full-electric-site:latest
+    container_name: full-electric-app
+    env_file: .env
+    # Só o Caddy (no host) fala com a app; nada exposto na rede externa.
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: unless-stopped
+    volumes:
+      - next-cache:/app/.next/cache
+    healthcheck:
+      # A imagem slim não tem curl/wget; o próprio Node faz a chamada.
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # Dá tempo para o migrate deploy do entrypoint antes de contar falhas
+      start_period: 40s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+volumes:
+  # Cache das imagens otimizadas (/_next/image) — sobrevive a rebuilds
+  next-cache:
