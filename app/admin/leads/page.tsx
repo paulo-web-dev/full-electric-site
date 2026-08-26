@@ -3,10 +3,15 @@ import { prisma } from "@/lib/db";
 import {
   STATUS_ORDEM,
   STATUS_ROTULO,
-  STATUS_COR,
   ehStatusValido,
+  rotuloOrigem,
   formatarDataHora,
 } from "@/lib/crm";
+import { waLinkParaLead } from "@/lib/whatsapp";
+import SeletorStatus from "@/components/admin/SeletorStatus";
+import NotaRapida from "@/components/admin/NotaRapida";
+import LinhaLead from "@/components/admin/LinhaLead";
+import { CAMPO, ROTULO, BOTAO_INK, BOTAO_LIME, BOTAO_BORDA, CARTAO } from "@/components/admin/estilos";
 
 interface Filtros {
   q?: string;
@@ -32,10 +37,6 @@ function montarWhere(filtros: Filtros): Prisma.LeadWhereInput {
   return where;
 }
 
-const CAMPO =
-  "rounded-[8px] border border-ink/20 bg-paper px-3 py-2 text-sm " +
-  "focus:border-lime-600 focus:outline-none";
-
 export default async function LeadsPage({
   searchParams,
 }: {
@@ -57,26 +58,32 @@ export default async function LeadsPage({
     }),
   ]);
 
-  const parametrosExport = new URLSearchParams();
-  if (filtros.q) parametrosExport.set("q", filtros.q);
-  if (filtros.status) parametrosExport.set("status", filtros.status);
-  if (filtros.origem) parametrosExport.set("origem", filtros.origem);
+  const parametros = new URLSearchParams();
+  if (filtros.q) parametros.set("q", filtros.q);
+  if (filtros.status) parametros.set("status", filtros.status);
+  if (filtros.origem) parametros.set("origem", filtros.origem);
+  if (filtros.ordem) parametros.set("ordem", filtros.ordem);
+  const query = parametros.toString();
+  /* Depois de um movimento com dados, volta para esta mesma lista filtrada */
+  const voltar = query ? `/admin/leads?${query}` : "/admin/leads";
 
   return (
     <main>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-extrabold tracking-[-0.025em]">Leads</h1>
-        <a
-          href={`/api/admin/leads/export?${parametrosExport.toString()}`}
-          className="rounded-full border border-ink/20 px-4 py-2 text-sm font-semibold transition-colors hover:border-ink/50"
-        >
-          Exportar CSV
-        </a>
+        <div className="flex gap-2">
+          <a href={`/api/admin/leads/export?${query}`} className={BOTAO_BORDA}>
+            Exportar CSV
+          </a>
+          <a href="/admin/leads/novo" className={BOTAO_LIME}>
+            Novo lead
+          </a>
+        </div>
       </div>
 
-      <form method="get" className="mt-6 flex flex-wrap items-end gap-3">
+      <form method="get" className="mt-6 grid gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-end">
         <div>
-          <label htmlFor="filtro-q" className="mb-1 block text-[13px] font-medium">
+          <label htmlFor="filtro-q" className={ROTULO}>
             Buscar
           </label>
           <input
@@ -89,10 +96,7 @@ export default async function LeadsPage({
           />
         </div>
         <div>
-          <label
-            htmlFor="filtro-status"
-            className="mb-1 block text-[13px] font-medium"
-          >
+          <label htmlFor="filtro-status" className={ROTULO}>
             Status
           </label>
           <select
@@ -110,10 +114,7 @@ export default async function LeadsPage({
           </select>
         </div>
         <div>
-          <label
-            htmlFor="filtro-origem"
-            className="mb-1 block text-[13px] font-medium"
-          >
+          <label htmlFor="filtro-origem" className={ROTULO}>
             Origem
           </label>
           <select
@@ -125,16 +126,13 @@ export default async function LeadsPage({
             <option value="">Todas</option>
             {origens.map((o) => (
               <option key={o.origem} value={o.origem}>
-                {o.origem}
+                {rotuloOrigem(o.origem)}
               </option>
             ))}
           </select>
         </div>
         <div>
-          <label
-            htmlFor="filtro-ordem"
-            className="mb-1 block text-[13px] font-medium"
-          >
+          <label htmlFor="filtro-ordem" className={ROTULO}>
             Ordenar
           </label>
           <select
@@ -147,10 +145,7 @@ export default async function LeadsPage({
             <option value="asc">Mais antigos</option>
           </select>
         </div>
-        <button
-          type="submit"
-          className="rounded-full bg-ink px-5 py-2 text-sm font-semibold text-paper transition-colors hover:bg-ink/80"
-        >
+        <button type="submit" className={`${BOTAO_INK} sm:col-span-2 lg:col-auto`}>
           Filtrar
         </button>
       </form>
@@ -161,8 +156,8 @@ export default async function LeadsPage({
           : `${leads.length} lead${leads.length === 1 ? "" : "s"}.`}
       </p>
 
-      {/* Desktop: tabela */}
-      <div className="mt-4 hidden overflow-x-auto rounded-[14px] border border-ink/10 bg-paper md:block">
+      {/* Desktop: tabela com status editável e nota rápida na linha */}
+      <div className={`${CARTAO} mt-4 hidden overflow-x-auto md:block`}>
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-ink/10 text-xs font-semibold uppercase tracking-[0.14em] text-text-2">
@@ -172,11 +167,14 @@ export default async function LeadsPage({
               <th className="px-4 py-3 font-semibold">Origem</th>
               <th className="px-4 py-3 font-semibold">Status</th>
               <th className="px-4 py-3 font-semibold">Criado em</th>
+              <th className="px-4 py-3 font-semibold">
+                <span className="sr-only">Ações</span>
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-ink/10">
             {leads.map((lead) => (
-              <tr key={lead.id} className="transition-colors hover:bg-muted">
+              <tr key={lead.id} className="align-top transition-colors hover:bg-muted">
                 <td className="px-4 py-3">
                   <a
                     href={`/admin/leads/${lead.id}`}
@@ -185,18 +183,26 @@ export default async function LeadsPage({
                     {lead.nome}
                   </a>
                 </td>
-                <td className="px-4 py-3">{lead.telefone}</td>
-                <td className="px-4 py-3">{lead.modeloInteresse}</td>
-                <td className="px-4 py-3">{lead.origem}</td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`inline-block rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${STATUS_COR[lead.status]}`}
+                  <a
+                    href={waLinkParaLead(lead.telefone, lead.nome)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline-offset-2 hover:underline"
                   >
-                    {STATUS_ROTULO[lead.status]}
-                  </span>
+                    {lead.telefone}
+                  </a>
                 </td>
-                <td className="px-4 py-3 text-text-2">
+                <td className="px-4 py-3">{lead.modeloInteresse}</td>
+                <td className="px-4 py-3 text-text-2">{rotuloOrigem(lead.origem)}</td>
+                <td className="px-4 py-3">
+                  <SeletorStatus id={lead.id} status={lead.status} voltar={voltar} compacto />
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-text-2">
                   {formatarDataHora(lead.criadoEm)}
+                </td>
+                <td className="px-4 py-3">
+                  <NotaRapida leadId={lead.id} />
                 </td>
               </tr>
             ))}
@@ -204,30 +210,15 @@ export default async function LeadsPage({
         </table>
       </div>
 
-      {/* Mobile: cards */}
-      <ul className="mt-4 grid gap-3 md:hidden">
+      {/* Celular: cards com as mesmas ações */}
+      <ul className={`${CARTAO} mt-4 divide-y divide-ink/10 md:hidden`}>
         {leads.map((lead) => (
-          <li key={lead.id}>
-            <a
-              href={`/admin/leads/${lead.id}`}
-              className="block rounded-[14px] border border-ink/10 bg-paper p-4"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <span className="font-semibold">{lead.nome}</span>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${STATUS_COR[lead.status]}`}
-                >
-                  {STATUS_ROTULO[lead.status]}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-text-2">
-                {lead.telefone} · {lead.modeloInteresse}
-              </p>
-              <p className="mt-1 text-[13px] text-text-2">
-                {lead.origem} · {formatarDataHora(lead.criadoEm)}
-              </p>
-            </a>
-          </li>
+          <LinhaLead
+            key={lead.id}
+            lead={lead}
+            meta={`${rotuloOrigem(lead.origem)} · ${formatarDataHora(lead.criadoEm)}`}
+            voltar={voltar}
+          />
         ))}
       </ul>
 

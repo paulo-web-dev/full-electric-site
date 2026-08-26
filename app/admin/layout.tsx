@@ -21,7 +21,7 @@ export default async function AdminLayout({
       {autenticado && (
         <header className="border-b border-ink/10 bg-paper">
           <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-5 md:px-8">
-            <nav aria-label="Navegação do admin" className="flex items-center gap-5">
+            <nav aria-label="Navegação do admin" className="flex items-center gap-4 md:gap-5">
               <span className="text-sm font-extrabold uppercase tracking-wide">
                 FE <span className="text-lime-600">Admin</span>
               </span>
@@ -33,6 +33,12 @@ export default async function AdminLayout({
                 className="text-sm font-medium text-text-2 hover:text-ink"
               >
                 Leads
+              </a>
+              <a
+                href="/admin/leads/novo"
+                className="hidden whitespace-nowrap rounded-full bg-lime-400 px-3 py-1 text-sm font-semibold text-ink transition-colors hover:bg-lime-500 sm:inline-flex"
+              >
+                Novo lead
               </a>
             </nav>
             <form action="/api/admin/logout" method="post">

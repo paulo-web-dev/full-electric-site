@@ -284,16 +284,31 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
   (`SESSION_SECRET`, lógica em `lib/adminAuth.ts`), sessão de 7 dias. Sem
   multiusuário, sem `localStorage`.
 - **Modelo de dados:** `Lead` (nome, telefone, email?, modeloInteresse, uso,
-  horarioPreferido, origem, utmSource?, utmMedium?, utmCampaign?, status,
-  proximoContatoEm?, valorVenda?, dataVenda?, criadoEm, atualizadoEm) e `Nota`
-  (leadId, texto, criadoEm, cascade no delete). Status: NOVO → CONTATADO →
+  horarioPreferido?, origem, utmSource?, utmMedium?, utmCampaign?, status,
+  proximoContatoEm?, valorVenda?, dataVenda?, modeloVendido?, motivoPerda?,
+  motivoPerdaDetalhe?, criadoEm, atualizadoEm) e `Nota` (leadId, texto,
+  criadoEm, cascade no delete). Status: NOVO → CONTATADO →
   TEST_DRIVE_AGENDADO → NEGOCIANDO → VENDIDO | PERDIDO (`lib/crm.ts`).
-  `valorVenda`/`dataVenda` só são editáveis com status VENDIDO e alimentam o
-  card "Vendas no mês" do painel (soma por `dataVenda` no mês corrente).
-- **Telas:** `/admin/login` · `/admin` (painel: contagens, semana, conversão,
-  follow-ups vencidos, vendas no mês) · `/admin/leads` (busca, filtros, CSV) ·
-  `/admin/leads/[id]` (ficha, notas, status, próximo contato, venda, WhatsApp,
-  exclusão LGPD).
+  `MotivoPerda`: PRECO · OUTRA_LOJA · SUMIU · SEM_MODELO · OUTRO.
+- **Origem é texto livre**, não enum: o site grava a seção do formulário
+  (`formulario`, `contato`, `entregadores`); leads manuais usam
+  `ORIGENS_MANUAIS` (`PRESENCIAL`, `TELEFONE`, `INDICACAO`, `OUTRO`) de
+  `lib/crm.ts`. "Site" nos relatórios = qualquer origem que não seja manual.
+- **Movimento de status com dados (`moverLead`):** TEST_DRIVE_AGENDADO exige
+  data/hora (grava em `proximoContatoEm` — o próximo contato *é* o test
+  drive); VENDIDO exige valor, data e modelo vendido; PERDIDO exige motivo.
+  Os demais status salvam direto do select da linha (`SeletorStatus`). A
+  tela `/admin/leads/[id]/mover?para=STATUS` pede esses dados; o status só
+  muda ao confirmar.
+- **Telas:** `/admin/login` · `/admin` (tela de trabalho: novos sem contato,
+  follow-ups vencidos, test drives nos próximos 7 dias, vendas do mês — cada
+  bloco com estado vazio explicativo; sem gráficos até haver volume) ·
+  `/admin/leads` (busca, filtros, CSV, status e nota rápida na linha, "Novo
+  lead") · `/admin/leads/novo` (cadastro manual: balcão/telefone/indicação;
+  observação inicial vira a primeira nota) · `/admin/leads/[id]` (ficha,
+  notas, status, próximo contato, venda com modelo, motivo da perda,
+  WhatsApp, exclusão LGPD) · `/admin/leads/[id]/mover`.
+- **Sem analytics de tráfego no admin** — isso é do Google Analytics.
 - **Fora do escopo da v1 (não construir sem pedido):** múltiplos usuários,
   permissões, automação de e-mail, calendário, faturamento.
 - **Env obrigatórias em produção:** `DATABASE_URL`, `DIRECT_URL`,

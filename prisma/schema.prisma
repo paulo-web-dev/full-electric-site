@@ -17,25 +17,39 @@ enum LeadStatus {
   PERDIDO
 }
 
+/// Por que o lead foi perdido — alimenta o relatório "perco por preço ou por estoque?"
+enum MotivoPerda {
+  PRECO
+  OUTRA_LOJA
+  SUMIU
+  SEM_MODELO
+  OUTRO
+}
+
 model Lead {
-  id               String     @id @default(cuid())
-  nome             String
-  telefone         String
-  email            String?
-  modeloInteresse  String
-  uso              String
-  horarioPreferido String
-  origem           String
-  utmSource        String?
-  utmMedium        String?
-  utmCampaign      String?
-  status           LeadStatus @default(NOVO)
-  proximoContatoEm DateTime?
-  valorVenda       Decimal?   @db.Decimal(10, 2)
-  dataVenda        DateTime?
-  criadoEm         DateTime   @default(now())
-  atualizadoEm     DateTime   @updatedAt
-  notas            Nota[]
+  id                 String       @id @default(cuid())
+  nome               String
+  telefone           String
+  email              String?
+  modeloInteresse    String
+  uso                String
+  horarioPreferido   String?
+  /// Texto livre: o site grava a seção de origem (formulario, contato, entregadores);
+  /// leads manuais usam as constantes ORIGENS_MANUAIS de lib/crm.ts.
+  origem             String
+  utmSource          String?
+  utmMedium          String?
+  utmCampaign        String?
+  status             LeadStatus   @default(NOVO)
+  proximoContatoEm   DateTime?
+  valorVenda         Decimal?     @db.Decimal(10, 2)
+  dataVenda          DateTime?
+  modeloVendido      String?
+  motivoPerda        MotivoPerda?
+  motivoPerdaDetalhe String?
+  criadoEm           DateTime     @default(now())
+  atualizadoEm       DateTime     @updatedAt
+  notas              Nota[]
 
   @@index([status])
   @@index([criadoEm])

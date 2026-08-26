@@ -3,10 +3,9 @@
 import { useState, type FormEvent } from "react";
 import { waLinkFormulario } from "@/lib/whatsapp";
 import { rastrearLead } from "@/lib/analytics";
+import { MODELOS_OPCOES, USOS_OPCOES, type UsoOpcao } from "@/lib/leadOpcoes";
 import Button from "@/components/ui/Button";
 
-const MODELOS = ["Full Electric S60", "Full Electric E30", "Ainda não sei"];
-const USOS = ["Ir ao trabalho", "Delivery", "Uso pessoal"] as const;
 const HORARIOS = [
   "Segunda a sexta, de manhã",
   "Segunda a sexta, à tarde",
@@ -17,7 +16,7 @@ interface LeadFormProps {
   /** Identifica no CRM de qual seção do site o lead veio */
   origem?: string;
   /** Opção de "uso pretendido" pré-selecionada (ex.: "Delivery" na LP de entregadores) */
-  usoPadrao?: (typeof USOS)[number];
+  usoPadrao?: UsoOpcao;
 }
 
 /* Máscara BR: (41) 98888-1253 */
@@ -52,7 +51,7 @@ const CAMPO =
 
 export default function LeadForm({
   origem = "formulario",
-  usoPadrao = USOS[0],
+  usoPadrao = USOS_OPCOES[0],
 }: LeadFormProps) {
   const [telefone, setTelefone] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -197,7 +196,7 @@ export default function LeadForm({
             Modelo de interesse
           </label>
           <select id="lead-modelo" name="modelo" required className={CAMPO}>
-            {MODELOS.map((m) => (
+            {MODELOS_OPCOES.map((m) => (
               <option key={m}>{m}</option>
             ))}
           </select>
@@ -213,7 +212,7 @@ export default function LeadForm({
             defaultValue={usoPadrao}
             className={CAMPO}
           >
-            {USOS.map((u) => (
+            {USOS_OPCOES.map((u) => (
               <option key={u}>{u}</option>
             ))}
           </select>

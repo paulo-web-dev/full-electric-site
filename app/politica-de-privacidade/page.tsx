@@ -50,11 +50,17 @@ export default function PoliticaDePrivacidadePage() {
                 2. Quais dados coletamos e de onde eles vêm
               </h2>
               <p className="mt-3">
-                Todos os dados pessoais que tratamos vêm de um único lugar:{" "}
+                Os dados pessoais que tratamos vêm de você mesmo, de duas
+                formas:{" "}
                 <strong>
-                  o formulário de test drive que você mesmo preenche no site
+                  o formulário de test drive que você preenche no site
+                </strong>{" "}
+                ou{" "}
+                <strong>
+                  o contato que você faz com a loja pessoalmente, por telefone
+                  ou por indicação
                 </strong>
-                . São eles:
+                , quando registramos seus dados para retornar. São eles:
               </p>
               <ul className="mt-3 list-disc space-y-1.5 pl-5">
                 <li>Nome;</li>
@@ -69,7 +75,12 @@ export default function PoliticaDePrivacidadePage() {
                   enviado e, se você chegou por um anúncio, os parâmetros da
                   campanha (utm_source, utm_medium, utm_campaign);
                 </li>
-                <li>Data e hora do envio.</li>
+                <li>Data e hora do envio ou do contato;</li>
+                <li>
+                  Registros do atendimento: anotações da conversa, agendamento
+                  do test drive, modelo e valor da compra e, se a negociação
+                  não avançar, o motivo.
+                </li>
               </ul>
               <p className="mt-3">
                 O site público não usa cookies de rastreamento nem coleta dados
@@ -98,7 +109,7 @@ export default function PoliticaDePrivacidadePage() {
               <p className="mt-3">
                 Tratamos os dados com base no seu{" "}
                 <strong>consentimento</strong> (art. 7º, I, da LGPD), dado no
-                próprio formulário, e na execução de{" "}
+                próprio formulário ou verbalmente no atendimento, e na execução de{" "}
                 <strong>
                   procedimentos preliminares ao contrato de compra
                 </strong>{" "}
