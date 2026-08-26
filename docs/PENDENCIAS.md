@@ -25,10 +25,10 @@
 - [ ] Vida útil e valor de reposição da bateria (está no FAQ como [CONFIRMAR]).
 - [ ] Foto da fachada da loja e do time.
 - [ ] 3 depoimentos em vídeo de clientes reais.
-- [ ] IDs de GA4 e Meta Pixel (o site não usa GTM). **Atenção:** a Política de Privacidade
-      afirma hoje que o site não usa cookies de rastreamento. Ao preencher esses
-      IDs, atualizar a seção 2 da política (e avaliar aviso de cookies) na mesma
-      tarefa — CLAUDE.md §3.7.
+- [ ] IDs de GA4 e Meta Pixel (o site não usa GTM). Entram por `.env`
+      (`NEXT_PUBLIC_GA4_ID` / `NEXT_PUBLIC_META_PIXEL_ID`) + rebuild da imagem.
+      Faixa de cookies, gate de consentimento e política já prontos
+      (26/08/2026) — com os IDs vazios a faixa nem aparece.
 
 ## 🟢 Melhorias depois do lançamento
 

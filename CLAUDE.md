@@ -101,6 +101,11 @@ sinalize e peça confirmação explícita.
     grava em `ExpurgoLog`). Cron semanal na VPS: `docs/DEPLOY.md §9`.
   - `/politica-de-privacidade` deve ser mantida em sincronia com o que o código
     efetivamente coleta. Mudou a coleta → muda a política, na mesma tarefa.
+  - **Cookies**: GA4 e Meta Pixel só carregam após "Aceitar" na faixa de
+    cookies (consentimento, art. 7º I). Essenciais, sem consentimento:
+    `fe_consent` (a escolha, 6 meses), `fe_utm` (UTMs da visita, sessão) e
+    `fe_admin_sessao` (equipe). Nunca carregue script de terceiro fora desse
+    gate. Toda UTM vai na mensagem do WhatsApp como `[ref: ...]` (`lib/utm.ts`).
 
 ---
 
@@ -191,20 +196,27 @@ Espelha a estrutura da Unyflex Digital, adaptada para produto físico.
 
 ### 5.2 Seções da Home (nesta ordem)
 
-1. **Herói** — eyebrow · h1 · subtítulo · CTA duplo (Test drive / WhatsApp) ·
-   3 chips de confiança · foto da S60
+Ordem revista em 26/08/2026 para conversão: o formulário vem logo depois de
+moto e preço (ponto de decisão), não no fim da página. Mesma ordem no mobile e
+no desktop.
+
+1. **Herói** — eyebrow curto · h1 · **foto da S60 antes dos CTAs no mobile**
+   (~220 px, com halo) · subtítulo · CTA primário → `#formulario` · CTA
+   secundário → WhatsApp · 3 chips de confiança · âncora legal. O CTA
+   primário precisa caber na dobra de uma tela de 667 px.
 2. **Barra de números** — modelos em estoque · potência · categoria legal · pronta entrega
 3. **Modelos disponíveis** — grid de cards, um por modelo, com foto, specs
    resumidas, preço "a partir de" e CTA
-4. **Economia** — comparativo ônibus × 125cc × elétrica, com a metodologia do
+4. **Formulário** — captura de lead que também abre o WhatsApp preenchido
+5. **Economia** — comparativo ônibus × 125cc × elétrica, com a metodologia do
    cálculo em nota de rodapé
-5. **"Você se identifica?"** — grid de 6 dores → solução (padrão Unyflex)
 6. **É legal? Sim, e provamos** — bloco CONTRAN 996 com os 5 critérios e o
    Dossiê de Conformidade que acompanha a venda
-7. **Como funciona** — 4 passos numerados (padrão Unyflex)
-8. **Prova social** — avaliações Google + depoimentos
-9. **Formulário** — captura de lead que também abre o WhatsApp preenchido
-10. **FAQ** — accordion, mínimo 12 perguntas, com Schema.org FAQPage
+7. **"Você se identifica?"** — grid de 6 dores → solução (padrão Unyflex)
+8. **O que você leva por escrito** — compromissos + Dossiê (no lugar da prova
+   social até haver avaliações reais; quando houver, entra aqui)
+9. **Como funciona** — 4 passos numerados (padrão Unyflex)
+10. **FAQ** — accordion, mínimo 12 perguntas, com Schema.org FAQPage (tom `paper`)
 11. **CTA final** + rodapé
 
 ### 5.3 Elementos persistentes
@@ -212,6 +224,11 @@ Espelha a estrutura da Unyflex Digital, adaptada para produto físico.
 - **Botão flutuante de WhatsApp**, canto inferior direito, aparece após 300px
   de rolagem. Mobile: barra fixa no rodapé.
 - **Header** com logo, navegação e botão "Test drive" à direita.
+- **Faixa de cookies** (`components/CookieBanner.tsx`): só aparece quando há
+  ID de GA4 ou Pixel no build e ainda não há escolha. "Aceitar" grava
+  `fe_consent=aceito` (6 meses) e só então os scripts carregam; "Só
+  essenciais" ou nenhuma resposta = não carrega. Link "Cookies" no rodapé
+  reabre a faixa.
 
 ---
 

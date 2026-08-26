@@ -16,7 +16,7 @@ export default function Faq() {
   };
 
   return (
-    <Section id="faq" tone="muted">
+    <Section id="faq" tone="paper">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}

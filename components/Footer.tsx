@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getSite } from "@/lib/content";
 import { waLink } from "@/lib/whatsapp";
+import CookiesLink from "@/components/CookiesLink";
 
 const NAV = [
   { href: "/#modelos", label: "Modelos" },
@@ -98,6 +99,9 @@ export default function Footer() {
                 </a>
               </li>
             ))}
+            <li>
+              <CookiesLink />
+            </li>
           </ul>
         </div>
       </div>

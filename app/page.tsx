@@ -61,15 +61,16 @@ export default function Home() {
             __html: JSON.stringify(schemaLocalBusiness),
           }}
         />
+        {/* Ordem = CLAUDE.md §5.2: formulário logo após moto e preço */}
         <Hero />
         <BarraNumeros />
         <Modelos />
-        <Economia />
-        <Dores />
-        <Legal />
-        <Passos />
-        <PorEscrito />
         <Formulario />
+        <Economia />
+        <Legal />
+        <Dores />
+        <PorEscrito />
+        <Passos />
         <Faq />
         <CtaFinal />
       </main>

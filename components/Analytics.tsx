@@ -1,27 +1,39 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Script from "next/script";
 import { origemDoLink, comEtiquetaUtm } from "@/lib/whatsapp";
 import { rastrear } from "@/lib/analytics";
 import { guardarUtmsDaVisita, lerUtms, etiquetaUtm } from "@/lib/utm";
+import { EVENTO_CONSENTIMENTO, lerConsentimento } from "@/lib/consent";
 
 const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
 /*
   Eventos da casa (além do PageView automático):
-  - whatsapp_click { origem }  → todo clique em link wa.me, com a seção de origem
-  - generate_lead / Lead       → envio do formulário (disparado no LeadForm)
-  - scroll_75                  → visitante passou de 75% da página, uma vez
+  - whatsapp_click { origem, utm* } → todo clique em link wa.me, com a seção de origem
+  - generate_lead / Lead            → envio do formulário (disparado no LeadForm)
+  - scroll_75                       → visitante passou de 75% da página, uma vez
+
+  Os scripts do GA4 e do Pixel só entram na página depois de "Aceitar" na
+  faixa de cookies (lib/consent.ts). Sem aceite, `rastrear` vira no-op — os
+  eventos são disparados no vazio, sem erro.
 
   UTM até o WhatsApp: no clique, a etiqueta "[ref: source / medium / campaign]"
-  é anexada à mensagem pré-preenchida — o lead chega identificável, sem
-  depender de nenhuma ferramenta de analytics estar ligada.
+  é anexada à mensagem pré-preenchida — o lead chega identificável, com ou
+  sem analytics ligado.
 */
 export default function Analytics() {
+  const [consentido, setConsentido] = useState(false);
+
   useEffect(() => {
     guardarUtmsDaVisita();
+
+    setConsentido(lerConsentimento() === "aceito");
+    function aoConsentir(evento: Event) {
+      setConsentido((evento as CustomEvent<string>).detail === "aceito");
+    }
 
     function aoClicar(evento: MouseEvent) {
       const alvo = evento.target as Element | null;
@@ -45,13 +57,17 @@ export default function Analytics() {
       }
     }
 
+    window.addEventListener(EVENTO_CONSENTIMENTO, aoConsentir);
     document.addEventListener("click", aoClicar, { capture: true });
     window.addEventListener("scroll", aoRolar, { passive: true });
     return () => {
+      window.removeEventListener(EVENTO_CONSENTIMENTO, aoConsentir);
       document.removeEventListener("click", aoClicar, { capture: true });
       window.removeEventListener("scroll", aoRolar);
     };
   }, []);
+
+  if (!consentido) return null;
 
   return (
     <>

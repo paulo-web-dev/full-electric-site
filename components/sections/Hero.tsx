@@ -5,6 +5,9 @@ import Section, { Eyebrow } from "@/components/ui/Section";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
 
+/* Curto de propósito: cabe em uma linha a 375px (CTA dentro da dobra de 667px) */
+const EYEBROW = "Motos elétricas em Curitiba";
+
 const CHIPS = [
   "Sem CNH",
   "Pronta entrega em Curitiba",
@@ -25,12 +28,12 @@ export default function Hero() {
   const foto = s60?.fotos.find((f) => f.principal) ?? s60?.fotos[0];
 
   return (
-    <Section tone="ink" className="pb-12 md:pb-16">
-      <div className="grid items-center gap-x-10 gap-y-6 md:grid-cols-[1.2fr_1fr] md:grid-rows-[auto_auto]">
+    <Section tone="ink" className="pt-10 pb-12 md:pt-24 md:pb-16">
+      <div className="grid items-center gap-x-10 gap-y-4 md:gap-y-6 md:grid-cols-[1.2fr_1fr] md:grid-rows-[auto_auto]">
         <div>
-          <Eyebrow on="dark">{site.marca.tagline}</Eyebrow>
+          <Eyebrow on="dark">{EYEBROW}</Eyebrow>
 
-          <h1 className="mt-4 text-[40px] font-extrabold leading-[1.05] tracking-[-0.03em] md:text-6xl">
+          <h1 className="mt-3 text-[40px] font-extrabold leading-[1.05] tracking-[-0.03em] md:text-6xl">
             Sem CNH.
             <br />
             <span className="text-lime-400">100% elétrica.</span>
@@ -62,7 +65,7 @@ export default function Hero() {
             o mês por menos de R$ 25.
           </p>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row md:mt-7">
             <Button href="#formulario" on="dark">
               Agendar test drive gratuito
             </Button>
