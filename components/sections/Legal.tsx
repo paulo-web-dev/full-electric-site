@@ -1,31 +1,9 @@
 import { AlertTriangle, FileCheck } from "lucide-react";
-import { getSite, getModelos } from "@/lib/content";
+import { getSite, valorCriterioNaMotoDestaque } from "@/lib/content";
 import { waLink } from "@/lib/whatsapp";
 import Section, { Eyebrow } from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-
-/*
-  Liga cada critério da Res. 996/2023 ao spec correspondente em
-  content/modelos.json. Quando você medir largura/entre-eixos (ou confirmar os
-  equipamentos), basta editar o JSON — marcar "confirmado": true com o valor —
-  e a tabela passa a exibir o número sozinha.
-*/
-const CRITERIO_PARA_SPEC: Record<string, string> = {
-  "Potência nominal máxima": "Motor",
-  "Velocidade máxima de fabricação": "Velocidade máxima",
-  "Largura máxima": "Largura",
-  "Distância entre eixos": "Entre-eixos",
-  Equipamentos: "Equipamentos",
-};
-
-function valorDaNossaMoto(criterioItem: string): string | null {
-  const s60 = getModelos().find((m) => m.destaque);
-  const spec = s60?.specs.find(
-    (s) => s.label === CRITERIO_PARA_SPEC[criterioItem]
-  );
-  return spec && spec.confirmado ? spec.valor : null;
-}
 
 export default function Legal() {
   const site = getSite();
@@ -67,7 +45,7 @@ export default function Legal() {
             </thead>
             <tbody className="divide-y divide-line">
               {criterios.map((criterio) => {
-                const valor = valorDaNossaMoto(criterio.item);
+                const valor = valorCriterioNaMotoDestaque(criterio.item);
                 return (
                   <tr key={criterio.item}>
                     <th scope="row" className="px-5 py-4 font-medium text-paper">
@@ -118,16 +96,20 @@ export default function Legal() {
           o veículo é ciclomotor e exige registro, placa e ACC ou CNH categoria
           A.
         </p>
-        <Button
-          href={waLink("legal")}
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="whatsapp"
-          on="dark"
-          className="shrink-0"
-        >
-          Tirar dúvida legal no WhatsApp
-        </Button>
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+          <Button href="/precisa-de-cnh" variant="secondary" on="dark">
+            Entenda a lei em detalhe
+          </Button>
+          <Button
+            href={waLink("legal")}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="whatsapp"
+            on="dark"
+          >
+            Tirar dúvida legal no WhatsApp
+          </Button>
+        </div>
       </div>
     </Section>
   );

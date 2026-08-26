@@ -33,8 +33,11 @@
 ## 🟢 Melhorias depois do lançamento
 
 - [ ] Teste real de autonomia gravado em Curitiba (Centro → Boqueirão → Centro)
-- [ ] Página `/precisa-de-cnh` para SEO
-- [ ] Página `/para-entregadores`
+- [x] ~~Página `/precisa-de-cnh` para SEO~~ **No ar (26/08/2026).** Os
+      fatos sobre a fiscalização no Paraná vêm de `docs/03-legal-contran.md`;
+      se o cliente tiver fonte oficial (Detran-PR/BPTran), anexar ao doc.
+- [x] ~~Página `/para-entregadores`~~ **No ar (26/08/2026).** Formulário
+      grava com `origem: "entregadores"` e uso pré-selecionado "Delivery".
 - [ ] Widget de avaliações do Google
 - [ ] Blog com dicas de legislação
 - [ ] Rotina de expurgo dos leads sem contato há 12 meses (a política de

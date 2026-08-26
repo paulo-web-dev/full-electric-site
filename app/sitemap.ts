@@ -21,6 +21,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${base}/precisa-de-cnh`,
+      lastModified: agora,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${base}/para-entregadores`,
+      lastModified: agora,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${base}/politica-de-privacidade`,
       lastModified: agora,
       changeFrequency: "yearly",

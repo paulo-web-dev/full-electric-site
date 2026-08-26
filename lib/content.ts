@@ -105,6 +105,36 @@ export function specsConfirmadas(modelo: Modelo): Spec[] {
   return modelo.specs.filter((s) => s.confirmado);
 }
 
+/*
+  Liga cada critério da Res. 996/2023 (content/site.json → legal.criterios) ao
+  spec correspondente do modelo em destaque. Quando você medir largura e
+  entre-eixos, basta marcar "confirmado": true no JSON e o valor aparece.
+*/
+const CRITERIO_PARA_SPEC: Record<string, string> = {
+  "Potência nominal máxima": "Motor",
+  "Velocidade máxima de fabricação": "Velocidade máxima",
+  "Largura máxima": "Largura",
+  "Distância entre eixos": "Entre-eixos",
+  Equipamentos: "Equipamentos",
+};
+
+/** Valor confirmado do modelo em destaque para um critério legal, ou null */
+export function valorCriterioNaMotoDestaque(criterioItem: string): string | null {
+  const destaque = getModelos().find((m) => m.destaque);
+  const spec = destaque?.specs.find(
+    (s) => s.label === CRITERIO_PARA_SPEC[criterioItem]
+  );
+  return spec && spec.confirmado ? spec.valor : null;
+}
+
+/** Perguntas do FAQ cujo enunciado está na lista, na ordem da lista */
+export function getFaqPor(perguntas: string[]): FaqItem[] {
+  const faq = getFaq();
+  return perguntas
+    .map((p) => faq.find((item) => item.p === p))
+    .filter((item): item is FaqItem => item !== undefined);
+}
+
 /** FAQ sem respostas pendentes de confirmação */
 export function getFaq(): FaqItem[] {
   return (faqJson as { faq: FaqItem[] }).faq.filter(

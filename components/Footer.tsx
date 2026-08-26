@@ -6,6 +6,8 @@ const NAV = [
   { href: "/#modelos", label: "Modelos" },
   { href: "/#economia", label: "Economia" },
   { href: "/#legal", label: "É legal?" },
+  { href: "/precisa-de-cnh", label: "Precisa de CNH?" },
+  { href: "/para-entregadores", label: "Para entregadores" },
   { href: "/#formulario", label: "Agendar test drive" },
   { href: "/#faq", label: "Dúvidas" },
   { href: "/contato", label: "Contato" },

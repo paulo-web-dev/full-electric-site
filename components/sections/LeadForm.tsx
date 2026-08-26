@@ -6,7 +6,7 @@ import { rastrearLead } from "@/lib/analytics";
 import Button from "@/components/ui/Button";
 
 const MODELOS = ["Full Electric S60", "Full Electric E30", "Ainda não sei"];
-const USOS = ["Ir ao trabalho", "Delivery", "Uso pessoal"];
+const USOS = ["Ir ao trabalho", "Delivery", "Uso pessoal"] as const;
 const HORARIOS = [
   "Segunda a sexta, de manhã",
   "Segunda a sexta, à tarde",
@@ -16,6 +16,8 @@ const HORARIOS = [
 interface LeadFormProps {
   /** Identifica no CRM de qual seção do site o lead veio */
   origem?: string;
+  /** Opção de "uso pretendido" pré-selecionada (ex.: "Delivery" na LP de entregadores) */
+  usoPadrao?: (typeof USOS)[number];
 }
 
 /* Máscara BR: (41) 98888-1253 */
@@ -48,7 +50,10 @@ const CAMPO =
   "w-full rounded-[8px] border border-ink/20 bg-paper px-4 py-3 text-[15px] " +
   "placeholder:text-text-2/70 focus:border-lime-600 focus:outline-none";
 
-export default function LeadForm({ origem = "formulario" }: LeadFormProps) {
+export default function LeadForm({
+  origem = "formulario",
+  usoPadrao = USOS[0],
+}: LeadFormProps) {
   const [telefone, setTelefone] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -201,7 +206,13 @@ export default function LeadForm({ origem = "formulario" }: LeadFormProps) {
           <label htmlFor="lead-uso" className="mb-1.5 block text-sm font-medium">
             Uso pretendido
           </label>
-          <select id="lead-uso" name="uso" required className={CAMPO}>
+          <select
+            id="lead-uso"
+            name="uso"
+            required
+            defaultValue={usoPadrao}
+            className={CAMPO}
+          >
             {USOS.map((u) => (
               <option key={u}>{u}</option>
             ))}

@@ -181,8 +181,8 @@ Espelha a estrutura da Unyflex Digital, adaptada para produto físico.
 | `/` | Home — conversão principal | P0 |
 | `/modelos/[slug]` | Página de cada modelo (S60, E30) | P0 |
 | `/contato` | Formulário + mapa + horários | P0 |
-| `/precisa-de-cnh` | Conteúdo educativo sobre CONTRAN 996 (SEO) | P1 |
-| `/para-entregadores` | LP para motoboy / iFood | P1 |
+| `/precisa-de-cnh` | Conteúdo educativo sobre CONTRAN 996 (SEO) — **no ar** | P1 |
+| `/para-entregadores` | LP para motoboy / iFood — **no ar** | P1 |
 | `/politica-de-privacidade` | LGPD (obrigatório p/ rodar anúncios) — **no ar** | P0 |
 | `/admin/*` | CRM de leads (ver §6.4) — protegido, noindex | P0 |
 

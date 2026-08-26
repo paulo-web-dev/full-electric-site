@@ -235,7 +235,7 @@ export default async function ModeloPage({
                   Conformidade com a documentação do enquadramento.
                 </p>
                 <a
-                  href="/#legal"
+                  href="/precisa-de-cnh"
                   className="mt-3 inline-block text-[14px] font-medium underline underline-offset-2"
                 >
                   Ver os critérios completos da lei
