@@ -12,6 +12,8 @@ export type OrigemWhatsApp =
   | "testdrive"
   | "entregador"
   | "legal"
+  | "dores"
+  | "ctafinal"
   | "flutuante";
 
 const MENSAGENS: Record<OrigemWhatsApp, string> = {
@@ -21,8 +23,29 @@ const MENSAGENS: Record<OrigemWhatsApp, string> = {
   testdrive: "Olá! Quero agendar um test drive.",
   entregador: "Olá! Sou entregador e quero saber sobre a moto para trabalhar.",
   legal: "Olá! Quero entender a parte legal (CNH, placa) antes de comprar.",
+  dores: "Olá! Me identifiquei com o que vi no site e quero saber mais.",
+  ctafinal: "Olá! Li o site inteiro e quero conversar sobre as motos.",
   flutuante: "Olá! Vim pelo site da Full Electric.",
 };
+
+/* Etiqueta de UTM anexada no clique (lib/utm.ts) — ignorada ao identificar a origem */
+const SUFIXO_UTM = /\s*\[ref:[^\]]*\]\s*$/;
+
+/**
+ * Devolve o mesmo link wa.me com a etiqueta de UTM no fim da mensagem.
+ * Chamado no navegador, no momento do clique (components/Analytics.tsx).
+ */
+export function comEtiquetaUtm(href: string, etiqueta: string): string {
+  if (!etiqueta) return href;
+  try {
+    const url = new URL(href);
+    const texto = (url.searchParams.get("text") ?? "").replace(SUFIXO_UTM, "");
+    url.searchParams.set("text", `${texto}\n\n${etiqueta}`);
+    return url.toString();
+  } catch {
+    return href;
+  }
+}
 
 function montarLink(mensagem: string): string {
   const numero = getSite().contato.whatsapp;
@@ -52,7 +75,7 @@ export interface DadosFormulario {
 export function origemDoLink(href: string): string {
   let mensagem: string;
   try {
-    mensagem = new URL(href).searchParams.get("text") ?? "";
+    mensagem = (new URL(href).searchParams.get("text") ?? "").replace(SUFIXO_UTM, "");
   } catch {
     return "desconhecida";
   }

@@ -34,7 +34,7 @@ export default function CtaFinal() {
           Agendar test drive gratuito
         </Button>
         <Button
-          href={waLink("hero")}
+          href={waLink("ctafinal")}
           target="_blank"
           rel="noopener noreferrer"
           variant="whatsapp"

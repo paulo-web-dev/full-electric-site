@@ -11,6 +11,14 @@ const CHIPS = [
   "Nota fiscal e 6 meses de garantia",
 ];
 
+/*
+  Primeira dobra (conversão):
+  - Mobile: título → FOTO (a moto aparece antes de qualquer botão) → CTAs.
+    Desktop: foto na coluna da direita, ocupando as duas linhas do grid.
+    É uma única <Image>; só a posição muda por CSS.
+  - Um CTA primário (formulário, #formulario) e um secundário (WhatsApp) —
+    dois destinos diferentes de verdade, não dois botões para o mesmo lugar.
+*/
 export default function Hero() {
   const site = getSite();
   const s60 = getModelos().find((m) => m.destaque);
@@ -18,7 +26,7 @@ export default function Hero() {
 
   return (
     <Section tone="ink" className="pb-12 md:pb-16">
-      <div className="grid items-center gap-10 md:grid-cols-[1.2fr_1fr]">
+      <div className="grid items-center gap-x-10 gap-y-6 md:grid-cols-[1.2fr_1fr] md:grid-rows-[auto_auto]">
         <div>
           <Eyebrow on="dark">{site.marca.tagline}</Eyebrow>
 
@@ -29,19 +37,33 @@ export default function Hero() {
             <br />
             Pronta entrega.
           </h1>
+        </div>
 
-          <p className="mt-5 max-w-md text-lg text-text-3">
+        {foto && s60 && (
+          <div className="relative mx-auto w-fit md:col-start-2 md:row-span-2 md:row-start-1 md:w-full md:max-w-sm">
+            {/* Halo radial: as motos são pretas e somem no fundo escuro — CLAUDE.md §4.5 */}
+            <div aria-hidden="true" className="photo-halo absolute -inset-6 md:-inset-8" />
+            <Image
+              src={foto.src}
+              alt={foto.alt}
+              width={384}
+              height={512}
+              priority
+              fetchPriority="high"
+              sizes="(max-width: 768px) 165px, 384px"
+              className="relative h-[220px] w-auto rounded-[14px] object-cover md:h-auto md:w-full md:rounded-[20px]"
+            />
+          </div>
+        )}
+
+        <div className="md:col-start-1">
+          <p className="max-w-md text-lg text-text-3">
             Sem placa, sem IPVA, sem posto de gasolina. Carrega em casa e roda
             o mês por menos de R$ 25.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button
-              href={waLink("testdrive")}
-              target="_blank"
-              rel="noopener noreferrer"
-              on="dark"
-            >
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <Button href="#formulario" on="dark">
               Agendar test drive gratuito
             </Button>
             <Button
@@ -68,23 +90,6 @@ export default function Hero() {
             {site.legal.textoCurto}. Dispensa CNH, placa e emplacamento.
           </p>
         </div>
-
-        {foto && s60 && (
-          <div className="relative mx-auto w-full max-w-xs md:max-w-sm">
-            {/* Halo radial: as motos são pretas e somem no fundo escuro — CLAUDE.md §4.5 */}
-            <div aria-hidden="true" className="photo-halo absolute -inset-8" />
-            <Image
-              src={foto.src}
-              alt={foto.alt}
-              width={384}
-              height={512}
-              priority
-              fetchPriority="high"
-              sizes="(max-width: 768px) 80vw, 384px"
-              className="relative w-full rounded-[20px] object-cover"
-            />
-          </div>
-        )}
       </div>
     </Section>
   );

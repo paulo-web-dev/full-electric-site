@@ -52,7 +52,7 @@ export default function Dores() {
 
       <div className="mt-8">
         <Button
-          href={waLink("hero")}
+          href={waLink("dores")}
           target="_blank"
           rel="noopener noreferrer"
           variant="whatsapp"

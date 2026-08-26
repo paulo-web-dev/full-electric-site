@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { waLinkFormulario } from "@/lib/whatsapp";
 import { rastrearLead } from "@/lib/analytics";
 import { MODELOS_OPCOES, USOS_OPCOES, type UsoOpcao } from "@/lib/leadOpcoes";
+import { lerUtms } from "@/lib/utm";
 import Button from "@/components/ui/Button";
 
 const HORARIOS = [
@@ -29,20 +30,6 @@ function mascaraTelefone(valor: string): string {
 
 function emailValido(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-}
-
-/* Lidos da URL no envio — sem localStorage (CLAUDE.md §6.2) */
-function utmsDaUrl(): {
-  utmSource?: string;
-  utmMedium?: string;
-  utmCampaign?: string;
-} {
-  const params = new URLSearchParams(window.location.search);
-  return {
-    utmSource: params.get("utm_source") ?? undefined,
-    utmMedium: params.get("utm_medium") ?? undefined,
-    utmCampaign: params.get("utm_campaign") ?? undefined,
-  };
 }
 
 const CAMPO =
@@ -77,7 +64,7 @@ export default function LeadForm({
       origem,
       website: String(dados.get("website") ?? ""),
       tempoMs: Date.now() - inicio,
-      ...utmsDaUrl(),
+      ...lerUtms(),
     };
 
     if (lead.whatsapp.replace(/\D/g, "").length < 10) {

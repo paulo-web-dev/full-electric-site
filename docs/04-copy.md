@@ -78,8 +78,13 @@ Aviso: "Cuidado com quem promete 3000 W sem CNH."
 | `testdrive` | Olá! Quero agendar um test drive. |
 | `entregador` | Olá! Sou entregador e quero saber sobre a moto para trabalhar. |
 | `legal` | Olá! Quero entender a parte legal (CNH, placa) antes de comprar. |
+| `dores` | Olá! Me identifiquei com o que vi no site e quero saber mais. |
+| `ctafinal` | Olá! Li o site inteiro e quero conversar sobre as motos. |
 | `formulario` | Olá! Me chamo {NOME}. Tenho interesse na {MODELO} para {USO}. Melhor horário para test drive: {HORARIO}. |
 | `flutuante` | Olá! Vim pelo site da Full Electric. |
+
+Toda mensagem ganha, no clique, a etiqueta `[ref: utm_source / utm_medium /
+utm_campaign]` quando a visita veio de campanha (`lib/utm.ts`).
 
 ## Tom
 
