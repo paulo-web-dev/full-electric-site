@@ -9,6 +9,8 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const ehLogin =
     pathname === "/admin/login" || pathname === "/api/admin/login";
+  // Chamada pelo cron, sem sessão: a própria rota valida o CRON_SECRET
+  const ehCron = pathname === "/api/admin/expurgo";
 
   const token = request.cookies.get(COOKIE_SESSAO)?.value;
   const autenticado = await tokenValido(token, process.env.SESSION_SECRET);
@@ -21,7 +23,7 @@ export async function middleware(request: NextRequest) {
       autenticado && pathname === "/admin/login"
         ? NextResponse.redirect(new URL("/admin", request.url))
         : NextResponse.next();
-  } else if (autenticado) {
+  } else if (autenticado || ehCron) {
     resposta = NextResponse.next();
   } else if (pathname.startsWith("/api/admin")) {
     resposta = NextResponse.json({ erro: "Não autenticado" }, { status: 401 });

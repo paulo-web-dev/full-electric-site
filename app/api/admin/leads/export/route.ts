@@ -2,6 +2,8 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
   ehStatusValido,
+  ehComoConheceuValido,
+  COMO_CONHECEU_ROTULO,
   STATUS_ROTULO,
   MOTIVO_PERDA_ROTULO,
   ehOrigemManual,
@@ -25,6 +27,10 @@ function montarWhere(params: URLSearchParams): Prisma.LeadWhereInput {
   }
   if (status && ehStatusValido(status)) where.status = status;
   if (origem) where.origem = origem;
+  const comoConheceu = params.get("comoConheceu");
+  if (comoConheceu && ehComoConheceuValido(comoConheceu)) {
+    where.comoConheceu = comoConheceu;
+  }
   return where;
 }
 
@@ -49,6 +55,7 @@ export async function GET(request: Request) {
     "Horário preferido",
     "Origem",
     "Canal",
+    "Como conheceu",
     "UTM source",
     "UTM medium",
     "UTM campaign",
@@ -72,6 +79,7 @@ export async function GET(request: Request) {
       lead.horarioPreferido ?? "",
       rotuloOrigem(lead.origem),
       ehOrigemManual(lead.origem) ? "Manual" : "Site",
+      lead.comoConheceu ? COMO_CONHECEU_ROTULO[lead.comoConheceu] : "",
       lead.utmSource ?? "",
       lead.utmMedium ?? "",
       lead.utmCampaign ?? "",

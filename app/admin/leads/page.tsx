@@ -4,6 +4,9 @@ import {
   STATUS_ORDEM,
   STATUS_ROTULO,
   ehStatusValido,
+  ehComoConheceuValido,
+  COMO_CONHECEU_ORDEM,
+  COMO_CONHECEU_ROTULO,
   rotuloOrigem,
   formatarDataHora,
 } from "@/lib/crm";
@@ -17,6 +20,7 @@ interface Filtros {
   q?: string;
   status?: string;
   origem?: string;
+  comoConheceu?: string;
   ordem?: string;
 }
 
@@ -33,6 +37,9 @@ function montarWhere(filtros: Filtros): Prisma.LeadWhereInput {
   }
   if (filtros.origem) {
     where.origem = filtros.origem;
+  }
+  if (filtros.comoConheceu && ehComoConheceuValido(filtros.comoConheceu)) {
+    where.comoConheceu = filtros.comoConheceu;
   }
   return where;
 }
@@ -62,6 +69,7 @@ export default async function LeadsPage({
   if (filtros.q) parametros.set("q", filtros.q);
   if (filtros.status) parametros.set("status", filtros.status);
   if (filtros.origem) parametros.set("origem", filtros.origem);
+  if (filtros.comoConheceu) parametros.set("comoConheceu", filtros.comoConheceu);
   if (filtros.ordem) parametros.set("ordem", filtros.ordem);
   const query = parametros.toString();
   /* Depois de um movimento com dados, volta para esta mesma lista filtrada */
@@ -127,6 +135,24 @@ export default async function LeadsPage({
             {origens.map((o) => (
               <option key={o.origem} value={o.origem}>
                 {rotuloOrigem(o.origem)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="filtro-como-conheceu" className={ROTULO}>
+            Como conheceu
+          </label>
+          <select
+            id="filtro-como-conheceu"
+            name="comoConheceu"
+            defaultValue={filtros.comoConheceu ?? ""}
+            className={CAMPO}
+          >
+            <option value="">Todos</option>
+            {COMO_CONHECEU_ORDEM.map((c) => (
+              <option key={c} value={c}>
+                {COMO_CONHECEU_ROTULO[c]}
               </option>
             ))}
           </select>

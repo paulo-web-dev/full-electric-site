@@ -1,4 +1,4 @@
-import type { LeadStatus, MotivoPerda } from "@prisma/client";
+import type { LeadStatus, MotivoPerda, ComoConheceu } from "@prisma/client";
 
 export const STATUS_ORDEM: LeadStatus[] = [
   "NOVO",
@@ -97,6 +97,30 @@ export const MOTIVO_PERDA_ROTULO: Record<MotivoPerda, string> = {
 
 export function ehMotivoValido(valor: string): valor is MotivoPerda {
   return (MOTIVO_PERDA_ORDEM as string[]).includes(valor);
+}
+
+/* ---------- Como conheceu a loja ----------
+   Só no cadastro manual e na ficha — lead do site já traz UTMs. */
+export const COMO_CONHECEU_ORDEM: ComoConheceu[] = [
+  "PANFLETO",
+  "GOOGLE",
+  "INSTAGRAM",
+  "INDICACAO",
+  "PASSOU_NA_FRENTE",
+  "OUTRO",
+];
+
+export const COMO_CONHECEU_ROTULO: Record<ComoConheceu, string> = {
+  PANFLETO: "Panfleto",
+  GOOGLE: "Google",
+  INSTAGRAM: "Instagram",
+  INDICACAO: "Indicação",
+  PASSOU_NA_FRENTE: "Passou na frente",
+  OUTRO: "Outro",
+};
+
+export function ehComoConheceuValido(valor: string): valor is ComoConheceu {
+  return (COMO_CONHECEU_ORDEM as string[]).includes(valor);
 }
 
 /* ---------- Datas e valores ---------- */

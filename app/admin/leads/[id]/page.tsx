@@ -6,6 +6,8 @@ import {
   STATUS_ROTULO,
   MOTIVO_PERDA_ORDEM,
   MOTIVO_PERDA_ROTULO,
+  COMO_CONHECEU_ORDEM,
+  COMO_CONHECEU_ROTULO,
   rotuloOrigem,
   formatarData,
   formatarDataHora,
@@ -16,6 +18,7 @@ import {
   adicionarNota,
   salvarVenda,
   salvarMotivoPerda,
+  salvarComoConheceu,
   excluirLead,
 } from "@/app/admin/leads/actions";
 import SeletorStatus from "@/components/admin/SeletorStatus";
@@ -43,6 +46,10 @@ export default async function FichaLeadPage({
     { rotulo: "Uso pretendido", valor: lead.uso },
     { rotulo: "Horário preferido", valor: lead.horarioPreferido ?? "—" },
     { rotulo: "Origem", valor: rotuloOrigem(lead.origem) },
+    {
+      rotulo: "Como conheceu a loja",
+      valor: lead.comoConheceu ? COMO_CONHECEU_ROTULO[lead.comoConheceu] : "—",
+    },
     {
       rotulo: "UTM (source / medium / campaign)",
       valor: [lead.utmSource ?? "—", lead.utmMedium ?? "—", lead.utmCampaign ?? "—"].join(" / "),
@@ -243,6 +250,34 @@ export default async function FichaLeadPage({
               </form>
             </section>
           )}
+
+          <section className={`${CARTAO} p-6`}>
+            <h2 className="font-semibold">Como conheceu a loja</h2>
+            <form action={salvarComoConheceu} className="mt-4 grid gap-3">
+              <input type="hidden" name="id" value={lead.id} />
+              <label htmlFor="como-conheceu" className="sr-only">
+                Como conheceu a loja
+              </label>
+              <select
+                id="como-conheceu"
+                name="comoConheceu"
+                defaultValue={lead.comoConheceu ?? ""}
+                className={CAMPO}
+              >
+                <option value="">— não informado —</option>
+                {COMO_CONHECEU_ORDEM.map((c) => (
+                  <option key={c} value={c}>
+                    {COMO_CONHECEU_ROTULO[c]}
+                  </option>
+                ))}
+              </select>
+              <div>
+                <button type="submit" className={BOTAO_INK}>
+                  Salvar
+                </button>
+              </div>
+            </form>
+          </section>
 
           <section className={`${CARTAO} p-6`}>
             <h2 className="font-semibold">

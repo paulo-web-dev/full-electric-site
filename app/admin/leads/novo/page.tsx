@@ -1,4 +1,9 @@
-import { ORIGENS_MANUAIS, rotuloOrigem } from "@/lib/crm";
+import {
+  ORIGENS_MANUAIS,
+  COMO_CONHECEU_ORDEM,
+  COMO_CONHECEU_ROTULO,
+  rotuloOrigem,
+} from "@/lib/crm";
 import { MODELOS_OPCOES, USOS_OPCOES } from "@/lib/leadOpcoes";
 import { criarLead } from "@/app/admin/leads/actions";
 import { CAMPO, ROTULO, BOTAO_LIME, CARTAO } from "@/components/admin/estilos";
@@ -94,6 +99,20 @@ export default function NovoLeadPage() {
               ))}
             </select>
           </div>
+        </div>
+
+        <div className="sm:w-1/2 sm:pr-2">
+          <label htmlFor="novo-como-conheceu" className={ROTULO}>
+            Como conheceu a loja (opcional)
+          </label>
+          <select id="novo-como-conheceu" name="comoConheceu" className={CAMPO}>
+            <option value="">— não perguntei —</option>
+            {COMO_CONHECEU_ORDEM.map((c) => (
+              <option key={c} value={c}>
+                {COMO_CONHECEU_ROTULO[c]}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

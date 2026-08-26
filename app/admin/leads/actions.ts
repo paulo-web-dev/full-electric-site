@@ -10,6 +10,7 @@ import {
   ehStatusValido,
   ehMotivoValido,
   ehOrigemManual,
+  ehComoConheceuValido,
   dataDeSaoPaulo,
   diaDeSaoPaulo,
   hojeEmSaoPaulo,
@@ -59,6 +60,7 @@ export async function criarLead(formData: FormData): Promise<void> {
   const modeloInteresse = texto(formData.get("modeloInteresse"), 60);
   const uso = texto(formData.get("uso"), 60);
   const origemBruta = texto(formData.get("origem"), 40);
+  const comoConheceu = texto(formData.get("comoConheceu"), 30);
   const observacao = texto(formData.get("observacao"), 2000);
 
   if (!nome || telefone.replace(/\D/g, "").length < 10) return;
@@ -74,6 +76,7 @@ export async function criarLead(formData: FormData): Promise<void> {
       uso,
       horarioPreferido: null,
       origem: ehOrigemManual(origemBruta) ? origemBruta : "OUTRO",
+      comoConheceu: ehComoConheceuValido(comoConheceu) ? comoConheceu : null,
       notas: observacao ? { create: { texto: observacao } } : undefined,
     },
   });
@@ -180,6 +183,19 @@ export async function salvarVenda(formData: FormData): Promise<void> {
       dataVenda,
       modeloVendido: texto(formData.get("modeloVendido"), 60) || null,
     },
+  });
+  revalidar(id);
+}
+
+export async function salvarComoConheceu(formData: FormData): Promise<void> {
+  await exigirSessao();
+  const id = texto(formData.get("id"), 40);
+  const valor = texto(formData.get("comoConheceu"), 30);
+  if (!id) return;
+
+  await prisma.lead.update({
+    where: { id },
+    data: { comoConheceu: ehComoConheceuValido(valor) ? valor : null },
   });
   revalidar(id);
 }

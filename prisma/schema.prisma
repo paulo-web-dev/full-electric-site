@@ -26,8 +26,19 @@ enum MotivoPerda {
   OUTRO
 }
 
+/// Como o cliente ficou sabendo da loja — só no cadastro manual e na ficha
+/// (leads do site já trazem UTMs)
+enum ComoConheceu {
+  PANFLETO
+  GOOGLE
+  INSTAGRAM
+  INDICACAO
+  PASSOU_NA_FRENTE
+  OUTRO
+}
+
 model Lead {
-  id                 String       @id @default(cuid())
+  id                 String        @id @default(cuid())
   nome               String
   telefone           String
   email              String?
@@ -40,15 +51,16 @@ model Lead {
   utmSource          String?
   utmMedium          String?
   utmCampaign        String?
-  status             LeadStatus   @default(NOVO)
+  status             LeadStatus    @default(NOVO)
   proximoContatoEm   DateTime?
-  valorVenda         Decimal?     @db.Decimal(10, 2)
+  valorVenda         Decimal?      @db.Decimal(10, 2)
   dataVenda          DateTime?
   modeloVendido      String?
   motivoPerda        MotivoPerda?
   motivoPerdaDetalhe String?
-  criadoEm           DateTime     @default(now())
-  atualizadoEm       DateTime     @updatedAt
+  comoConheceu       ComoConheceu?
+  criadoEm           DateTime      @default(now())
+  atualizadoEm       DateTime      @updatedAt
   notas              Nota[]
 
   @@index([status])
@@ -64,4 +76,15 @@ model Nota {
   criadoEm DateTime @default(now())
 
   @@index([leadId])
+}
+
+/// Registro de cada execução do expurgo LGPD (/api/admin/expurgo) — prova de
+/// que a retenção de 12 meses prometida na política está sendo cumprida.
+model ExpurgoLog {
+  id          String   @id @default(cuid())
+  executadoEm DateTime @default(now())
+  simulacao   Boolean
+  limite      DateTime
+  candidatos  Int
+  apagados    Int
 }

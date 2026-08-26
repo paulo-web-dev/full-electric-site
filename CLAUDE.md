@@ -96,6 +96,9 @@ sinalize e peça confirmação explícita.
   - **Minimização**: não adicione campos novos ao formulário/CRM sem necessidade
     real e sem refletir na política de privacidade.
   - **Retenção**: a política promete apagar após 12 meses do último contato.
+    Cumprida por `/api/admin/expurgo` (token `CRON_SECRET`, dry-run por
+    padrão, `?confirmar=true` apaga; VENDIDO nunca é apagado; cada execução
+    grava em `ExpurgoLog`). Cron semanal na VPS: `docs/DEPLOY.md §9`.
   - `/politica-de-privacidade` deve ser mantida em sincronia com o que o código
     efetivamente coleta. Mudou a coleta → muda a política, na mesma tarefa.
 
@@ -286,10 +289,13 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
 - **Modelo de dados:** `Lead` (nome, telefone, email?, modeloInteresse, uso,
   horarioPreferido?, origem, utmSource?, utmMedium?, utmCampaign?, status,
   proximoContatoEm?, valorVenda?, dataVenda?, modeloVendido?, motivoPerda?,
-  motivoPerdaDetalhe?, criadoEm, atualizadoEm) e `Nota` (leadId, texto,
-  criadoEm, cascade no delete). Status: NOVO → CONTATADO →
+  motivoPerdaDetalhe?, comoConheceu?, criadoEm, atualizadoEm), `Nota` (leadId,
+  texto, criadoEm, cascade no delete) e `ExpurgoLog` (executadoEm, simulacao,
+  limite, candidatos, apagados). Status: NOVO → CONTATADO →
   TEST_DRIVE_AGENDADO → NEGOCIANDO → VENDIDO | PERDIDO (`lib/crm.ts`).
   `MotivoPerda`: PRECO · OUTRA_LOJA · SUMIU · SEM_MODELO · OUTRO.
+  `ComoConheceu` (só cadastro manual e ficha — lead do site já traz UTMs):
+  PANFLETO · GOOGLE · INSTAGRAM · INDICACAO · PASSOU_NA_FRENTE · OUTRO.
 - **Origem é texto livre**, não enum: o site grava a seção do formulário
   (`formulario`, `contato`, `entregadores`); leads manuais usam
   `ORIGENS_MANUAIS` (`PRESENCIAL`, `TELEFONE`, `INDICACAO`, `OUTRO`) de
@@ -312,7 +318,8 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
 - **Fora do escopo da v1 (não construir sem pedido):** múltiplos usuários,
   permissões, automação de e-mail, calendário, faturamento.
 - **Env obrigatórias em produção:** `DATABASE_URL`, `DIRECT_URL`,
-  `ADMIN_PASSWORD`, `SESSION_SECRET`, `TRUST_PROXY_HOPS` (=1 atrás do Traefik).
+  `ADMIN_PASSWORD`, `SESSION_SECRET`, `TRUST_PROXY_HOPS` (=1 atrás do Traefik),
+  `CRON_SECRET` (expurgo LGPD).
   Ver `.env.example`.
 - **`NEXT_PUBLIC_*` são de build**, não de runtime: entram como `ARG` no
   Dockerfile e exigem rebuild da imagem para mudar (README).

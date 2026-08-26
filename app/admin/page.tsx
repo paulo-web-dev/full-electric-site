@@ -36,6 +36,7 @@ export default async function PainelPage() {
     testDrivesSemData,
     vendas,
     vendasSemValor,
+    ultimoExpurgo,
   ] = await Promise.all([
     prisma.lead.groupBy({ by: ["status"], _count: { _all: true } }),
     prisma.lead.findMany({
@@ -74,6 +75,7 @@ export default async function PainelPage() {
       orderBy: { dataVenda: "desc" },
     }),
     prisma.lead.count({ where: { status: "VENDIDO", valorVenda: null } }),
+    prisma.expurgoLog.findFirst({ orderBy: { executadoEm: "desc" } }),
   ]);
 
   const contagem = new Map(porStatus.map((g) => [g.status, g._count._all]));
@@ -203,6 +205,13 @@ export default async function PainelPage() {
           ))}
         </Bloco>
       </div>
+
+      {/* Prova de que a retenção de 12 meses da política está rodando (§3.7) */}
+      <p className="mt-8 text-[13px] text-text-2">
+        {ultimoExpurgo
+          ? `Expurgo LGPD: último em ${formatarDataHora(ultimoExpurgo.executadoEm)} — ${ultimoExpurgo.candidatos} lead${ultimoExpurgo.candidatos === 1 ? "" : "s"} sem contato há mais de 12 meses, ${ultimoExpurgo.apagados} apagado${ultimoExpurgo.apagados === 1 ? "" : "s"}${ultimoExpurgo.simulacao ? " (simulação)" : ""}.`
+          : "Expurgo LGPD ainda não rodou nesta base — agende o cron semanal (docs/DEPLOY.md §9)."}
+      </p>
     </main>
   );
 }

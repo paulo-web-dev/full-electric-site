@@ -103,6 +103,7 @@ No `.env`, para este ambiente:
   pooler**. As duas com `sslmode=require`. O `migrate deploy` do entrypoint usa
   a `DIRECT_URL` porque o pooler não suporta as sessões que a migration exige.
 - `ADMIN_PASSWORD` e `SESSION_SECRET` (`openssl rand -base64 48`)
+- `CRON_SECRET` (`openssl rand -hex 32`) — token do expurgo LGPD, ver §9
 
 Confira que a rede do Traefik está lá antes de subir:
 
@@ -347,3 +348,54 @@ docker inspect traefik --format '{{range $k,$v := .NetworkSettings.Networks}}{{$
 | Build morre com `Killed` | Falta de memória — a VPS é compartilhada e o `next build` passa de 2 GB | Criar swap (`fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile`) ou buildar em outra máquina e enviar a imagem (`docker save`/`docker load`) |
 | Outro site da VPS parou depois do nosso deploy | Alguém rodou `docker compose down` na pasta errada, ou `docker system prune` apagou rede/volume alheio | Nunca usar `prune` com `-a`/`--volumes` nesta VPS; `deploy.sh` só usa `image prune -f` (imagens sem tag) |
 | Imagens do site lentas após deploy | Cache de otimização vazio | Normal na primeira visita; o volume `next-cache` preserva entre deploys |
+
+---
+
+## 9. Expurgo LGPD (retenção de 12 meses)
+
+A Política de Privacidade promete apagar os dados de um lead **12 meses após
+o último contato**. Quem cumpre isso é a rota `GET /api/admin/expurgo`:
+
+- apaga leads cujo último sinal de vida — a data mais recente entre
+  `atualizadoEm` e a última nota — tem mais de 12 meses;
+- **lead VENDIDO nunca é apagado** (registro comercial: nota fiscal, garantia);
+- notas caem em cascata;
+- **simulação por padrão**: só apaga com `?confirmar=true`;
+- cada execução (real ou simulada) grava uma linha em `ExpurgoLog`
+  (data, limite usado, candidatos, apagados). O painel `/admin` mostra a última.
+
+A rota não usa a sessão do admin: exige `Authorization: Bearer <CRON_SECRET>`.
+Gere o token e coloque no `.env` (o container lê no próximo `up -d`):
+
+```bash
+openssl rand -hex 32          # → CRON_SECRET=... no .env
+docker compose up -d          # recria o container com a variável
+```
+
+`scripts/expurgo.sh` chama a rota **de dentro do container** (`docker exec`),
+porque o app não publica porta e a imagem não tem curl. Teste à mão antes de
+agendar:
+
+```bash
+scripts/expurgo.sh              # simulação: {"simulacao":true,"candidatos":N,"apagados":0,...}
+scripts/expurgo.sh --confirmar  # apaga de verdade
+```
+
+Semanal, segunda-feira às 4h, via cron (`crontab -e`) — depois do backup das
+3h, para o dump da semana ainda conter o que foi apagado:
+
+```cron
+0 4 * * 1 /srv/full-electric/scripts/expurgo.sh --confirmar >> /srv/full-electric/backups/expurgo.log 2>&1
+```
+
+Cada linha do `expurgo.log` traz data ISO, status HTTP e o JSON de resumo.
+Para conferir o histórico direto no banco:
+
+```bash
+docker run --rm postgres:17 psql "$(grep -E '^DIRECT_URL=' .env | cut -d= -f2-)" \
+  -c 'SELECT "executadoEm", simulacao, candidatos, apagados FROM "ExpurgoLog" ORDER BY "executadoEm" DESC LIMIT 10;'
+```
+
+Alternativa sem `docker exec` (por exemplo, de outra máquina): a mesma rota
+pelo domínio público, que passa pelo Traefik —
+`curl -fsS -H "Authorization: Bearer $CRON_SECRET" "https://fulleletric.unysystens.com.br/api/admin/expurgo?confirmar=true"`.
