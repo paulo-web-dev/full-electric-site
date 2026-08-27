@@ -6,9 +6,6 @@
       / (41) 98888-1253.**
 - [ ] **Razão social e CNPJ da loja** — a Política de Privacidade e o rodapé
       devem exibi-los; hoje a política identifica só o nome fantasia.
-- [ ] **Medir largura e entre-eixos da S60 e da E30.** Limites legais: 70 cm e
-      130 cm. Citycoco costuma ter 75 cm de largura. Se estourar, o veículo é
-      ciclomotor e todo o discurso "sem CNH" do site precisa ser reescrito.
 - [ ] **Obter do fornecedor**, por escrito: ficha técnica assinada, manual,
       número de identificação e declaração de enquadramento na Res. 996/2023.
 - [ ] Endereço da loja, CEP e link do Google Maps.

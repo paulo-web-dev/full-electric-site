@@ -106,8 +106,10 @@ export function specsConfirmadas(modelo: Modelo): Spec[] {
 
 /*
   Liga cada critério da Res. 996/2023 (content/site.json → legal.criterios) ao
-  spec correspondente do modelo em destaque. Quando você medir largura e
-  entre-eixos, basta marcar "confirmado": true no JSON e o valor aparece.
+  spec correspondente do modelo em destaque. Largura, entre-eixos e
+  equipamentos foram medidos/confirmados em 27/08/2026 e aparecem como "Dentro
+  do limite legal" — por decisão do cliente, sem os números. Modelo novo sem
+  medição cai no fallback "Aguardando aferição" dos componentes.
 */
 const CRITERIO_PARA_SPEC: Record<string, string> = {
   "Potência nominal máxima": "Motor",

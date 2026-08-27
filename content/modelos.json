@@ -22,8 +22,9 @@
         { "label": "Freios", "valor": "Disco nas duas rodas", "confirmado": true },
         { "label": "Suspensão", "valor": "Dianteira e traseira", "confirmado": true },
         { "label": "Capacidade de carga", "valor": "[CONFIRMAR NO MANUAL]", "confirmado": false },
-        { "label": "Largura", "valor": "[MEDIR — limite legal 70 cm]", "confirmado": false },
-        { "label": "Entre-eixos", "valor": "[MEDIR — limite legal 130 cm]", "confirmado": false }
+        { "label": "Largura", "valor": "Dentro do limite legal", "confirmado": true },
+        { "label": "Entre-eixos", "valor": "Dentro do limite legal", "confirmado": true },
+        { "label": "Equipamentos", "valor": "Velocímetro, campainha e sinalização noturna dianteira, traseira e lateral", "confirmado": true }
       ],
       "itensDeSerie": [
         "Farol LED com anel de iluminação",
@@ -60,8 +61,9 @@
         { "label": "Velocidade máxima", "valor": "[CONFIRMAR]", "confirmado": false },
         { "label": "Autonomia", "valor": "[CONFIRMAR]", "confirmado": false },
         { "label": "Freios", "valor": "[CONFIRMAR]", "confirmado": false },
-        { "label": "Largura", "valor": "[MEDIR — limite legal 70 cm]", "confirmado": false },
-        { "label": "Entre-eixos", "valor": "[MEDIR — limite legal 130 cm]", "confirmado": false }
+        { "label": "Largura", "valor": "Dentro do limite legal", "confirmado": true },
+        { "label": "Entre-eixos", "valor": "Dentro do limite legal", "confirmado": true },
+        { "label": "Equipamentos", "valor": "Velocímetro, campainha e sinalização noturna dianteira, traseira e lateral", "confirmado": true }
       ],
       "itensDeSerie": [
         "Baú traseiro rígido",

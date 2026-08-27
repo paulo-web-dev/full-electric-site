@@ -407,10 +407,10 @@ Antes de dizer que uma tarefa terminou, confira:
 Estão detalhadas em `docs/PENDENCIAS.md`. As críticas:
 
 1. ~~Confirmar o WhatsApp.~~ **Confirmado em 24/08/2026: `5541988881253`.**
-2. **Medir a largura e o entre-eixos de cada modelo.** O enquadramento como
-   autopropelido exige largura ≤ 70 cm e entre-eixos ≤ 130 cm. Fichas técnicas
-   públicas de citycoco mostram 75 cm de largura. Se estourar, **todo o discurso
-   "sem CNH" cai** e o site precisa ser reescrito.
+2. ~~Medir a largura e o entre-eixos de cada modelo.~~ **Medidos em
+   27/08/2026: S60 e E30 dentro dos limites (≤ 70 cm e ≤ 130 cm), equipamentos
+   obrigatórios atendidos.** Por decisão do cliente, o site mostra só
+   "Dentro do limite legal", sem os números — não publique as medidas.
 3. **Fotos em alta resolução.** As atuais são 384×512.
 
 ---
