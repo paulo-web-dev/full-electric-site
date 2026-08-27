@@ -247,8 +247,6 @@ export default function ParaEntregadoresPage() {
                 SPECS_DO_CARD.includes(s.label)
               );
               const nomeCurto = modelo.nome.replace("Full Electric ", "");
-              const temPreco =
-                modelo.preco.confirmado && modelo.preco.aPartirDe !== null;
 
               return (
                 <Card key={modelo.slug} className="flex flex-col gap-5 sm:flex-row">
@@ -277,19 +275,17 @@ export default function ParaEntregadoresPage() {
                         ))}
                       </dl>
                     )}
-                    <p className="mt-4 font-semibold">
-                      {temPreco
-                        ? `A partir de ${formatBRL(modelo.preco.aPartirDe!)} ${site.comercial.parcelamentoTexto}`
-                        : "Consulte preço no WhatsApp"}
+                    <p className="mt-4 text-[14px] text-text-2">
+                      {site.comercial.parcelamentoTexto}
                     </p>
                     <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
                       <Button
-                        href={waLink("modelo", nomeCurto)}
+                        href={waLink("valor", nomeCurto)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 px-4"
                       >
-                        Tenho interesse
+                        {site.comercial.consulteValor}
                       </Button>
                       <Button
                         href={`/modelos/${modelo.slug}`}
@@ -305,7 +301,7 @@ export default function ParaEntregadoresPage() {
             })}
           </div>
           <p className="mt-6 max-w-3xl text-[13px] leading-relaxed text-text-2">
-            {site.comercial.precoNota} {site.comercial.parcelamentoNota}
+            {site.comercial.parcelamentoNota}
           </p>
         </Section>
 

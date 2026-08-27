@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
-import { getModelo, getModelos, formatBRL } from "@/lib/content";
+import { getModelo, getModelos } from "@/lib/content";
 
 /* Preview de compartilhamento por modelo — foto e preço do próprio modelo */
 export const alt = "Ficha do modelo — Full Electric Motos Elétricas, Curitiba";
@@ -31,9 +31,6 @@ export default async function Image({
     comoDataUri("brand/logo-full-electric.jpg"),
     comoDataUri((fotoModelo?.src ?? "/modelos/s60/s60-01-frente-34.jpg").slice(1)),
   ]);
-
-  const temPreco =
-    modelo?.preco.confirmado === true && modelo.preco.aPartirDe !== null;
 
   return new ImageResponse(
     (
@@ -109,40 +106,17 @@ export default async function Image({
               marginTop: "36px",
             }}
           >
-            {temPreco ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "baseline",
-                  gap: "14px",
-                }}
-              >
-                <div style={{ display: "flex", fontSize: "26px", color: "#9AA096" }}>
-                  a partir de
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    fontSize: "58px",
-                    fontWeight: 700,
-                    color: "#D2FC13",
-                  }}
-                >
-                  {formatBRL(modelo!.preco.aPartirDe!)}
-                </div>
-              </div>
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  fontSize: "34px",
-                  fontWeight: 700,
-                  color: "#D2FC13",
-                }}
-              >
-                Consulte disponibilidade
-              </div>
-            )}
+            {/* Sem preço no site público — CLAUDE.md §3.4 */}
+            <div
+              style={{
+                display: "flex",
+                fontSize: "34px",
+                fontWeight: 700,
+                color: "#D2FC13",
+              }}
+            >
+              Consulte o valor no WhatsApp
+            </div>
             <div
               style={{
                 display: "flex",

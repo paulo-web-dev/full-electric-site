@@ -24,12 +24,10 @@
     ]
   },
   "comercial": {
-    "precoMinimo": 8499,
-    "precoMinimoFormatado": "R$ 8.499",
     "parcelas": 18,
     "parcelamentoTexto": "em até 18x no cartão*",
     "parcelamentoNota": "*com juros. Sujeito a análise e aprovação de crédito.",
-    "precoNota": "Valor \"a partir de\" referente ao modelo de entrada, sujeito a alteração sem aviso prévio e à disponibilidade de estoque.",
+    "consulteValor": "Consulte o valor no WhatsApp",
     "garantiaMeses": 6,
     "garantiaTexto": "6 meses de garantia",
     "prontaEntrega": true

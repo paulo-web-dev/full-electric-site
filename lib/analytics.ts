@@ -109,27 +109,21 @@ export function rastrearLead(dados: {
 }
 
 /**
-  Página de modelo aberta → GA4 view_item · Meta ViewContent.
-  `preco` só quando confirmado em content/modelos.json; sem preço, o evento
-  vai sem `value` (não se inventa número — CLAUDE.md §3.6).
+  Página de modelo (catálogo ou LP) aberta → GA4 view_item · Meta ViewContent.
+  Sem `value`: o preço não aparece no site público (CLAUDE.md §3.4), e
+  evento com valor de produto que o visitante não viu distorce o relatório.
 */
-export function rastrearVisualizacaoDeModelo(modelo: {
-  nome: string;
-  preco: number | null;
-}): () => void {
+export function rastrearVisualizacaoDeModelo(modelo: { nome: string }): () => void {
   return quandoPronto(() => {
     if (!podeRastrear()) return;
-    const valor = modelo.preco !== null ? { value: modelo.preco } : {};
     window.gtag?.("event", "view_item", {
       currency: MOEDA,
-      ...valor,
       items: [{ item_name: modelo.nome }],
     });
     window.fbq?.("track", "ViewContent", {
       content_name: modelo.nome,
       content_type: "product",
       currency: MOEDA,
-      ...valor,
     });
   });
 }

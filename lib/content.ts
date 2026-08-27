@@ -30,12 +30,11 @@ export interface SiteContent {
     horarios: Horario[];
   };
   comercial: {
-    precoMinimo: number;
-    precoMinimoFormatado: string;
     parcelas: number;
     parcelamentoTexto: string;
     parcelamentoNota: string;
-    precoNota: string;
+    /** Preço não aparece no site público (CLAUDE.md §3.4) — só em modelos.json/CRM */
+    consulteValor: string;
     garantiaMeses: number;
     garantiaTexto: string;
     prontaEntrega: boolean;

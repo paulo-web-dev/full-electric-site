@@ -13,6 +13,7 @@ const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 /*
   Eventos (além do PageView automático) — tabela de nomes em lib/analytics.ts:
   - whatsapp_click / Contact      → todo clique em link wa.me, com a seção de origem
+                                    (data-origem no link, se houver; senão pela mensagem)
   - generate_lead / Lead          → formulário gravado (disparado no LeadForm)
   - view_item / ViewContent       → página de modelo (disparado em RastreioModelo)
   - scroll_75                     → visitante passou de 75% da página, uma vez
@@ -43,7 +44,7 @@ export default function Analytics() {
       const href = link?.getAttribute("href");
       if (!link || !href) return;
       const utms = lerUtms();
-      rastrearContato(origemDoLink(href), utms);
+      rastrearContato(link.dataset.origem ?? origemDoLink(href), utms);
       // Reescreve o href antes de o navegador seguir o link (fase de captura)
       link.href = comEtiquetaUtm(href, etiquetaUtm(utms));
     }

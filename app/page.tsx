@@ -28,7 +28,6 @@ export default function Home() {
     url: siteUrl(),
     image: `${siteUrl()}${site.marca.logo}`,
     telephone: `+${site.contato.whatsapp}`,
-    priceRange: `a partir de ${site.comercial.precoMinimoFormatado}`,
     address: {
       "@type": "PostalAddress",
       addressLocality: site.contato.endereco.cidade,

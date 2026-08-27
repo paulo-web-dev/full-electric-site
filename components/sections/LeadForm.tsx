@@ -18,6 +18,8 @@ interface LeadFormProps {
   origem?: string;
   /** Opção de "uso pretendido" pré-selecionada (ex.: "Delivery" na LP de entregadores) */
   usoPadrao?: UsoOpcao;
+  /** Modelo pré-selecionado (LP de campanha de um modelo); precisa estar em MODELOS_OPCOES */
+  modeloPadrao?: string;
 }
 
 /* Máscara BR: (41) 98888-1253 */
@@ -39,6 +41,7 @@ const CAMPO =
 export default function LeadForm({
   origem = "formulario",
   usoPadrao = USOS_OPCOES[0],
+  modeloPadrao = MODELOS_OPCOES[0],
 }: LeadFormProps) {
   const [telefone, setTelefone] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -185,7 +188,13 @@ export default function LeadForm({
           <label htmlFor="lead-modelo" className="mb-1.5 block text-sm font-medium">
             Modelo de interesse
           </label>
-          <select id="lead-modelo" name="modelo" required className={CAMPO}>
+          <select
+            id="lead-modelo"
+            name="modelo"
+            required
+            defaultValue={modeloPadrao}
+            className={CAMPO}
+          >
             {MODELOS_OPCOES.map((m) => (
               <option key={m}>{m}</option>
             ))}

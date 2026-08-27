@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getSite, getModelos, getModelo, formatBRL } from "@/lib/content";
+import { getSite, getModelos, getModelo } from "@/lib/content";
 import { waLink } from "@/lib/whatsapp";
 import { siteUrl } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import RastreioModelo from "@/components/RastreioModelo";
+import FichaTecnica from "@/components/FichaTecnica";
 import Section, { Eyebrow } from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -46,8 +47,9 @@ export default async function ModeloPage({
   const fotoPrincipal =
     modelo.fotos.find((f) => f.principal) ?? modelo.fotos[0];
   const demaisFotos = modelo.fotos.filter((f) => f !== fotoPrincipal);
-  const temPreco = modelo.preco.confirmado && modelo.preco.aPartirDe !== null;
 
+  /* Sem `offers`: preço não aparece no site público (CLAUDE.md §3.4) e
+     marcação de preço sem preço visível viola a política do Google. */
   const schemaProduct = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -56,28 +58,13 @@ export default async function ModeloPage({
     image: modelo.fotos.map((f) => `${siteUrl()}${f.src}`),
     brand: { "@type": "Brand", name: "Full Electric" },
     url: `${siteUrl()}/modelos/${modelo.slug}`,
-    ...(temPreco
-      ? {
-          offers: {
-            "@type": "Offer",
-            price: modelo.preco.aPartirDe,
-            priceCurrency: "BRL",
-            availability: "https://schema.org/InStock",
-            itemCondition: "https://schema.org/NewCondition",
-            url: `${siteUrl()}/modelos/${modelo.slug}`,
-          },
-        }
-      : {}),
   };
 
   return (
     <>
       <Header />
       <main>
-        <RastreioModelo
-          nome={modelo.nome}
-          preco={temPreco ? modelo.preco.aPartirDe : null}
-        />
+        <RastreioModelo nome={modelo.nome} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaProduct) }}
@@ -105,35 +92,19 @@ export default async function ModeloPage({
               </h1>
               <p className="mt-4 max-w-lg text-lg text-text-3">{modelo.resumo}</p>
 
-              <div className="mt-6">
-                {temPreco ? (
-                  <>
-                    <p className="text-[13px] text-text-3">A partir de</p>
-                    <p className="num-display text-4xl text-lime-400">
-                      {formatBRL(modelo.preco.aPartirDe!)}
-                    </p>
-                    <p className="mt-1 text-[14px] text-text-3">
-                      {site.comercial.parcelamentoTexto}{" "}
-                      <span className="text-text-3">
-                        {site.comercial.parcelamentoNota}
-                      </span>
-                    </p>
-                  </>
-                ) : (
-                  <p className="text-lg font-semibold">
-                    Consulte disponibilidade e preço no WhatsApp
-                  </p>
-                )}
-              </div>
+              {/* Sem preço no site público — CTA de consulta (CLAUDE.md §3.4) */}
+              <p className="mt-6 text-[14px] text-text-3">
+                {site.comercial.parcelamentoTexto} {site.comercial.parcelamentoNota}
+              </p>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Button
-                  href={waLink("modelo", nomeCurto)}
+                  href={waLink("valor", nomeCurto)}
                   target="_blank"
                   rel="noopener noreferrer"
                   on="dark"
                 >
-                  Tenho interesse
+                  {site.comercial.consulteValor}
                 </Button>
                 <Button
                   href={waLink("testdrive")}
@@ -177,40 +148,7 @@ export default async function ModeloPage({
         <Section tone="paper">
           <div className="grid gap-10 md:grid-cols-[1.3fr_1fr]">
             <div>
-              <h2 className="text-2xl font-extrabold tracking-[-0.025em]">
-                Ficha técnica
-              </h2>
-              <div className="mt-5 overflow-x-auto rounded-[14px] border border-ink/10">
-                <table className="w-full text-left text-[15px]">
-                  <caption className="sr-only">
-                    Ficha técnica da {modelo.nome}
-                  </caption>
-                  <tbody className="divide-y divide-ink/10">
-                    {modelo.specs.map((spec) => (
-                      <tr key={spec.label}>
-                        <th
-                          scope="row"
-                          className="w-2/5 px-5 py-3.5 font-medium"
-                        >
-                          {spec.label}
-                        </th>
-                        <td className="px-5 py-3.5">
-                          {spec.confirmado ? (
-                            spec.valor
-                          ) : (
-                            <span className="text-text-2">Sob consulta</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="mt-3 text-[13px] text-text-2">
-                Itens &quot;sob consulta&quot; ainda estão em aferição ou
-                confirmação com o fabricante — pergunte no WhatsApp que a gente
-                responde na hora.
-              </p>
+              <FichaTecnica modelo={modelo} />
             </div>
 
             <div>

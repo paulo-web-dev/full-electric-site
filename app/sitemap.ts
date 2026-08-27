@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getModelos } from "@/lib/content";
 import { siteUrl } from "@/lib/site";
 
+/* /lp/[slug] (LPs de campanha) ficam fora de propósito: são noindex. */
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteUrl();
   const agora = new Date();

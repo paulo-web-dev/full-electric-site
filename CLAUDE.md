@@ -28,7 +28,7 @@ Tudo no site existe para servir a esses dois eventos.
 | Fornecedor | BOLIN Electric Motor (fábrica, atacado só p/ CNPJ) — https://bolinmotoseletricas.com.br |
 | Grupo | Mesmo grupo da Unyflex Digital — https://digital.unyflex.com.br |
 | WhatsApp | `5541988881253` — **⚠️ CONFIRMAR COM O CLIENTE (ver §9)** |
-| Preço de entrada | A partir de R$ 8.499 |
+| Preço | **Não aparece no site público** (desde 27/08/2026). Fica só em `content/modelos.json` e no CRM |
 | Parcelamento | Até 18x no cartão, **com juros** |
 | Garantia | **6 meses** |
 | Categoria legal | Equipamento de mobilidade individual autopropelido (Res. CONTRAN 996/2023) |
@@ -68,10 +68,19 @@ sinalize e peça confirmação explícita.
 - É **6 meses**. Não escreva "1 ano" em lugar nenhum.
 
 ### 3.4 Sobre preço
-- Sempre "**a partir de** R$ 8.499".
-- Sempre com a nota: *"referente ao modelo de entrada, sujeito a alteração sem
-  aviso prévio e à disponibilidade de estoque"*.
-- Parcelamento **sempre** com asterisco e `*com juros` visível.
+- **Nenhum valor de moto aparece no site público** (decisão de 27/08/2026):
+  nem "a partir de", nem faixa, nem em JSON-LD (`Product` sem `offers`,
+  `Store` sem `priceRange`), nem em OG image, nem como `value` de evento de
+  Pixel/GA4. No lugar, o CTA de consulta: **"Consulte o valor no WhatsApp"**
+  (`site.comercial.consulteValor`, origem `valor` em `lib/whatsapp.ts`).
+- O preço continua em `content/modelos.json` (`preco.aPartirDe`) **só para o
+  CRM**: sugestão de valor no cadastro de venda (`/admin/leads/[id]/mover`).
+  Nunca leia esse campo em componente público.
+- Parcelamento pode aparecer ("em até 18x no cartão*") — parcelamento sem
+  valor não é oferta de preço — **sempre** com asterisco e `*com juros`
+  visível.
+- Custos de uso (energia por mês, comparativo com ônibus/125cc) não são
+  preço da moto e continuam permitidos.
 
 ### 3.5 Sobre delivery/iFood
 - ✅ "Aceito no cadastro do iFood na modalidade Bicicleta Elétrica".
@@ -196,13 +205,14 @@ Espelha a estrutura da Unyflex Digital, adaptada para produto físico.
 | `/contato` | Formulário + mapa + horários | P0 |
 | `/precisa-de-cnh` | Conteúdo educativo sobre CONTRAN 996 (SEO) — **no ar** | P1 |
 | `/para-entregadores` | LP para motoboy / iFood — **no ar** | P1 |
+| `/lp/[slug]` | LP de campanha por modelo (tráfego pago): sem header/navegação, **noindex**, fora do sitemap; gerada de `modelos.json` — **no ar** | P1 |
 | `/politica-de-privacidade` | LGPD (obrigatório p/ rodar anúncios) — **no ar** | P0 |
 | `/admin/*` | CRM de leads (ver §6.4) — protegido, noindex | P0 |
 
 ### 5.2 Seções da Home (nesta ordem)
 
-Ordem revista em 26/08/2026 para conversão: o formulário vem logo depois de
-moto e preço (ponto de decisão), não no fim da página. Mesma ordem no mobile e
+Ordem revista em 26/08/2026 para conversão: o formulário vem logo depois dos
+modelos (ponto de decisão), não no fim da página. Mesma ordem no mobile e
 no desktop.
 
 1. **Herói** — eyebrow curto · h1 · **foto da S60 antes dos CTAs no mobile**
@@ -211,7 +221,7 @@ no desktop.
    primário precisa caber na dobra de uma tela de 667 px.
 2. **Barra de números** — modelos em estoque · potência · categoria legal · pronta entrega
 3. **Modelos disponíveis** — grid de cards, um por modelo, com foto, specs
-   resumidas, preço "a partir de" e CTA
+   resumidas, parcelamento e CTA "Consulte o valor no WhatsApp" (sem preço)
 4. **Formulário** — captura de lead que também abre o WhatsApp preenchido
 5. **Economia** — comparativo ônibus × 125cc × elétrica, com a metodologia do
    cálculo em nota de rodapé
@@ -292,7 +302,12 @@ o cliente sabe de onde veio o lead:
 waLink("hero")      // "Olá! Vim pelo site e quero saber mais sobre as motos elétricas."
 waLink("modelo", "S60")  // "Olá! Tenho interesse na Full Electric S60."
 waLink("entregador")     // "Olá! Sou entregador e quero saber sobre a moto para trabalhar."
+waLink("valor", "S60")   // "Olá! Quero saber o valor da Full Electric S60."  (CTA de consulta)
+waLink("lp", "S60")      // "Olá! Vi o anúncio da Full Electric S60 e quero saber mais."  (LP)
 ```
+
+O rastreio descobre a origem pela mensagem; um link pode forçar outra com
+`data-origem` (as LPs usam `lp-{slug}` em todos os botões e no FAB).
 
 ### 6.4 Módulo admin — CRM de leads
 
@@ -319,7 +334,7 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
   `ComoConheceu` (só cadastro manual e ficha — lead do site já traz UTMs):
   PANFLETO · GOOGLE · INSTAGRAM · INDICACAO · PASSOU_NA_FRENTE · OUTRO.
 - **Origem é texto livre**, não enum: o site grava a seção do formulário
-  (`formulario`, `contato`, `entregadores`); leads manuais usam
+  (`formulario`, `contato`, `entregadores`, `lp-{slug}`); leads manuais usam
   `ORIGENS_MANUAIS` (`PRESENCIAL`, `TELEFONE`, `INDICACAO`, `OUTRO`) de
   `lib/crm.ts`. "Site" nos relatórios = qualquer origem que não seja manual.
 - **Movimento de status com dados (`moverLead`):** TEST_DRIVE_AGENDADO exige

@@ -8,6 +8,8 @@ import { getSite } from "@/lib/content";
 export type OrigemWhatsApp =
   | "hero"
   | "modelo"
+  | "valor"
+  | "lp"
   | "preco"
   | "testdrive"
   | "entregador"
@@ -19,6 +21,8 @@ export type OrigemWhatsApp =
 const MENSAGENS: Record<OrigemWhatsApp, string> = {
   hero: "Olá! Vim pelo site e quero saber mais sobre as motos elétricas.",
   modelo: "Olá! Tenho interesse na Full Electric {MODELO}.",
+  valor: "Olá! Quero saber o valor da Full Electric {MODELO}.",
+  lp: "Olá! Vi o anúncio da Full Electric {MODELO} e quero saber mais.",
   preco: "Olá! Quero simular o parcelamento da Full Electric.",
   testdrive: "Olá! Quero agendar um test drive.",
   entregador: "Olá! Sou entregador e quero saber sobre a moto para trabalhar.",
@@ -52,9 +56,12 @@ function montarLink(mensagem: string): string {
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
 }
 
+/* Origens cuja mensagem leva o nome do modelo */
+const COM_MODELO: OrigemWhatsApp[] = ["modelo", "valor", "lp"];
+
 export function waLink(origem: OrigemWhatsApp, modelo?: string): string {
   let mensagem = MENSAGENS[origem];
-  if (origem === "modelo") {
+  if (COM_MODELO.includes(origem)) {
     mensagem = mensagem.replace("{MODELO}", modelo ?? "");
   }
   return montarLink(mensagem);
@@ -80,10 +87,12 @@ export function origemDoLink(href: string): string {
     return "desconhecida";
   }
   for (const [origem, texto] of Object.entries(MENSAGENS)) {
-    if (origem !== "modelo" && mensagem === texto) return origem;
-  }
-  if (mensagem.startsWith("Olá! Tenho interesse na Full Electric")) {
-    return "modelo";
+    if (COM_MODELO.includes(origem as OrigemWhatsApp)) {
+      const prefixo = texto.split("{MODELO}")[0];
+      if (mensagem.startsWith(prefixo)) return origem;
+    } else if (mensagem === texto) {
+      return origem;
+    }
   }
   if (mensagem.startsWith("Olá! Me chamo")) return "formulario";
   return "desconhecida";

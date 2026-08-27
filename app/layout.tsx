@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | Full Electric — Motos Elétricas Curitiba",
   },
   description:
-    "Scooter elétrica em Curitiba com pronta entrega. Equipamento de mobilidade individual autopropelido (Res. CONTRAN 996/2023): dispensa CNH, placa e IPVA. A partir de R$ 8.499, nota fiscal e 6 meses de garantia. Test drive gratuito.",
+    "Scooter elétrica em Curitiba com pronta entrega. Equipamento de mobilidade individual autopropelido (Res. CONTRAN 996/2023): dispensa CNH, placa e IPVA. Nota fiscal, 6 meses de garantia e parcelamento em até 18x. Test drive gratuito.",
   keywords: [
     "moto elétrica sem cnh curitiba",
     "scooter elétrica curitiba",

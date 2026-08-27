@@ -19,9 +19,8 @@ export default function CtaFinal() {
         Chame agora e agende seu <span className="text-lime-400">test drive</span>
       </h2>
       <p className="mx-auto mt-3 max-w-xl text-text-3">
-        A partir de {site.comercial.precoMinimoFormatado},{" "}
-        {site.comercial.parcelamentoTexto}. Sem compromisso: você testa, a
-        gente responde tudo, e a decisão é sua.
+        {site.comercial.consulteValor}, {site.comercial.parcelamentoTexto}.
+        Sem compromisso: você testa, a gente responde tudo, e a decisão é sua.
       </p>
 
       <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

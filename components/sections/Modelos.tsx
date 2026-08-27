@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { getSite, getModelos, specsConfirmadas, formatBRL } from "@/lib/content";
+import { getSite, getModelos, specsConfirmadas } from "@/lib/content";
 import { waLink } from "@/lib/whatsapp";
 import Section, { Eyebrow } from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
@@ -66,32 +66,19 @@ export default function Modelos() {
                   </dl>
                 )}
 
-                <div className="mt-5 border-t border-ink/10 pt-4">
-                  {modelo.preco.confirmado && modelo.preco.aPartirDe !== null ? (
-                    <>
-                      <p className="text-[13px] text-text-2">A partir de</p>
-                      <p className="num-display text-3xl">
-                        {formatBRL(modelo.preco.aPartirDe)}
-                      </p>
-                      <p className="text-[13px] text-text-2">
-                        {site.comercial.parcelamentoTexto}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="font-semibold">
-                      Consulte disponibilidade e preço no WhatsApp
-                    </p>
-                  )}
-                </div>
+                {/* Sem preço no site público — CTA de consulta (CLAUDE.md §3.4) */}
+                <p className="mt-5 border-t border-ink/10 pt-4 text-[13px] text-text-2">
+                  {site.comercial.parcelamentoTexto}
+                </p>
 
-                <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
+                <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
                   <Button
-                    href={waLink("modelo", nomeCurto)}
+                    href={waLink("valor", nomeCurto)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1"
                   >
-                    Tenho interesse
+                    {site.comercial.consulteValor}
                   </Button>
                   <Button
                     href={`/modelos/${modelo.slug}`}
@@ -108,7 +95,7 @@ export default function Modelos() {
       </div>
 
       <p className="mt-6 max-w-3xl text-[13px] leading-relaxed text-text-2">
-        {site.comercial.precoNota} {site.comercial.parcelamentoNota}
+        {site.comercial.parcelamentoNota}
       </p>
     </Section>
   );

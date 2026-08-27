@@ -65,7 +65,8 @@ Aviso: "Cuidado com quem promete 3000 W sem CNH."
 
 - Primário: "Agendar test drive gratuito"
 - Secundário: "Falar no WhatsApp"
-- Card de modelo: "Ver ficha completa" / "Tenho interesse"
+- Card de modelo: "Ver ficha completa" / "Consulte o valor no WhatsApp"
+  (sem preço no site público desde 27/08/2026 — CLAUDE.md §3.4)
 - Final: "Chame agora e agende seu test drive"
 
 ## Mensagens de WhatsApp por origem
@@ -74,6 +75,8 @@ Aviso: "Cuidado com quem promete 3000 W sem CNH."
 |---|---|
 | `hero` | Olá! Vim pelo site e quero saber mais sobre as motos elétricas. |
 | `modelo` | Olá! Tenho interesse na Full Electric {MODELO}. |
+| `valor` | Olá! Quero saber o valor da Full Electric {MODELO}. |
+| `lp` | Olá! Vi o anúncio da Full Electric {MODELO} e quero saber mais. |
 | `preco` | Olá! Quero simular o parcelamento da Full Electric. |
 | `testdrive` | Olá! Quero agendar um test drive. |
 | `entregador` | Olá! Sou entregador e quero saber sobre a moto para trabalhar. |
