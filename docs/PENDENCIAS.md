@@ -40,5 +40,7 @@
       grava com `origem: "entregadores"` e uso pré-selecionado "Delivery".
 - [ ] Widget de avaliações do Google
 - [ ] Blog com dicas de legislação
-- [ ] Rotina de expurgo dos leads sem contato há 12 meses (a política de
-      privacidade promete isso; hoje a exclusão é só manual na ficha)
+- [x] ~~Rotina de expurgo dos leads sem contato há 12 meses~~ **Pronta
+      (26/08/2026):** `/api/admin/expurgo` com `CRON_SECRET`, dry-run por
+      padrão, log em `ExpurgoLog`; falta só agendar o cron semanal na VPS
+      (`docs/DEPLOY.md §9`).
