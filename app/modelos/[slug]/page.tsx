@@ -7,6 +7,7 @@ import { siteUrl } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
+import RastreioModelo from "@/components/RastreioModelo";
 import Section, { Eyebrow } from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -73,6 +74,10 @@ export default async function ModeloPage({
     <>
       <Header />
       <main>
+        <RastreioModelo
+          nome={modelo.nome}
+          preco={temPreco ? modelo.preco.aPartirDe : null}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaProduct) }}

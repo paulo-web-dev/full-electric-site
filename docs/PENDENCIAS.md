@@ -25,10 +25,10 @@
 - [ ] Vida útil e valor de reposição da bateria (está no FAQ como [CONFIRMAR]).
 - [ ] Foto da fachada da loja e do time.
 - [ ] 3 depoimentos em vídeo de clientes reais.
-- [ ] IDs de GA4 e Meta Pixel (o site não usa GTM). Entram por `.env`
-      (`NEXT_PUBLIC_GA4_ID` / `NEXT_PUBLIC_META_PIXEL_ID`) + rebuild da imagem.
-      Faixa de cookies, gate de consentimento e política já prontos
-      (26/08/2026) — com os IDs vazios a faixa nem aparece.
+- [ ] ID do GA4 (o site não usa GTM). Entra por `.env` (`NEXT_PUBLIC_GA4_ID`)
+      + rebuild da imagem. **Meta Pixel já no `.env` do servidor
+      (27/08/2026)** — falta só o rebuild para entrar no ar. Faixa de
+      cookies, gate de consentimento e política prontos (26/08/2026).
 
 ## 🟢 Melhorias depois do lançamento
 

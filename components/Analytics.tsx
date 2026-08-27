@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Script from "next/script";
 import { origemDoLink, comEtiquetaUtm } from "@/lib/whatsapp";
-import { rastrear } from "@/lib/analytics";
+import { rastrear, rastrearContato, EVENTO_ANALYTICS_PRONTO } from "@/lib/analytics";
 import { guardarUtmsDaVisita, lerUtms, etiquetaUtm } from "@/lib/utm";
 import { EVENTO_CONSENTIMENTO, lerConsentimento } from "@/lib/consent";
 
@@ -11,14 +11,16 @@ const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
 /*
-  Eventos da casa (além do PageView automático):
-  - whatsapp_click { origem, utm* } → todo clique em link wa.me, com a seção de origem
-  - generate_lead / Lead            → envio do formulário (disparado no LeadForm)
-  - scroll_75                       → visitante passou de 75% da página, uma vez
+  Eventos (além do PageView automático) — tabela de nomes em lib/analytics.ts:
+  - whatsapp_click / Contact      → todo clique em link wa.me, com a seção de origem
+  - generate_lead / Lead          → formulário gravado (disparado no LeadForm)
+  - view_item / ViewContent       → página de modelo (disparado em RastreioModelo)
+  - scroll_75                     → visitante passou de 75% da página, uma vez
 
   Os scripts do GA4 e do Pixel só entram na página depois de "Aceitar" na
-  faixa de cookies (lib/consent.ts). Sem aceite, `rastrear` vira no-op — os
-  eventos são disparados no vazio, sem erro.
+  faixa de cookies (lib/consent.ts). Sem aceite, o helper vira no-op — os
+  eventos são disparados no vazio, sem erro. Cada script iniciado emite
+  EVENTO_ANALYTICS_PRONTO, para quem disparou antes da hora (ViewContent).
 
   UTM até o WhatsApp: no clique, a etiqueta "[ref: source / medium / campaign]"
   é anexada à mensagem pré-preenchida — o lead chega identificável, com ou
@@ -41,7 +43,7 @@ export default function Analytics() {
       const href = link?.getAttribute("href");
       if (!link || !href) return;
       const utms = lerUtms();
-      rastrear("whatsapp_click", { origem: origemDoLink(href), ...utms });
+      rastrearContato(origemDoLink(href), utms);
       // Reescreve o href antes de o navegador seguir o link (fase de captura)
       link.href = comEtiquetaUtm(href, etiquetaUtm(utms));
     }
@@ -82,7 +84,8 @@ export default function Analytics() {
               function gtag(){dataLayer.push(arguments);}
               window.gtag = gtag;
               gtag('js', new Date());
-              gtag('config', '${GA4_ID}');`}
+              gtag('config', '${GA4_ID}');
+              window.dispatchEvent(new Event('${EVENTO_ANALYTICS_PRONTO}'));`}
           </Script>
         </>
       )}
@@ -94,7 +97,8 @@ export default function Analytics() {
             t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
             document,'script','https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '${PIXEL_ID}');
-            fbq('track', 'PageView');`}
+            fbq('track', 'PageView');
+            window.dispatchEvent(new Event('${EVENTO_ANALYTICS_PRONTO}'));`}
         </Script>
       )}
     </>

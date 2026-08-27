@@ -81,19 +81,22 @@ export default function LeadForm({
     }
 
     setEnviando(true);
+    let gravado = false;
     try {
       // Grava o lead; se a rota falhar, o WhatsApp abre mesmo assim —
       // a conversa é a conversão, o registro é secundário (CLAUDE.md §6.4).
-      await fetch("/api/lead", {
+      const resposta = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(lead),
       }).catch(() => null);
+      gravado = resposta?.ok ?? false;
     } finally {
       setEnviando(false);
     }
 
-    rastrearLead({ origem, modelo: lead.modelo, uso: lead.uso });
+    // Só conta como lead o envio que a rota aceitou (bem-sucedido)
+    if (gravado) rastrearLead({ origem, modelo: lead.modelo, uso: lead.uso });
 
     window.open(
       waLinkFormulario({

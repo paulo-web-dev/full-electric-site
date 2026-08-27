@@ -106,6 +106,11 @@ sinalize e peça confirmação explícita.
     `fe_consent` (a escolha, 6 meses), `fe_utm` (UTMs da visita, sessão) e
     `fe_admin_sessao` (equipe). Nunca carregue script de terceiro fora desse
     gate. Toda UTM vai na mensagem do WhatsApp como `[ref: ...]` (`lib/utm.ts`).
+    Eventos só por `lib/analytics.ts` (que relê o consentimento a cada
+    disparo): Meta `Contact` (clique em wa.me), `Lead` (formulário gravado,
+    **sem `value`** — preço de entrada não é valor de lead) e `ViewContent`
+    (página de modelo, `value` só com preço confirmado). Um único carregador
+    de Pixel: `components/Analytics.tsx`.
 
 ---
 
