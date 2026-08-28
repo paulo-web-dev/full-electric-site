@@ -2,64 +2,77 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { FileCheck } from "lucide-react";
+import { getSite, getFaqPor } from "@/lib/content";
 import {
-  getSite,
   getModelos,
   getModelo,
-  getFaqPor,
-  type Modelo,
-} from "@/lib/content";
+  fotoPrincipal,
+  linhasFicha,
+  nomeCategoria,
+  nomeCurto,
+  classesFotoNoEscuro,
+  type ModeloPublicado,
+} from "@/lib/catalogo";
+import { opcoesDeModelo } from "@/lib/opcoesModelo";
 import { waLink } from "@/lib/whatsapp";
+import { siteUrl } from "@/lib/site";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import RastreioModelo from "@/components/RastreioModelo";
 import FichaTecnica from "@/components/FichaTecnica";
+import SeloAutopropelido from "@/components/SeloAutopropelido";
 import CookiesLink from "@/components/CookiesLink";
 import LeadForm from "@/components/sections/LeadForm";
-import Section, { Eyebrow } from "@/components/ui/Section";
+import Section, { Eyebrow, type SectionTone } from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
 import Accordion from "@/components/ui/Accordion";
 
 /*
-  LP de campanha, uma por modelo, gerada de content/modelos.json — destino de
-  anúncio, sem saída: sem header, sem navegação, sem link para outras páginas
-  (só a Política de Privacidade, obrigatória). Nova moto no JSON = nova LP,
-  sem tocar em código.
+  LP de campanha, uma por modelo publicado, gerada de content/modelos.json —
+  destino de anúncio, sem saída: sem header, sem navegação, sem link para
+  outras páginas (só a Política de Privacidade, obrigatória). Nova moto no
+  JSON = nova LP, sem tocar em código.
 
   Difere de /modelos/[slug] (catálogo, indexável): aqui é noindex e fora do
   sitemap, para não competir no Google. Sem preço (CLAUDE.md §3.4).
   Origem do lead no CRM e nos eventos: "lp-{slug}".
+
+  Tudo sobre CNH/placa passa pelo interruptor `autopropelidoApto`
+  (CLAUDE.md §3.1): com "PENDENTE" a LP vende "100% elétrica, pronta
+  entrega" e não cita CNH em lugar nenhum — nem no título, nem no FAQ.
 */
 
-/* Headline aprovada (docs/04-copy.md) */
-const CHIPS = [
-  "Sem CNH",
-  "Pronta entrega em Curitiba",
-  "Nota fiscal e 6 meses de garantia",
-];
+/* Headline aprovada (docs/04-copy.md); o chip "Sem CNH" só com o selo ligado */
+const CHIP_SEM_CNH = "Sem CNH";
+const CHIPS = [CHIP_SEM_CNH, "Pronta entrega em Curitiba", "Nota fiscal e 6 meses de garantia"];
 
 /*
-  FAQ curto: 5 perguntas, na ordem. "Qual a autonomia real?" cita a faixa da
-  S60 — só entra quando a autonomia do modelo está confirmada no JSON.
+  FAQ curto: 5 perguntas, na ordem. "Precisa de CNH" só com o selo ligado;
+  "Qual a autonomia real?" cita a faixa da S60 — só entra quando a autonomia
+  do modelo está no JSON.
 */
+const PERGUNTA_CNH = "Precisa de CNH para andar nessas motos?";
+const PERGUNTA_AUTONOMIA = "Qual a autonomia real?";
 const FAQ_CANDIDATAS = [
-  "Precisa de CNH para andar nessas motos?",
-  "Qual a autonomia real?",
+  PERGUNTA_CNH,
+  PERGUNTA_AUTONOMIA,
   "Aceita cartão? Dá para parcelar?",
   "Como funciona a garantia?",
   "Posso fazer um test drive?",
   "Onde posso circular em Curitiba?",
+  "Quanto custa carregar por mês?",
 ];
 const FAQ_TAMANHO = 5;
 
-function faqDoModelo(modelo: Modelo) {
-  const autonomiaConfirmada = modelo.specs.some(
-    (s) => s.label === "Autonomia" && s.confirmado
-  );
-  const perguntas = FAQ_CANDIDATAS.filter(
-    (p) => autonomiaConfirmada || p !== "Qual a autonomia real?"
-  ).slice(0, FAQ_TAMANHO);
+function faqDoModelo(modelo: ModeloPublicado) {
+  const apto = modelo.autopropelidoApto === "SIM";
+  const temAutonomia = modelo.specs.autonomiaKm !== null;
+  const perguntas = FAQ_CANDIDATAS.filter((p) => {
+    if (p === PERGUNTA_CNH) return apto;
+    if (p === PERGUNTA_AUTONOMIA) return temAutonomia;
+    return true;
+  }).slice(0, FAQ_TAMANHO);
   return getFaqPor(perguntas);
 }
 
@@ -75,11 +88,27 @@ export async function generateMetadata({
   const { slug } = await params;
   const modelo = getModelo(slug);
   if (!modelo) return {};
+  const apto = modelo.autopropelidoApto === "SIM";
+  const site = getSite();
+  const abertura = modelo.resumo ? `${modelo.resumo} ` : "";
+  const altOg = apto
+    ? `${modelo.nome} — sem CNH, pronta entrega em Curitiba`
+    : `${modelo.nome} — moto elétrica com pronta entrega em Curitiba`;
   return {
-    title: `${modelo.nome} — sem CNH, pronta entrega em Curitiba`,
-    description: `${modelo.resumo} Equipamento de mobilidade individual autopropelido (Res. CONTRAN 996/2023). Test drive gratuito em Curitiba.`,
+    title: apto
+      ? `${modelo.nome} — sem CNH, pronta entrega em Curitiba`
+      : `${modelo.nome} — moto elétrica com pronta entrega em Curitiba`,
+    description: apto
+      ? `${abertura}${site.legal.textoCurto}. Test drive gratuito em Curitiba.`
+      : `${abertura}100% elétrica, pronta entrega em Curitiba. Test drive gratuito.`,
     /* LP de anúncio: não indexa, não compete com /modelos/[slug] */
     robots: { index: false, follow: false },
+    /* Preview de compartilhamento próprio: o da home cita "Sem CNH" no alt */
+    openGraph: {
+      title: modelo.nome,
+      images: [{ url: `${siteUrl()}/modelos/${modelo.slug}/opengraph-image`, width: 1200, height: 630, alt: altOg }],
+    },
+    twitter: { card: "summary_large_image", images: [{ url: `${siteUrl()}/modelos/${modelo.slug}/opengraph-image`, alt: altOg }] },
   };
 }
 
@@ -93,12 +122,28 @@ export default async function LpModeloPage({
   if (!modelo) notFound();
 
   const site = getSite();
-  const nomeCurto = modelo.nome.replace("Full Electric ", "");
+  const curto = nomeCurto(modelo);
   const origem = `lp-${modelo.slug}`;
-  const linkWhatsApp = waLink("lp", nomeCurto);
-  const fotoPrincipal =
-    modelo.fotos.find((f) => f.principal) ?? modelo.fotos[0];
+  const linkWhatsApp = waLink("lp", curto);
+  const principal = fotoPrincipal(modelo);
+  const apto = modelo.autopropelidoApto === "SIM";
+  const chips = CHIPS.filter((c) => apto || c !== CHIP_SEM_CNH);
   const faq = faqDoModelo(modelo);
+  const temFicha = linhasFicha(modelo).length > 0;
+  const temItens = modelo.itensDeSerie.length > 0;
+
+  /*
+    Ritmo paper → muted → ink sem duas iguais seguidas (CLAUDE.md §4.4),
+    mesmo quando a ficha ou o bloco legal somem: galeria (paper) → ficha
+    (muted, opcional) → legal (ink, só apto) → formulário → FAQ → CTA (ink).
+  */
+  const tomAntesDoFormulario: SectionTone = apto
+    ? "ink"
+    : temFicha || temItens
+      ? "muted"
+      : "paper";
+  const tomFormulario: SectionTone = tomAntesDoFormulario === "paper" ? "muted" : "paper";
+  const tomFaq: SectionTone = tomFormulario === "paper" ? "muted" : "paper";
 
   return (
     <>
@@ -126,32 +171,38 @@ export default async function LpModeloPage({
         <Section tone="ink" className="pt-8 pb-12 md:pt-20 md:pb-16">
           <div className="grid items-center gap-x-10 gap-y-4 md:gap-y-6 md:grid-cols-[1.2fr_1fr] md:grid-rows-[auto_auto]">
             <div>
-              <Eyebrow on="dark">{modelo.estilo}</Eyebrow>
+              <Eyebrow on="dark">{nomeCategoria(modelo.categoria)}</Eyebrow>
               <h1 className="mt-3 text-[40px] font-extrabold leading-[1.05] tracking-[-0.03em] md:text-6xl">
                 {modelo.nome}
               </h1>
               <p className="mt-3 text-xl font-semibold leading-snug tracking-[-0.01em] md:text-2xl">
-                Sem CNH. <span className="text-lime-400">100% elétrica.</span>{" "}
-                Pronta entrega.
+                {apto && "Sem CNH. "}
+                <span className="text-lime-400">100% elétrica.</span>{" "}
+                {apto ? "Pronta entrega." : "Pronta entrega em Curitiba."}
               </p>
             </div>
 
             <div className="relative mx-auto w-fit md:col-start-2 md:row-span-2 md:row-start-1 md:w-full md:max-w-sm">
               <div aria-hidden="true" className="photo-halo absolute -inset-6 md:-inset-8" />
               <Image
-                src={fotoPrincipal.src}
-                alt={fotoPrincipal.alt}
-                width={384}
-                height={512}
+                src={principal.src}
+                alt={principal.alt}
+                width={principal.largura}
+                height={principal.altura}
                 priority
                 fetchPriority="high"
-                sizes="(max-width: 768px) 165px, 384px"
-                className="relative h-[220px] w-auto rounded-[14px] object-cover md:h-auto md:w-full md:rounded-[20px]"
+                sizes="(max-width: 768px) 176px, 384px"
+                className={`relative h-[220px] w-auto object-contain md:h-auto md:w-full ${classesFotoNoEscuro(principal, "rounded-[14px] md:rounded-[20px]")}`}
               />
             </div>
 
             <div className="md:col-start-1">
-              <p className="max-w-md text-lg text-text-3">{modelo.resumo}</p>
+              {modelo.resumo && <p className="max-w-md text-lg text-text-3">{modelo.resumo}</p>}
+              {modelo.cores.length > 0 && (
+                <p className="mt-2 max-w-md text-[14px] text-text-3">
+                  Cores em estoque: {modelo.cores.join(", ")}
+                </p>
+              )}
 
               <div className="mt-5 flex flex-col gap-3 sm:flex-row md:mt-7">
                 <Button href="#formulario" on="dark">
@@ -170,17 +221,15 @@ export default async function LpModeloPage({
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                {CHIPS.map((chip) => (
+                {chips.map((chip) => (
                   <Chip key={chip} on="dark">
                     {chip}
                   </Chip>
                 ))}
               </div>
 
-              {/* Âncora legal obrigatória no mesmo bloco de "Sem CNH" — CLAUDE.md §3.1 */}
-              <p className="mt-4 max-w-md text-[13px] leading-relaxed text-text-3">
-                {site.legal.textoCurto}. Dispensa CNH, placa e emplacamento.
-              </p>
+              {/* Âncora legal no mesmo bloco de "Sem CNH" — só com o selo ligado (CLAUDE.md §3.1) */}
+              <SeloAutopropelido modelo={modelo} on="dark" className="mt-4 max-w-md" />
             </div>
           </div>
         </Section>
@@ -190,7 +239,7 @@ export default async function LpModeloPage({
           <div className="max-w-2xl">
             <Eyebrow>Galeria</Eyebrow>
             <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.025em] md:text-4xl">
-              A {nomeCurto} de perto
+              A {curto} de perto
             </h2>
           </div>
           <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
@@ -199,116 +248,126 @@ export default async function LpModeloPage({
                 <Image
                   src={foto.src}
                   alt={foto.alt}
-                  width={384}
-                  height={512}
+                  width={foto.largura}
+                  height={foto.altura}
                   sizes="(max-width: 640px) 45vw, (max-width: 768px) 30vw, 260px"
-                  className="w-full rounded-[8px] object-cover"
+                  className="w-full rounded-[8px] object-contain"
                 />
               </li>
             ))}
           </ul>
         </Section>
 
-        {/* Ficha técnica */}
-        <Section tone="muted" className="py-12 md:py-20">
-          <div className="max-w-3xl">
-            <FichaTecnica modelo={modelo} />
-          </div>
-          {modelo.itensDeSerie.length > 0 && (
-            <div className="mt-8 max-w-3xl">
-              <h3 className="font-semibold">Itens de série</h3>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {modelo.itensDeSerie.map((item) => (
-                  <Chip key={item}>{item}</Chip>
-                ))}
-              </ul>
+        {/* Ficha técnica — some inteira quando o JSON ainda não tem specs */}
+        {(temFicha || temItens) && (
+          <Section tone="muted" className="py-12 md:py-20">
+            <div className="max-w-3xl">
+              <FichaTecnica modelo={modelo} />
             </div>
-          )}
-        </Section>
-
-        {/* Bloco legal resumido — âncora obrigatória (CLAUDE.md §3.1) */}
-        <Section tone="ink" className="py-12 md:py-20">
-          <div className="grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-start">
-            <div>
-              <Eyebrow on="dark">{site.legal.norma}</Eyebrow>
-              <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.025em] md:text-4xl">
-                Sem CNH, sem placa, sem IPVA — e provamos.
-              </h2>
-              <p className="mt-4 max-w-xl text-text-3">
-                {site.legal.textoCurto}. Para dispensar CNH, placa e
-                emplacamento, o veículo precisa respeitar todos os limites da
-                norma:
-              </p>
-              <ul className="mt-4 max-w-xl space-y-2 text-[15px]">
-                {site.legal.criterios.map((c) => (
-                  <li key={c.item} className="flex justify-between gap-4 border-b border-line pb-2">
-                    <span className="text-text-3">{c.item}</span>
-                    <span className="text-right font-medium">{c.limite}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-4 max-w-xl text-[13px] leading-relaxed text-text-3">
-                {site.legal.avisoCirculacao}
-              </p>
-            </div>
-
-            <Card on="dark">
-              <div className="flex items-center gap-2.5">
-                <FileCheck aria-hidden="true" className="size-5 text-lime-400" />
-                <h3 className="font-semibold text-paper">
-                  Dossiê de Conformidade — acompanha toda venda
-                </h3>
+            {temItens && (
+              <div className={`max-w-3xl ${temFicha ? "mt-8" : ""}`}>
+                <h3 className="font-semibold">Itens de série</h3>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {modelo.itensDeSerie.map((item) => (
+                    <Chip key={item}>{item}</Chip>
+                  ))}
+                </ul>
               </div>
-              <ul className="mt-4 space-y-2.5 text-[15px] text-text-3">
-                {site.legal.dossie.map((item) => (
-                  <li key={item} className="flex gap-2.5">
-                    <span aria-hidden="true" className="text-lime-400">
-                      ✓
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          </div>
-        </Section>
+            )}
+          </Section>
+        )}
+
+        {/* Bloco legal — só com o interruptor ligado (CLAUDE.md §3.1) */}
+        {apto && (
+          <Section tone="ink" className="py-12 md:py-20">
+            <div className="grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-start">
+              <div>
+                <Eyebrow on="dark">{site.legal.norma}</Eyebrow>
+                <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.025em] md:text-4xl">
+                  Sem CNH, sem placa, sem IPVA — e provamos.
+                </h2>
+                <p className="mt-4 max-w-xl text-text-3">
+                  {site.legal.textoCurto}. Para dispensar CNH, placa e
+                  emplacamento, o veículo precisa respeitar todos os limites da
+                  norma:
+                </p>
+                <ul className="mt-4 max-w-xl space-y-2 text-[15px]">
+                  {site.legal.criterios.map((c) => (
+                    <li key={c.item} className="flex justify-between gap-4 border-b border-line pb-2">
+                      <span className="text-text-3">{c.item}</span>
+                      <span className="text-right font-medium">{c.limite}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 max-w-xl text-[13px] leading-relaxed text-text-3">
+                  {site.legal.avisoCirculacao}
+                </p>
+              </div>
+
+              <Card on="dark">
+                <div className="flex items-center gap-2.5">
+                  <FileCheck aria-hidden="true" className="size-5 text-lime-400" />
+                  <h3 className="font-semibold text-paper">
+                    Dossiê de Conformidade — acompanha toda venda
+                  </h3>
+                </div>
+                <ul className="mt-4 space-y-2.5 text-[15px] text-text-3">
+                  {site.legal.dossie.map((item) => (
+                    <li key={item} className="flex gap-2.5">
+                      <span aria-hidden="true" className="text-lime-400">
+                        ✓
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            </div>
+          </Section>
+        )}
 
         {/* Formulário — origem lp-{slug}, modelo pré-selecionado */}
-        <Section id="formulario" tone="paper">
+        <Section id="formulario" tone={tomFormulario}>
           <div className="mx-auto max-w-2xl">
             <Eyebrow>Test drive gratuito</Eyebrow>
             <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.025em] md:text-4xl">
-              Agende seu test drive na {nomeCurto}
+              Agende seu test drive na {curto}
             </h2>
             <p className="mt-3 text-text-2">
               Sem e-mail obrigatório. A gente responde no WhatsApp no horário
               comercial.
             </p>
             <div className="mt-8">
-              <LeadForm origem={origem} modeloPadrao={modelo.nome} />
+              <LeadForm
+                origem={origem}
+                modeloPadrao={modelo.nome}
+                opcoesModelo={opcoesDeModelo()}
+              />
             </div>
           </div>
         </Section>
 
         {/* FAQ curto */}
-        <Section tone="muted" className="py-12 md:py-20">
-          <div className="max-w-2xl">
-            <Eyebrow>Perguntas frequentes</Eyebrow>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.025em] md:text-4xl">
-              Dúvidas antes de comprar
-            </h2>
-          </div>
-          <div className="mt-8 max-w-3xl">
-            <Accordion
-              itens={faq.map((item) => ({ titulo: item.p, conteudo: item.r }))}
-            />
-          </div>
-        </Section>
+        {faq.length > 0 && (
+          <Section tone={tomFaq} className="py-12 md:py-20">
+            <div className="max-w-2xl">
+              <Eyebrow>Perguntas frequentes</Eyebrow>
+              <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.025em] md:text-4xl">
+                Dúvidas antes de comprar
+              </h2>
+            </div>
+            <div className="mt-8 max-w-3xl">
+              <Accordion
+                itens={faq.map((item) => ({ titulo: item.p, conteudo: item.r }))}
+              />
+            </div>
+          </Section>
+        )}
 
         {/* CTA final — sem preço, parcelamento com asterisco (CLAUDE.md §3.4) */}
         <Section tone="ink" className="text-center">
           <h2 className="mx-auto max-w-2xl text-3xl font-extrabold tracking-[-0.025em] md:text-4xl">
-            Quer ver a {nomeCurto} de perto?
+            Quer ver a {curto} de perto?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-text-3">
             {site.comercial.consulteValor}, {site.comercial.parcelamentoTexto}.
@@ -377,7 +436,8 @@ export default async function LpModeloPage({
         </div>
         <div className="mx-auto mt-8 w-full max-w-6xl border-t border-line px-5 pt-6 md:px-8">
           <p className="text-[13px] leading-relaxed text-text-3">
-            {site.legal.textoCurto}. {site.legal.avisoCirculacao}
+            {apto ? `${site.legal.textoCurto}. ` : ""}
+            {site.legal.avisoCirculacao}
           </p>
           <p className="mt-4 text-[13px] text-text-3">
             © {new Date().getFullYear()} {site.marca.nomeCompleto} — Curitiba/PR

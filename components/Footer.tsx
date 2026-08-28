@@ -5,6 +5,7 @@ import CookiesLink from "@/components/CookiesLink";
 
 const NAV = [
   { href: "/#modelos", label: "Modelos" },
+  { href: "/modelos", label: "Catálogo completo" },
   { href: "/#economia", label: "Economia" },
   { href: "/#legal", label: "É legal?" },
   { href: "/precisa-de-cnh", label: "Precisa de CNH?" },

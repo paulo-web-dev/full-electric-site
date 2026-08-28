@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { getSite, getModelos } from "@/lib/content";
+import { getSite } from "@/lib/content";
+import { getModeloDestaque, fotoPrincipal, classesFotoNoEscuro } from "@/lib/catalogo";
 import { waLink } from "@/lib/whatsapp";
 import Section, { Eyebrow } from "@/components/ui/Section";
 import Button from "@/components/ui/Button";
@@ -24,8 +25,8 @@ const CHIPS = [
 */
 export default function Hero() {
   const site = getSite();
-  const s60 = getModelos().find((m) => m.destaque);
-  const foto = s60?.fotos.find((f) => f.principal) ?? s60?.fotos[0];
+  const destaque = getModeloDestaque();
+  const foto = destaque ? fotoPrincipal(destaque) : undefined;
 
   return (
     <Section tone="ink" className="pt-10 pb-12 md:pt-24 md:pb-16">
@@ -42,19 +43,19 @@ export default function Hero() {
           </h1>
         </div>
 
-        {foto && s60 && (
+        {foto && (
           <div className="relative mx-auto w-fit md:col-start-2 md:row-span-2 md:row-start-1 md:w-full md:max-w-sm">
             {/* Halo radial: as motos são pretas e somem no fundo escuro — CLAUDE.md §4.5 */}
             <div aria-hidden="true" className="photo-halo absolute -inset-6 md:-inset-8" />
             <Image
               src={foto.src}
               alt={foto.alt}
-              width={384}
-              height={512}
+              width={foto.largura}
+              height={foto.altura}
               priority
               fetchPriority="high"
               sizes="(max-width: 768px) 165px, 384px"
-              className="relative h-[220px] w-auto rounded-[14px] object-cover md:h-auto md:w-full md:rounded-[20px]"
+              className={`relative h-[220px] w-auto object-contain md:h-auto md:w-full ${classesFotoNoEscuro(foto, "rounded-[14px] md:rounded-[20px]")}`}
             />
           </div>
         )}

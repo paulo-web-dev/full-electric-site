@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { getModelos } from "@/lib/content";
+import { getModelosCatalogo } from "@/lib/catalogo";
 import { waLinkParaLead } from "@/lib/whatsapp";
 import {
   STATUS_ROTULO,
@@ -36,7 +36,7 @@ export default async function FichaLeadPage({
   });
   if (!lead) notFound();
 
-  const modelos = getModelos();
+  const modelos = getModelosCatalogo();
   const fichaUrl = `/admin/leads/${lead.id}`;
 
   const dados: { rotulo: string; valor: string }[] = [

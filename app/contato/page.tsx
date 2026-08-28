@@ -9,6 +9,7 @@ import WhatsAppFab from "@/components/WhatsAppFab";
 import Section, { Eyebrow } from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import { opcoesDeModelo } from "@/lib/opcoesModelo";
 import LeadForm from "@/components/sections/LeadForm";
 
 export const metadata: Metadata = {
@@ -62,7 +63,7 @@ export default function ContatoPage() {
                 Gratuito e sem compromisso, inclusive no sábado.
               </p>
               <div className="mt-6">
-                <LeadForm origem="contato" />
+                <LeadForm origem="contato" opcoesModelo={opcoesDeModelo()} />
               </div>
             </div>
 

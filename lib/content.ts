@@ -1,5 +1,4 @@
 import siteJson from "@/content/site.json";
-import modelosJson from "@/content/modelos.json";
 import faqJson from "@/content/faq.json";
 
 export interface Horario {
@@ -54,34 +53,6 @@ export interface SiteContent {
   };
 }
 
-export interface Spec {
-  label: string;
-  valor: string;
-  confirmado: boolean;
-}
-
-export interface FotoModelo {
-  src: string;
-  alt: string;
-  principal?: boolean;
-}
-
-export interface Modelo {
-  slug: string;
-  nome: string;
-  fabricante: string;
-  estilo: string;
-  cor: string;
-  destaque: boolean;
-  prontaEntrega: boolean;
-  resumo: string;
-  publico: string[];
-  preco: { aPartirDe: number | null; confirmado: boolean };
-  specs: Spec[];
-  itensDeSerie: string[];
-  fotos: FotoModelo[];
-}
-
 export interface FaqItem {
   p: string;
   r: string;
@@ -91,42 +62,7 @@ export function getSite(): SiteContent {
   return siteJson as SiteContent;
 }
 
-export function getModelos(): Modelo[] {
-  return (modelosJson as { modelos: Modelo[] }).modelos;
-}
-
-export function getModelo(slug: string): Modelo | undefined {
-  return getModelos().find((m) => m.slug === slug);
-}
-
-/** Só specs confirmadas podem virar fato no site — CLAUDE.md §3.6 */
-export function specsConfirmadas(modelo: Modelo): Spec[] {
-  return modelo.specs.filter((s) => s.confirmado);
-}
-
-/*
-  Liga cada critério da Res. 996/2023 (content/site.json → legal.criterios) ao
-  spec correspondente do modelo em destaque. Largura, entre-eixos e
-  equipamentos foram medidos/confirmados em 27/08/2026 e aparecem como "Dentro
-  do limite legal" — por decisão do cliente, sem os números. Modelo novo sem
-  medição cai no fallback "Aguardando aferição" dos componentes.
-*/
-const CRITERIO_PARA_SPEC: Record<string, string> = {
-  "Potência nominal máxima": "Motor",
-  "Velocidade máxima de fabricação": "Velocidade máxima",
-  "Largura máxima": "Largura",
-  "Distância entre eixos": "Entre-eixos",
-  Equipamentos: "Equipamentos",
-};
-
-/** Valor confirmado do modelo em destaque para um critério legal, ou null */
-export function valorCriterioNaMotoDestaque(criterioItem: string): string | null {
-  const destaque = getModelos().find((m) => m.destaque);
-  const spec = destaque?.specs.find(
-    (s) => s.label === CRITERIO_PARA_SPEC[criterioItem]
-  );
-  return spec && spec.confirmado ? spec.valor : null;
-}
+/* ---------- FAQ ---------- */
 
 /** Perguntas do FAQ cujo enunciado está na lista, na ordem da lista */
 export function getFaqPor(perguntas: string[]): FaqItem[] {

@@ -1,31 +1,81 @@
 {
-  "_leia": "Campos com 'confirmado': false NAO devem aparecer no site como fato. Use [CONFIRMAR] ou omita a linha inteira.",
+  "_leia": [
+    "Catálogo do site. Modelo novo entra aqui, sem tocar em código (CLAUDE.md §3.6 e §6.6).",
+    "null NUNCA renderiza: a linha da ficha some. Não invente valor nem placeholder.",
+    "publicado: true exige nome e ao menos uma foto — o build falha se não tiver.",
+    "autopropelidoApto: 'SIM' liga o selo sem CNH/placa do modelo; 'PENDENTE' esconde tudo sobre CNH. É um interruptor: mediu, trocou, o selo aparece sozinho.",
+    "precoBrl e medidas (largura, entre-eixos, comprimento, altura) NUNCA vão ao site público: preço é só CRM; medidas só validam o enquadramento no build.",
+    "specs.autonomiaKm é a faixa realista {min,max} (CLAUDE.md §3.2). autonomiaDeclaradaKm é o número do fabricante e não renderiza.",
+    "pendencias: anotações do dono, não renderizam."
+  ],
+  "categorias": [
+    {
+      "id": "citycoco",
+      "nome": "Citycoco",
+      "descricao": "Pneus largos, banco corrido e postura relaxada. As mais confortáveis para o dia a dia."
+    },
+    {
+      "id": "scooter-urbano",
+      "nome": "Scooter urbano",
+      "descricao": "Formato de scooter tradicional, leve e ágil, com baú de série na maioria."
+    },
+    {
+      "id": "scooter-retro",
+      "nome": "Scooter retrô",
+      "descricao": "Linhas clássicas com motor elétrico."
+    },
+    {
+      "id": "fat-bike",
+      "nome": "Fat bike elétrica",
+      "descricao": "Bicicleta elétrica de pneus largos, com pedal assistido."
+    }
+  ],
   "modelos": [
     {
       "slug": "s60",
       "nome": "Full Electric S60",
-      "fabricante": "BOLIN Electric Motor",
-      "estilo": "Citycoco / chopper urbana",
-      "cor": "Preto fosco com detalhes em caramelo",
+      "marca": "BOLIN Electric Motor",
+      "categoria": "citycoco",
+      "cores": [
+        "preto fosco com detalhes em caramelo",
+        "vermelho"
+      ],
       "destaque": true,
+      "publicado": true,
       "prontaEntrega": true,
       "resumo": "Pneus largos, banco corrido com encosto e baú redondo. A mais confortável da linha para o trânsito de Curitiba.",
-      "publico": ["Uso diário", "Trabalho", "Delivery"],
-      "preco": { "aPartirDe": 8499, "confirmado": true },
-      "specs": [
-        { "label": "Motor", "valor": "1.000 W brushless traseiro", "confirmado": true },
-        { "label": "Bateria", "valor": "Lítio 60V 21Ah (1,26 kWh), removível", "confirmado": true },
-        { "label": "Velocidade máxima", "valor": "32 km/h", "confirmado": true },
-        { "label": "Autonomia", "valor": "40 a 55 km por carga", "confirmado": true },
-        { "label": "Recarga", "valor": "Tomada comum de casa", "confirmado": true },
-        { "label": "Tempo de recarga", "valor": "5 a 8 horas", "confirmado": false },
-        { "label": "Freios", "valor": "Disco nas duas rodas", "confirmado": true },
-        { "label": "Suspensão", "valor": "Dianteira e traseira", "confirmado": true },
-        { "label": "Capacidade de carga", "valor": "[CONFIRMAR NO MANUAL]", "confirmado": false },
-        { "label": "Largura", "valor": "Dentro do limite legal", "confirmado": true },
-        { "label": "Entre-eixos", "valor": "Dentro do limite legal", "confirmado": true },
-        { "label": "Equipamentos", "valor": "Velocímetro, campainha e sinalização noturna dianteira, traseira e lateral", "confirmado": true }
+      "publico": [
+        "Uso diário",
+        "Trabalho",
+        "Delivery"
       ],
+      "autopropelidoApto": "SIM",
+      "precoBrl": 8499,
+      "specs": {
+        "motor": "1.000 W brushless traseiro",
+        "potenciaW": 1000,
+        "bateria": "Lítio 60V 21Ah (1,26 kWh), removível",
+        "velocidadeMaxKmh": 32,
+        "autonomiaKm": {
+          "min": 40,
+          "max": 55
+        },
+        "autonomiaDeclaradaKm": "60 km",
+        "recarga": "Tomada comum de casa",
+        "recargaHoras": null,
+        "freios": "Disco nas duas rodas",
+        "suspensao": "Dianteira e traseira",
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": 200,
+        "equipamentos": "Velocímetro, campainha e sinalização noturna dianteira, traseira e lateral"
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": 115,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
       "itensDeSerie": [
         "Farol LED com anel de iluminação",
         "Setas dianteiras e traseiras",
@@ -35,45 +85,781 @@
         "Pneus largos (fat)"
       ],
       "fotos": [
-        { "src": "/modelos/s60/s60-01-frente-34.jpg", "alt": "Full Electric S60 preta vista de frente em três quartos", "principal": true },
-        { "src": "/modelos/s60/s60-02-frente-34-alt.jpg", "alt": "Full Electric S60 preta em três quartos, ângulo alternativo" },
-        { "src": "/modelos/s60/s60-03-frente-34-baixo.jpg", "alt": "Full Electric S60 preta vista em ângulo baixo" },
-        { "src": "/modelos/s60/s60-04-frontal.jpg", "alt": "Full Electric S60 vista frontal mostrando o pneu largo" },
-        { "src": "/modelos/s60/s60-05-frontal-detalhe.jpg", "alt": "Detalhe do farol LED e guidão da Full Electric S60" },
-        { "src": "/modelos/s60/s60-06-lateral.jpg", "alt": "Full Electric S60 preta vista de perfil" },
-        { "src": "/modelos/s60/s60-07-lateral-alt.jpg", "alt": "Full Electric S60 preta de perfil, ângulo alternativo" }
+        {
+          "src": "/images/modelos/s60/s60-01-frente-34.jpg",
+          "alt": "Full Electric S60 preta vista de frente em três quartos",
+          "largura": 384,
+          "altura": 512,
+          "principal": true
+        },
+        {
+          "src": "/images/modelos/s60/citycoco-bolin-preto-frente.png",
+          "alt": "Full Electric S60 preta, vista de frente",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/s60/citycoco-bolin-preto-34-traseira.png",
+          "alt": "Full Electric S60 preta, em três quartos, vista traseira",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/s60/citycoco-bolin-preto-traseira-plaqueta.png",
+          "alt": "Full Electric S60 preta, vista traseira, com a plaqueta de identificação",
+          "largura": 1122,
+          "altura": 1402,
+          "uso": "compliance"
+        },
+        {
+          "src": "/images/modelos/s60/citycoco-bolin-vermelho-lateral.png",
+          "alt": "Full Electric S60 vermelha, vista de perfil",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/s60/citycoco-bolin-vermelho-34-frente.png",
+          "alt": "Full Electric S60 vermelha, em três quartos, vista de frente",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/s60/citycoco-bolin-vermelho-34-traseira.png",
+          "alt": "Full Electric S60 vermelha, em três quartos, vista traseira",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/s60/s60-02-frente-34-alt.jpg",
+          "alt": "Full Electric S60 preta em três quartos, ângulo alternativo",
+          "largura": 384,
+          "altura": 512
+        },
+        {
+          "src": "/images/modelos/s60/s60-03-frente-34-baixo.jpg",
+          "alt": "Full Electric S60 preta vista em ângulo baixo",
+          "largura": 384,
+          "altura": 512
+        },
+        {
+          "src": "/images/modelos/s60/s60-04-frontal.jpg",
+          "alt": "Full Electric S60 vista frontal mostrando o pneu largo",
+          "largura": 384,
+          "altura": 512
+        },
+        {
+          "src": "/images/modelos/s60/s60-05-frontal-detalhe.jpg",
+          "alt": "Detalhe do farol LED e guidão da Full Electric S60",
+          "largura": 384,
+          "altura": 512
+        },
+        {
+          "src": "/images/modelos/s60/s60-06-lateral.jpg",
+          "alt": "Full Electric S60 preta vista de perfil",
+          "largura": 384,
+          "altura": 512
+        },
+        {
+          "src": "/images/modelos/s60/s60-07-lateral-alt.jpg",
+          "alt": "Full Electric S60 preta de perfil, ângulo alternativo",
+          "largura": 384,
+          "altura": 512
+        }
+      ],
+      "pendencias": [
+        "Tempo de recarga (5 a 8 h) não confirmado — fica fora da ficha até confirmar",
+        "Capacidade de carga 200 kg veio da plaqueta do Citycoco BOLIN — conferir no manual",
+        "Largura e entre-eixos medidos em 27/08/2026 (dentro do limite); anotar os cm em `medidas` se quiser guardar",
+        "Fundido com \"Citycoco BOLIN\" em 2026-08-28",
+        "[citycoco-bolin] Plaqueta de fabrica le '1.5?0W' - ILEGIVEL entre 1.000W e 1.500W. Se for 1.500W o modelo NAO e autopropelido.",
+        "Foto principal ideal: 3/4 frontal PRETA em alta (as novas pretas são frente/traseira; as 3/4 são vermelhas)"
       ]
     },
     {
       "slug": "e30",
       "nome": "Full Electric E30",
-      "fabricante": "BOLIN Electric Motor",
-      "estilo": "Scooter urbana",
-      "cor": "Branco",
+      "marca": "BOLIN Electric Motor",
+      "categoria": "scooter-urbano",
+      "cores": [
+        "branco"
+      ],
       "destaque": false,
+      "publicado": true,
       "prontaEntrega": true,
       "resumo": "Formato de scooter tradicional, mais leve e com baú de série. Ideal para quem quer praticidade no dia a dia.",
-      "publico": ["Uso diário", "Delivery"],
-      "preco": { "aPartirDe": null, "confirmado": false },
-      "specs": [
-        { "label": "Motor", "valor": "[CONFIRMAR]", "confirmado": false },
-        { "label": "Bateria", "valor": "[CONFIRMAR]", "confirmado": false },
-        { "label": "Velocidade máxima", "valor": "[CONFIRMAR]", "confirmado": false },
-        { "label": "Autonomia", "valor": "[CONFIRMAR]", "confirmado": false },
-        { "label": "Freios", "valor": "[CONFIRMAR]", "confirmado": false },
-        { "label": "Largura", "valor": "Dentro do limite legal", "confirmado": true },
-        { "label": "Entre-eixos", "valor": "Dentro do limite legal", "confirmado": true },
-        { "label": "Equipamentos", "valor": "Velocímetro, campainha e sinalização noturna dianteira, traseira e lateral", "confirmado": true }
+      "publico": [
+        "Uso diário",
+        "Delivery"
       ],
+      "autopropelidoApto": "SIM",
+      "precoBrl": null,
+      "specs": {
+        "motor": null,
+        "potenciaW": null,
+        "bateria": null,
+        "velocidadeMaxKmh": null,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": null,
+        "recarga": null,
+        "recargaHoras": null,
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": "Velocímetro, campainha e sinalização noturna dianteira, traseira e lateral"
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
       "itensDeSerie": [
         "Baú traseiro rígido",
         "Farol LED",
         "Porta-objetos frontal"
       ],
       "fotos": [
-        { "src": "/modelos/e30/e30-01-traseira-34.jpg", "alt": "Full Electric E30 branca vista traseira em três quartos", "principal": true },
-        { "src": "/modelos/e30/e30-02-traseira-34-alt.jpg", "alt": "Full Electric E30 branca, ângulo traseiro alternativo" },
-        { "src": "/modelos/e30/e30-03-bau-detalhe.jpg", "alt": "Detalhe do baú traseiro da Full Electric E30" }
+        {
+          "src": "/images/modelos/e30/e30-01-traseira-34.jpg",
+          "alt": "Full Electric E30 branca vista traseira em três quartos",
+          "largura": 384,
+          "altura": 512,
+          "principal": true
+        },
+        {
+          "src": "/images/modelos/e30/e30-02-traseira-34-alt.jpg",
+          "alt": "Full Electric E30 branca, ângulo traseiro alternativo",
+          "largura": 384,
+          "altura": 512
+        },
+        {
+          "src": "/images/modelos/e30/e30-03-bau-detalhe.jpg",
+          "alt": "Detalhe do baú traseiro da Full Electric E30",
+          "largura": 384,
+          "altura": 512
+        }
+      ],
+      "pendencias": [
+        "Ficha técnica completa: motor, bateria, velocidade, autonomia, freios",
+        "Preço para o CRM"
+      ]
+    },
+    {
+      "slug": "citycoco-king-pro-x30",
+      "nome": "Citycoco King Pro X30",
+      "marca": null,
+      "categoria": "citycoco",
+      "cores": [
+        "azul Union Jack"
+      ],
+      "destaque": false,
+      "publicado": true,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": null,
+      "specs": {
+        "motor": null,
+        "potenciaW": null,
+        "bateria": null,
+        "velocidadeMaxKmh": null,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": null,
+        "recarga": null,
+        "recargaHoras": null,
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
+      "itensDeSerie": [],
+      "fotos": [
+        {
+          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-34-frente.png",
+          "alt": "Citycoco King Pro X30 azul com estampa Union Jack, em três quartos, vista de frente",
+          "largura": 1122,
+          "altura": 1402,
+          "principal": true
+        },
+        {
+          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-lateral.png",
+          "alt": "Citycoco King Pro X30 azul com estampa Union Jack, vista de perfil",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-34-traseira.png",
+          "alt": "Citycoco King Pro X30 azul com estampa Union Jack, em três quartos, vista traseira",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-34-frente-alt.png",
+          "alt": "Citycoco King Pro X30 azul com estampa Union Jack, em três quartos, vista de frente",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-duplo.png",
+          "alt": "Citycoco King Pro X30 azul com estampa Union Jack, duas unidades lado a lado",
+          "largura": 1122,
+          "altura": 1402
+        }
+      ],
+      "pendencias": []
+    },
+    {
+      "slug": "citycoco-slim",
+      "nome": "Citycoco Slim (bau lateral)",
+      "marca": null,
+      "categoria": "citycoco",
+      "cores": [
+        "laranja",
+        "azul",
+        "verde oliva"
+      ],
+      "destaque": false,
+      "publicado": true,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": null,
+      "specs": {
+        "motor": null,
+        "potenciaW": null,
+        "bateria": null,
+        "velocidadeMaxKmh": null,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": null,
+        "recarga": null,
+        "recargaHoras": null,
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
+      "itensDeSerie": [
+        "Baú lateral"
+      ],
+      "fotos": [
+        {
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-laranja-lateral.png",
+          "alt": "Citycoco Slim laranja, vista de perfil",
+          "largura": 1122,
+          "altura": 1402,
+          "principal": true
+        },
+        {
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-azul-lateral.png",
+          "alt": "Citycoco Slim azul, vista de perfil",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-verde-oliva-lateral.png",
+          "alt": "Citycoco Slim verde-oliva, vista de perfil",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-laranja-34-traseira.png",
+          "alt": "Citycoco Slim laranja, em três quartos, vista traseira",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-laranja-frente.png",
+          "alt": "Citycoco Slim laranja, vista de frente",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-azul-34-traseira.png",
+          "alt": "Citycoco Slim azul, em três quartos, vista traseira",
+          "largura": 1122,
+          "altura": 1402
+        }
+      ],
+      "pendencias": []
+    },
+    {
+      "slug": "konnan-explorer-ii",
+      "nome": "Explorer II",
+      "marca": "Konnan",
+      "categoria": "fat-bike",
+      "cores": [
+        "verde/branco",
+        "preto/laranja"
+      ],
+      "destaque": false,
+      "publicado": false,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": 8999.9,
+      "specs": {
+        "motor": null,
+        "potenciaW": 750,
+        "bateria": "Litio 48V 18,2Ah",
+        "velocidadeMaxKmh": 32,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": "50 km",
+        "recarga": null,
+        "recargaHoras": "4 a 6",
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
+      "itensDeSerie": [],
+      "fotos": [
+        {
+          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-34-frente.png",
+          "alt": "Explorer II verde e branca, em três quartos, vista de frente",
+          "largura": 1122,
+          "altura": 1402,
+          "principal": true
+        },
+        {
+          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-34-frente-alt.png",
+          "alt": "Explorer II verde e branca, em três quartos, vista de frente",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-frente.png",
+          "alt": "Explorer II verde e branca, vista de frente",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-lateral.png",
+          "alt": "Explorer II verde e branca, vista de perfil",
+          "largura": 1122,
+          "altura": 1402
+        }
+      ],
+      "pendencias": [
+        "Vinculo foto<->modelo INFERIDO pela cor verde/branco. Paulo precisa confirmar.",
+        "Autonomia declarada pelo fabricante (50 km) não vai ao site: CLAUDE.md §3.2 exige faixa realista — preencher specs.autonomiaKm {min,max}",
+        "Publicação segurada até confirmar que a fat bike verde das fotos é a Explorer II"
+      ]
+    },
+    {
+      "slug": "new-ebike-cappuccino",
+      "nome": "Cappuccino",
+      "marca": "New E-Bike",
+      "categoria": "scooter-retro",
+      "cores": [
+        "bege",
+        "verde menta",
+        "vinho/creme"
+      ],
+      "destaque": false,
+      "publicado": false,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": null,
+      "specs": {
+        "motor": null,
+        "potenciaW": 1000,
+        "bateria": "Lítio 60V 20Ah (1.200 Wh)",
+        "velocidadeMaxKmh": 32,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": "60 a 80 km",
+        "recarga": null,
+        "recargaHoras": "6",
+        "freios": "disco dianteiro + tambor traseiro",
+        "suspensao": null,
+        "pneus": "3.0x10 sem camara",
+        "pesoKg": 66,
+        "cargaMaxKg": 180,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": 45,
+        "entreEixosCm": 117,
+        "comprimentoCm": 165,
+        "alturaCm": 87
+      },
+      "itensDeSerie": [],
+      "fotos": [],
+      "pendencias": [
+        "Sem foto vinculada — sem foto não publica",
+        "So existem fotos de catalogo do fabricante (fundo branco, baixa res). Nao esta nos ZIPs de estudio.",
+        "Enquadramento no catálogo: \"SIM (1000W / 32km/h / 45cm largura / 117cm entre-eixos) - confirmar com trena na loja\"",
+        "Autonomia declarada pelo fabricante (60 a 80 km) não vai ao site: CLAUDE.md §3.2 exige faixa realista — preencher specs.autonomiaKm {min,max}"
+      ]
+    },
+    {
+      "slug": "scooter-urbano-lime",
+      "nome": null,
+      "marca": "New E-Bike",
+      "categoria": "scooter-urbano",
+      "cores": [
+        "preto com detalhes verde-limao"
+      ],
+      "destaque": false,
+      "publicado": false,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": null,
+      "specs": {
+        "motor": null,
+        "potenciaW": null,
+        "bateria": null,
+        "velocidadeMaxKmh": null,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": null,
+        "recarga": null,
+        "recargaHoras": null,
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
+      "itensDeSerie": [],
+      "fotos": [
+        {
+          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-34-frente.png",
+          "alt": "scooter-urbano-lime preta com detalhes verde-limão, em três quartos, vista de frente",
+          "largura": 1122,
+          "altura": 1402,
+          "principal": true
+        },
+        {
+          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-frente.png",
+          "alt": "scooter-urbano-lime preta com detalhes verde-limão, vista de frente",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-34-frente-alt.png",
+          "alt": "scooter-urbano-lime preta com detalhes verde-limão, em três quartos, vista de frente",
+          "largura": 1122,
+          "altura": 1402
+        },
+        {
+          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-traseira-plaqueta.png",
+          "alt": "scooter-urbano-lime preta com detalhes verde-limão, vista traseira, com a plaqueta de identificação",
+          "largura": 1122,
+          "altura": 1402,
+          "uso": "compliance"
+        },
+        {
+          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-lateral-HERO.png",
+          "alt": "scooter-urbano-lime preta com detalhes verde-limão, vista de perfil",
+          "largura": 1448,
+          "altura": 1086,
+          "uso": "hero"
+        }
+      ],
+      "pendencias": [
+        "Sem nome comercial — nomear para publicar",
+        "Cor combina com a paleta da marca (#D2FC13). Melhor candidato a destaque visual."
+      ]
+    },
+    {
+      "slug": "scooter-urbano-grafite",
+      "nome": null,
+      "marca": null,
+      "categoria": "scooter-urbano",
+      "cores": [
+        "grafite"
+      ],
+      "destaque": false,
+      "publicado": false,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": null,
+      "specs": {
+        "motor": null,
+        "potenciaW": null,
+        "bateria": null,
+        "velocidadeMaxKmh": null,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": null,
+        "recarga": null,
+        "recargaHoras": null,
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
+      "itensDeSerie": [],
+      "fotos": [
+        {
+          "src": "/images/modelos/scooter-urbano-grafite/urbano-grafite-lateral.png",
+          "alt": "scooter-urbano-grafite grafite, vista de perfil",
+          "largura": 1122,
+          "altura": 1402,
+          "principal": true
+        },
+        {
+          "src": "/images/modelos/scooter-urbano-grafite/urbano-grafite-frente.png",
+          "alt": "scooter-urbano-grafite grafite, vista de frente",
+          "largura": 1122,
+          "altura": 1402
+        }
+      ],
+      "pendencias": [
+        "Sem nome comercial — nomear para publicar"
+      ]
+    },
+    {
+      "slug": "scooter-urbano-branco-vermelho",
+      "nome": null,
+      "marca": null,
+      "categoria": "scooter-urbano",
+      "cores": [
+        "branco/vermelho"
+      ],
+      "destaque": false,
+      "publicado": false,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": null,
+      "specs": {
+        "motor": null,
+        "potenciaW": null,
+        "bateria": null,
+        "velocidadeMaxKmh": null,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": null,
+        "recarga": null,
+        "recargaHoras": null,
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
+      "itensDeSerie": [],
+      "fotos": [
+        {
+          "src": "/images/modelos/scooter-urbano-branco-vermelho/urbano-branco-vermelho-frente.png",
+          "alt": "scooter-urbano-branco-vermelho branca e vermelha, vista de frente",
+          "largura": 1122,
+          "altura": 1402,
+          "principal": true
+        },
+        {
+          "src": "/images/modelos/scooter-urbano-branco-vermelho/urbano-branco-vermelho-traseira-plaqueta.png",
+          "alt": "scooter-urbano-branco-vermelho branca e vermelha, vista traseira, com a plaqueta de identificação",
+          "largura": 1122,
+          "altura": 1402,
+          "uso": "compliance"
+        }
+      ],
+      "pendencias": [
+        "Sem nome comercial — nomear para publicar"
+      ]
+    },
+    {
+      "slug": "scooter-urbano-preto-amarelo",
+      "nome": null,
+      "marca": null,
+      "categoria": "scooter-urbano",
+      "cores": [
+        "preto/amarelo"
+      ],
+      "destaque": false,
+      "publicado": false,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": null,
+      "specs": {
+        "motor": null,
+        "potenciaW": null,
+        "bateria": null,
+        "velocidadeMaxKmh": null,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": null,
+        "recarga": null,
+        "recargaHoras": null,
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
+      "itensDeSerie": [],
+      "fotos": [
+        {
+          "src": "/images/modelos/scooter-urbano-preto-amarelo/urbano-preto-amarelo-frente.png",
+          "alt": "scooter-urbano-preto-amarelo preta e amarela, vista de frente",
+          "largura": 1122,
+          "altura": 1402,
+          "principal": true
+        },
+        {
+          "src": "/images/modelos/scooter-urbano-preto-amarelo/urbano-preto-amarelo-34-duplo.png",
+          "alt": "scooter-urbano-preto-amarelo preta e amarela, duas unidades lado a lado",
+          "largura": 1122,
+          "altura": 1402
+        }
+      ],
+      "pendencias": [
+        "Sem nome comercial — nomear para publicar"
+      ]
+    },
+    {
+      "slug": "b3-grafeno",
+      "nome": "B3",
+      "marca": "New E-Bike",
+      "categoria": "scooter-urbano",
+      "cores": [
+        "preto"
+      ],
+      "destaque": false,
+      "publicado": false,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": 8994,
+      "specs": {
+        "motor": null,
+        "potenciaW": 1000,
+        "bateria": "Grafeno 60V 26Ah",
+        "velocidadeMaxKmh": 32,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": "95 km",
+        "recarga": null,
+        "recargaHoras": "6 a 7",
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
+      "itensDeSerie": [],
+      "fotos": [],
+      "pendencias": [
+        "Sem foto vinculada — sem foto não publica",
+        "SEM FOTO IDENTIFICADA. Pode ser um dos scooters urbanos pretos acima - Paulo precisa apontar qual.",
+        "Autonomia declarada pelo fabricante (95 km) não vai ao site: CLAUDE.md §3.2 exige faixa realista — preencher specs.autonomiaKm {min,max}"
+      ]
+    },
+    {
+      "slug": "shark-72v",
+      "nome": "Shark",
+      "marca": "New E-Bike",
+      "categoria": "scooter-urbano",
+      "cores": [
+        "vermelho"
+      ],
+      "destaque": false,
+      "publicado": false,
+      "prontaEntrega": true,
+      "resumo": null,
+      "publico": [],
+      "autopropelidoApto": "PENDENTE",
+      "precoBrl": null,
+      "specs": {
+        "motor": null,
+        "potenciaW": 1000,
+        "bateria": "Grafeno 72V 26Ah",
+        "velocidadeMaxKmh": 32,
+        "autonomiaKm": null,
+        "autonomiaDeclaradaKm": "95 km",
+        "recarga": null,
+        "recargaHoras": "6 a 9",
+        "freios": null,
+        "suspensao": null,
+        "pneus": null,
+        "pesoKg": null,
+        "cargaMaxKg": null,
+        "equipamentos": null
+      },
+      "medidas": {
+        "larguraCm": null,
+        "entreEixosCm": null,
+        "comprimentoCm": null,
+        "alturaCm": null
+      },
+      "itensDeSerie": [],
+      "fotos": [],
+      "pendencias": [
+        "Sem foto vinculada — sem foto não publica",
+        "SEM FOTO IDENTIFICADA e SEM PRECO na copy enviada.",
+        "Autonomia declarada pelo fabricante (95 km) não vai ao site: CLAUDE.md §3.2 exige faixa realista — preencher specs.autonomiaKm {min,max}"
       ]
     }
   ]

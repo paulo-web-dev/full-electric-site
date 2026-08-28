@@ -1,9 +1,14 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
-import { getModelo, getModelos } from "@/lib/content";
+import {
+  getModelo,
+  getModelos,
+  fotoPrincipal,
+  nomeCategoria,
+} from "@/lib/catalogo";
 
-/* Preview de compartilhamento por modelo — foto e preço do próprio modelo */
+/* Preview de compartilhamento por modelo — foto do próprio modelo, sem preço */
 export const alt = "Ficha do modelo — Full Electric Motos Elétricas, Curitiba";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -12,9 +17,12 @@ export function generateStaticParams() {
   return getModelos().map((modelo) => ({ slug: modelo.slug }));
 }
 
+const MIME: Record<string, string> = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg" };
+
 async function comoDataUri(relativo: string): Promise<string> {
   const bytes = await readFile(path.join(process.cwd(), "public", relativo));
-  return `data:image/jpeg;base64,${bytes.toString("base64")}`;
+  const mime = MIME[path.extname(relativo).toLowerCase()] ?? "image/jpeg";
+  return `data:${mime};base64,${bytes.toString("base64")}`;
 }
 
 export default async function Image({
@@ -24,13 +32,20 @@ export default async function Image({
 }) {
   const { slug } = await params;
   const modelo = getModelo(slug);
-  const fotoModelo =
-    modelo?.fotos.find((f) => f.principal) ?? modelo?.fotos[0];
+  const foto = modelo ? fotoPrincipal(modelo) : undefined;
+  const apto = modelo?.autopropelidoApto === "SIM";
 
-  const [logo, foto] = await Promise.all([
+  const [logo, fotoUri] = await Promise.all([
     comoDataUri("brand/logo-full-electric.jpg"),
-    comoDataUri((fotoModelo?.src ?? "/modelos/s60/s60-01-frente-34.jpg").slice(1)),
+    foto ? comoDataUri(foto.src.slice(1)) : Promise.resolve(""),
   ]);
+
+  /* Foto 4:5 ou 3:4 dentro de uma moldura clara fixa (fotos de estúdio têm fundo branco) */
+  const molduraLargura = 400;
+  const molduraAltura = 518;
+  const proporcao = foto ? foto.largura / foto.altura : 3 / 4;
+  const fotoAltura = 453;
+  const fotoLargura = Math.round(fotoAltura * proporcao);
 
   return new ImageResponse(
     (
@@ -84,13 +99,13 @@ export default async function Image({
               letterSpacing: "4px",
             }}
           >
-            {modelo?.estilo ?? "Scooter elétrica"}
+            {modelo ? nomeCategoria(modelo.categoria) : "Moto elétrica"}
           </div>
           <div
             style={{
               display: "flex",
               marginTop: "10px",
-              fontSize: "72px",
+              fontSize: modelo && modelo.nome.length > 18 ? "56px" : "72px",
               fontWeight: 700,
               lineHeight: 1.05,
               letterSpacing: "-2px",
@@ -117,6 +132,7 @@ export default async function Image({
             >
               Consulte o valor no WhatsApp
             </div>
+            {/* "Sem CNH" só com o interruptor ligado — CLAUDE.md §3.1 */}
             <div
               style={{
                 display: "flex",
@@ -125,7 +141,9 @@ export default async function Image({
                 color: "#9AA096",
               }}
             >
-              Pronta entrega em Curitiba · Sem CNH — Res. CONTRAN 996/2023
+              {apto
+                ? "Pronta entrega em Curitiba · Sem CNH — Res. CONTRAN 996/2023"
+                : "Pronta entrega em Curitiba · 100% elétrica"}
             </div>
           </div>
         </div>
@@ -135,21 +153,23 @@ export default async function Image({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: "400px",
-            height: "518px",
+            width: `${molduraLargura}px`,
+            height: `${molduraAltura}px`,
             borderRadius: "24px",
             background:
               "radial-gradient(circle at 50% 45%, rgba(210,252,19,0.22), rgba(210,252,19,0.05) 60%, #141613 85%)",
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={foto}
-            alt=""
-            width={340}
-            height={453}
-            style={{ borderRadius: "18px", objectFit: "cover" }}
-          />
+          {fotoUri && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={fotoUri}
+              alt=""
+              width={fotoLargura}
+              height={fotoAltura}
+              style={{ borderRadius: foto?.recortada ? "0" : "18px", objectFit: "cover" }}
+            />
+          )}
         </div>
       </div>
     ),

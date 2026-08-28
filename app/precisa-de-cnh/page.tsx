@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { AlertTriangle, FileCheck, ShieldCheck, XCircle } from "lucide-react";
-import {
-  getSite,
-  getFaqPor,
-  valorCriterioNaMotoDestaque,
-} from "@/lib/content";
+import { getSite, getFaqPor } from "@/lib/content";
+import { getModeloDestaque, valorCriterio } from "@/lib/catalogo";
 import { waLink } from "@/lib/whatsapp";
 import { siteUrl } from "@/lib/site";
 import Header from "@/components/Header";
@@ -76,6 +73,7 @@ const PERGUNTAS_LEGAIS = [
 
 export default function PrecisaDeCnhPage() {
   const site = getSite();
+  const destaque = getModeloDestaque();
   const { norma, enquadramento, textoCurto, criterios, dispensa, dossie } =
     site.legal;
   const faq = getFaqPor(PERGUNTAS_LEGAIS);
@@ -247,7 +245,7 @@ export default function PrecisaDeCnhPage() {
               </thead>
               <tbody className="divide-y divide-ink/10">
                 {criterios.map((criterio) => {
-                  const valor = valorCriterioNaMotoDestaque(criterio.item);
+                  const valor = destaque ? valorCriterio(destaque, criterio.item) : null;
                   return (
                     <tr key={criterio.item}>
                       <th scope="row" className="px-5 py-4 font-medium">

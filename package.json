@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "catalogo": "node scripts/catalogo.mjs",
+    "catalogo:ficha": "node scripts/catalogo.mjs ficha",
+    "catalogo:aferir": "node scripts/catalogo.mjs aferir",
+    "catalogo:fotos": "node scripts/catalogo.mjs fotos"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

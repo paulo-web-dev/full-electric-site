@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getModelos } from "@/lib/content";
+import { getModelos } from "@/lib/catalogo";
 import { siteUrl } from "@/lib/site";
 
 /* /lp/[slug] (LPs de campanha) ficam fora de propósito: são noindex. */
@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: `${base}/`, lastModified: agora, changeFrequency: "weekly", priority: 1 },
+    { url: `${base}/modelos`, lastModified: agora, changeFrequency: "weekly", priority: 0.9 },
     ...getModelos().map((modelo) => ({
       url: `${base}/modelos/${modelo.slug}`,
       lastModified: agora,

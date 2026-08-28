@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { waLinkFormulario } from "@/lib/whatsapp";
 import { rastrearLead } from "@/lib/analytics";
-import { MODELOS_OPCOES, USOS_OPCOES, type UsoOpcao } from "@/lib/leadOpcoes";
+import { USOS_OPCOES, type UsoOpcao } from "@/lib/leadOpcoes";
 import { lerUtms } from "@/lib/utm";
 import Button from "@/components/ui/Button";
 
@@ -18,7 +18,9 @@ interface LeadFormProps {
   origem?: string;
   /** Opção de "uso pretendido" pré-selecionada (ex.: "Delivery" na LP de entregadores) */
   usoPadrao?: UsoOpcao;
-  /** Modelo pré-selecionado (LP de campanha de um modelo); precisa estar em MODELOS_OPCOES */
+  /** Lista "Modelo de interesse" — calculada no servidor (lib/opcoesModelo.ts) */
+  opcoesModelo: string[];
+  /** Modelo pré-selecionado (LP de campanha de um modelo); precisa estar em opcoesModelo */
   modeloPadrao?: string;
 }
 
@@ -41,7 +43,8 @@ const CAMPO =
 export default function LeadForm({
   origem = "formulario",
   usoPadrao = USOS_OPCOES[0],
-  modeloPadrao = MODELOS_OPCOES[0],
+  opcoesModelo,
+  modeloPadrao = opcoesModelo[0],
 }: LeadFormProps) {
   const [telefone, setTelefone] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -195,7 +198,7 @@ export default function LeadForm({
             defaultValue={modeloPadrao}
             className={CAMPO}
           >
-            {MODELOS_OPCOES.map((m) => (
+            {opcoesModelo.map((m) => (
               <option key={m}>{m}</option>
             ))}
           </select>

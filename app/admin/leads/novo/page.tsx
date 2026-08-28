@@ -4,7 +4,8 @@ import {
   COMO_CONHECEU_ROTULO,
   rotuloOrigem,
 } from "@/lib/crm";
-import { MODELOS_OPCOES, USOS_OPCOES } from "@/lib/leadOpcoes";
+import { USOS_OPCOES } from "@/lib/leadOpcoes";
+import { opcoesDeModeloAdmin } from "@/lib/opcoesModelo";
 import { criarLead } from "@/app/admin/leads/actions";
 import { CAMPO, ROTULO, BOTAO_LIME, CARTAO } from "@/components/admin/estilos";
 
@@ -72,7 +73,7 @@ export default function NovoLeadPage() {
               Modelo de interesse
             </label>
             <select id="novo-modelo" name="modeloInteresse" required className={CAMPO}>
-              {MODELOS_OPCOES.map((m) => (
+              {opcoesDeModeloAdmin().map((m) => (
                 <option key={m}>{m}</option>
               ))}
             </select>

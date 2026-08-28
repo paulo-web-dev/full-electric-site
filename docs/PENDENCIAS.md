@@ -12,10 +12,58 @@
 - [x] ~~Política de Privacidade~~ **No ar em `/politica-de-privacidade`
       (24/08/2026). Falta só razão social/CNPJ (item acima).**
 
+## 🟠 Catálogo de 27/08/2026 — o que libera cada modelo
+
+Fonte: `docs/catalogo/`. Estado em `content/modelos.json` (`publicado`,
+`autopropelidoApto`, `pendencias` de cada modelo). Trocar no JSON basta —
+não há código por modelo.
+
+**Publicados (4):** S60 (fundida com o Citycoco BOLIN em 28/08/2026 —
+preto e vermelho, 13 fotos) · E30 · Citycoco King Pro X30 · Citycoco Slim.
+X30 e Slim estão `PENDENTE` (sem selo "sem CNH").
+
+**Aferição:** `npm run catalogo:ficha` → imprimir
+`docs/catalogo/ficha-afericao.pdf` → medir → digitar em
+`docs/catalogo/afericao.csv` → `npm run catalogo:aferir`.
+
+**Aguardando (8):**
+
+| Modelo | Falta para publicar | Falta para o selo "sem CNH" |
+|---|---|---|
+| Explorer II (Konnan) | Confirmar que a fat bike verde das fotos é ela (vínculo inferido pela cor) → `publicado: true` | Medir largura e entre-eixos |
+| Cappuccino (New E-Bike) | Foto de estúdio (só há catálogo do fabricante em baixa) | Conferir com trena: 45 cm / 117 cm já constam da ficha |
+| Scooter urbano lime | Nome comercial | Plaqueta + medição |
+| Scooter urbano grafite | Nome comercial | Plaqueta + medição |
+| Scooter urbano branco/vermelho | **Confirmar se é a E30** → `npm run catalogo -- fundir e30 scooter-urbano-branco-vermelho`; senão, nome comercial | Plaqueta + medição |
+| Scooter urbano preto/amarelo | Nome comercial | Plaqueta + medição |
+| B3 (New E-Bike) | Apontar qual foto é a B3 (pode ser um dos urbanos pretos) | Medição |
+| Shark (New E-Bike) | Foto; preço para o CRM | Medição |
+
+**Para os publicados sem selo:**
+- [ ] Citycoco King Pro X30 e Citycoco Slim: ficha técnica inteira (tudo
+      `null`) + plaqueta + medição.
+- [ ] S60: a plaqueta do lote BOLIN lê "1.5?0W" (ilegível). A S60 está
+      confirmada em 1.000 W; conferir na moto vermelha se é o mesmo motor.
+      Capacidade de carga 200 kg veio da plaqueta — conferir no manual.
+- [x] ~~S60 × Citycoco BOLIN~~ **Mesma moto, fundidas em 28/08/2026.**
+- [ ] E30 × scooter urbano branco/vermelho: **aguardando confirmação**;
+      comando pronto (tabela acima).
+- [x] ~~Autonomia dos modelos novos~~ **Decisão de 28/08/2026: publicar sem
+      autonomia.** O número do fabricante fica em `autonomiaDeclaradaKm` e
+      não renderiza.
+
+**Imagens:**
+- [x] ~~Tratamento das fotos sobre seção escura~~ **Decisão de 28/08/2026:
+      moldura clara (opção A).** Código pronto para PNG com alpha
+      (`recortada`, marcado por `npm run catalogo:fotos`).
+- [ ] Recortes (PNG com alpha) das fotos principais — o dono manda depois.
+- [ ] Foto 3/4 frontal preta da S60 em alta (as novas 3/4 são vermelhas).
+- [ ] Foto landscape para herói, ou aceitar o split atual.
+
 ## 🟡 Necessárias para qualidade
 
-- [ ] **Fotos em alta resolução.** As atuais são 384×512 px — servem para card,
-      não para herói em desktop. Pedir à BOLIN os originais do catálogo.
+- [ ] **Fotos em alta resolução da S60 e da E30.** As atuais são 384×512 px —
+      servem para card, não para herói em desktop. Pedir à BOLIN os originais.
 - [ ] Ficha técnica completa da **E30** (motor, bateria, velocidade, autonomia,
       freios, preço).
 - [ ] Capacidade de carga da S60, conforme o manual.

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { AlertTriangle } from "lucide-react";
+import { getSite, getFaqPor, formatBRL } from "@/lib/content";
 import {
-  getSite,
   getModelos,
-  getFaqPor,
-  specsConfirmadas,
-  formatBRL,
-} from "@/lib/content";
+  fotoPrincipal,
+  linhasFicha,
+  nomeCurto,
+} from "@/lib/catalogo";
+import { opcoesDeModelo } from "@/lib/opcoesModelo";
 import { waLink } from "@/lib/whatsapp";
 import { siteUrl } from "@/lib/site";
 import Header from "@/components/Header";
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${siteUrl()}/para-entregadores` },
 };
 
-const SPECS_DO_CARD = ["Autonomia", "Velocidade máxima", "Bateria"];
+const SPECS_DO_CARD = ["autonomiaKm", "velocidadeMaxKmh", "bateria"];
 
 /* O que o entregador precisa saber antes de comprar — sem surpresa depois */
 const AVISOS = [
@@ -241,12 +242,10 @@ export default function ParaEntregadoresPage() {
 
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {modelos.map((modelo) => {
-              const foto =
-                modelo.fotos.find((f) => f.principal) ?? modelo.fotos[0];
-              const specs = specsConfirmadas(modelo).filter((s) =>
-                SPECS_DO_CARD.includes(s.label)
+              const foto = fotoPrincipal(modelo);
+              const specs = linhasFicha(modelo).filter((l) =>
+                SPECS_DO_CARD.includes(l.chave)
               );
-              const nomeCurto = modelo.nome.replace("Full Electric ", "");
 
               return (
                 <Card key={modelo.slug} className="flex flex-col gap-5 sm:flex-row">
@@ -254,23 +253,25 @@ export default function ParaEntregadoresPage() {
                     <Image
                       src={foto.src}
                       alt={foto.alt}
-                      width={384}
-                      height={512}
+                      width={foto.largura}
+                      height={foto.altura}
                       sizes="(max-width: 640px) 60vw, 160px"
-                      className="h-48 w-auto rounded-[8px] object-cover"
+                      className="h-48 w-auto rounded-[8px] object-contain"
                     />
                   </div>
                   <div className="flex flex-1 flex-col">
                     <h3 className="text-xl font-semibold tracking-[-0.01em]">
                       {modelo.nome}
                     </h3>
-                    <p className="mt-1.5 text-[15px] text-text-2">{modelo.resumo}</p>
+                    {modelo.resumo && (
+                      <p className="mt-1.5 text-[15px] text-text-2">{modelo.resumo}</p>
+                    )}
                     {specs.length > 0 && (
                       <dl className="mt-3 space-y-1 text-[14px]">
-                        {specs.map((spec) => (
-                          <div key={spec.label} className="flex justify-between gap-4">
-                            <dt className="text-text-2">{spec.label}</dt>
-                            <dd className="text-right font-medium">{spec.valor}</dd>
+                        {specs.map((linha) => (
+                          <div key={linha.chave} className="flex justify-between gap-4">
+                            <dt className="text-text-2">{linha.label}</dt>
+                            <dd className="text-right font-medium">{linha.valor}</dd>
                           </div>
                         ))}
                       </dl>
@@ -280,7 +281,7 @@ export default function ParaEntregadoresPage() {
                     </p>
                     <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
                       <Button
-                        href={waLink("valor", nomeCurto)}
+                        href={waLink("valor", nomeCurto(modelo))}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 px-4"
@@ -339,7 +340,11 @@ export default function ParaEntregadoresPage() {
                 combina o horário.
               </p>
               <div className="mt-6">
-                <LeadForm origem="entregadores" usoPadrao="Delivery" />
+                <LeadForm
+                  origem="entregadores"
+                  usoPadrao="Delivery"
+                  opcoesModelo={opcoesDeModelo()}
+                />
               </div>
             </div>
             <Card className="content-start">

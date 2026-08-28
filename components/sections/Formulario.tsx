@@ -1,4 +1,5 @@
 import Section, { Eyebrow } from "@/components/ui/Section";
+import { opcoesDeModelo } from "@/lib/opcoesModelo";
 import LeadForm from "@/components/sections/LeadForm";
 
 export default function Formulario() {
@@ -14,7 +15,7 @@ export default function Formulario() {
           horário comercial.
         </p>
         <div className="mt-8">
-          <LeadForm origem="formulario" />
+          <LeadForm origem="formulario" opcoesModelo={opcoesDeModelo()} />
         </div>
       </div>
     </Section>

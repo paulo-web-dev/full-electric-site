@@ -1,5 +1,6 @@
 import { AlertTriangle, FileCheck } from "lucide-react";
-import { getSite, valorCriterioNaMotoDestaque } from "@/lib/content";
+import { getSite } from "@/lib/content";
+import { getModeloDestaque, valorCriterio } from "@/lib/catalogo";
 import { waLink } from "@/lib/whatsapp";
 import Section, { Eyebrow } from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
@@ -8,6 +9,7 @@ import Button from "@/components/ui/Button";
 export default function Legal() {
   const site = getSite();
   const { criterios, dossie, norma } = site.legal;
+  const destaque = getModeloDestaque();
 
   return (
     <Section id="legal" tone="ink">
@@ -27,8 +29,8 @@ export default function Legal() {
         <div className="overflow-x-auto rounded-[14px] border border-line">
           <table className="w-full min-w-[480px] text-left text-[15px]">
             <caption className="sr-only">
-              Critérios da Resolução CONTRAN 996/2023 comparados com a Full
-              Electric S60
+              Critérios da Resolução CONTRAN 996/2023 comparados com a{" "}
+              {destaque?.nome ?? "moto de entrada"}
             </caption>
             <thead>
               <tr className="border-b border-line text-xs font-semibold uppercase tracking-[0.14em] text-text-3">
@@ -45,7 +47,7 @@ export default function Legal() {
             </thead>
             <tbody className="divide-y divide-line">
               {criterios.map((criterio) => {
-                const valor = valorCriterioNaMotoDestaque(criterio.item);
+                const valor = destaque ? valorCriterio(destaque, criterio.item) : null;
                 return (
                   <tr key={criterio.item}>
                     <th scope="row" className="px-5 py-4 font-medium text-paper">

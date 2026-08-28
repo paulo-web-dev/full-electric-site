@@ -1,42 +1,38 @@
-import type { Modelo } from "@/lib/content";
+import { linhasFicha, NOTA_AUTONOMIA, type ModeloPublicado } from "@/lib/catalogo";
 
 /*
-  Tabela de ficha técnica de um modelo — usada na página de catálogo
-  (/modelos/[slug]) e na LP de campanha (/lp/[slug]). Spec não confirmada em
-  content/modelos.json aparece como "Sob consulta", nunca como fato
-  (CLAUDE.md §3.6).
+  Tabela de ficha técnica de um modelo — página de catálogo (/modelos/[slug])
+  e LP de campanha (/lp/[slug]). Só renderiza o que está preenchido em
+  content/modelos.json: campo null não vira linha, sem placeholder
+  (CLAUDE.md §3.6). Sem linha nenhuma, não renderiza nada.
 */
-export default function FichaTecnica({ modelo }: { modelo: Modelo }) {
+export default function FichaTecnica({ modelo }: { modelo: ModeloPublicado }) {
+  const linhas = linhasFicha(modelo);
+  if (linhas.length === 0) return null;
+
+  const temAutonomia = linhas.some((l) => l.chave === "autonomiaKm");
+
   return (
     <>
-      <h2 className="text-2xl font-extrabold tracking-[-0.025em]">
-        Ficha técnica
-      </h2>
+      <h2 className="text-2xl font-extrabold tracking-[-0.025em]">Ficha técnica</h2>
       <div className="mt-5 overflow-x-auto rounded-[14px] border border-ink/10">
         <table className="w-full text-left text-[15px]">
           <caption className="sr-only">Ficha técnica da {modelo.nome}</caption>
           <tbody className="divide-y divide-ink/10">
-            {modelo.specs.map((spec) => (
-              <tr key={spec.label}>
+            {linhas.map((linha) => (
+              <tr key={linha.chave}>
                 <th scope="row" className="w-2/5 px-5 py-3.5 font-medium">
-                  {spec.label}
+                  {linha.label}
                 </th>
-                <td className="px-5 py-3.5">
-                  {spec.confirmado ? (
-                    spec.valor
-                  ) : (
-                    <span className="text-text-2">Sob consulta</span>
-                  )}
-                </td>
+                <td className="px-5 py-3.5">{linha.valor}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="mt-3 text-[13px] text-text-2">
-        Itens &quot;sob consulta&quot; ainda estão em aferição ou confirmação
-        com o fabricante — pergunte no WhatsApp que a gente responde na hora.
-      </p>
+      {temAutonomia && (
+        <p className="mt-3 text-[13px] text-text-2">{NOTA_AUTONOMIA}</p>
+      )}
     </>
   );
 }

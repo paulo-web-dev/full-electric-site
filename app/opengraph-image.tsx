@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
+import { getModeloDestaque, fotoPrincipal } from "@/lib/catalogo";
 
 /*
   Preview de compartilhamento (WhatsApp/redes) — 1200×630.
@@ -11,16 +12,26 @@ export const alt =
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+const MIME: Record<string, string> = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg" };
+
 async function comoDataUri(relativo: string): Promise<string> {
   const bytes = await readFile(path.join(process.cwd(), "public", relativo));
-  return `data:image/jpeg;base64,${bytes.toString("base64")}`;
+  const mime = MIME[path.extname(relativo).toLowerCase()] ?? "image/jpeg";
+  return `data:${mime};base64,${bytes.toString("base64")}`;
 }
 
 export default async function Image() {
+  /* Foto do modelo em destaque (content/modelos.json) */
+  const destaque = getModeloDestaque();
+  const fotoDestaque = destaque ? fotoPrincipal(destaque) : undefined;
   const [logo, foto] = await Promise.all([
     comoDataUri("brand/logo-full-electric.jpg"),
-    comoDataUri("modelos/s60/s60-01-frente-34.jpg"),
+    fotoDestaque ? comoDataUri(fotoDestaque.src.slice(1)) : Promise.resolve(""),
   ]);
+  const fotoAltura = 453;
+  const fotoLargura = fotoDestaque
+    ? Math.round((fotoAltura * fotoDestaque.largura) / fotoDestaque.altura)
+    : 340;
 
   return new ImageResponse(
     (
@@ -106,14 +117,16 @@ export default async function Image() {
               "radial-gradient(circle at 50% 45%, rgba(210,252,19,0.22), rgba(210,252,19,0.05) 60%, #141613 85%)",
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={foto}
-            alt=""
-            width={340}
-            height={453}
-            style={{ borderRadius: "18px", objectFit: "cover" }}
-          />
+          {foto && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={foto}
+              alt=""
+              width={fotoLargura}
+              height={fotoAltura}
+              style={{ borderRadius: fotoDestaque?.recortada ? "0" : "18px", objectFit: "cover" }}
+            />
+          )}
         </div>
       </div>
     ),

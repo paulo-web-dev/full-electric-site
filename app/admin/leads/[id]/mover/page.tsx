@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { getModelo, getModelos } from "@/lib/content";
+import { getModelosCatalogo } from "@/lib/catalogo";
 import {
   STATUS_ROTULO,
   STATUS_COR,
@@ -41,12 +41,9 @@ export default async function MoverLeadPage({
   const destino = /^\/admin(\/|\?|$)/.test(voltar) ? voltar : `/admin/leads/${id}`;
 
   // Modelo vendido: pré-seleciona o de interesse; valor sugerido = preço de tabela
-  const modelos = getModelos();
+  const modelos = getModelosCatalogo();
   const modeloDeInteresse = modelos.find((m) => m.nome === lead.modeloInteresse);
-  const precoSugerido =
-    modeloDeInteresse && getModelo(modeloDeInteresse.slug)?.preco.confirmado
-      ? modeloDeInteresse.preco.aPartirDe
-      : null;
+  const precoSugerido = modeloDeInteresse?.precoBrl ?? null;
 
   return (
     <main className="mx-auto max-w-xl">

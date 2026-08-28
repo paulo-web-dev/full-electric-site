@@ -58,6 +58,20 @@ sinalize e peça confirmação explícita.
 - ❌ Nunca use "sem CNH" isolado, sem essa âncora na mesma seção.
 - ❌ Nunca escreva que qualquer moto acima de 1.000 W ou 32 km/h dispensa CNH.
   Acima disso é **ciclomotor** e exige registro, placa e ACC/CNH-A.
+- **Por modelo, quem manda é o interruptor `autopropelidoApto`** em
+  `content/modelos.json`:
+  - `"SIM"` → o selo aparece (`components/SeloAutopropelido.tsx`, o card
+    legal em `/modelos/[slug]`, o bloco legal, o chip e o FAQ de CNH na LP,
+    a linha "Sem CNH" no OG image).
+  - `"PENDENTE"` → **nada** sobre CNH, placa ou emplacamento naquele modelo.
+    A moto vende como "100% elétrica, pronta entrega".
+  - É um **interruptor, não um bloqueio permanente**: mediu com trena, leu a
+    plaqueta, trocou para `"SIM"` no JSON → o selo aparece sozinho, sem
+    alteração de código. Nunca ligue o selo por código, nem crie um terceiro
+    estado.
+  - O build **falha** se um modelo `"SIM"` tiver `potenciaW` > 1.000,
+    `velocidadeMaxKmh` > 32, `medidas.larguraCm` > 70 ou
+    `medidas.entreEixosCm` > 130 (`validarCatalogo` em `lib/catalogo.ts`).
 
 ### 3.2 Sobre autonomia
 - ✅ Faixa realista: **40 a 55 km por carga**.
@@ -73,9 +87,12 @@ sinalize e peça confirmação explícita.
   `Store` sem `priceRange`), nem em OG image, nem como `value` de evento de
   Pixel/GA4. No lugar, o CTA de consulta: **"Consulte o valor no WhatsApp"**
   (`site.comercial.consulteValor`, origem `valor` em `lib/whatsapp.ts`).
-- O preço continua em `content/modelos.json` (`preco.aPartirDe`) **só para o
+- O preço continua em `content/modelos.json` (`precoBrl`) **só para o
   CRM**: sugestão de valor no cadastro de venda (`/admin/leads/[id]/mover`).
-  Nunca leia esse campo em componente público.
+  Nunca leia esse campo em componente público. O catálogo não vai ao bundle
+  do navegador: o `LeadForm` recebe a lista de modelos por prop
+  (`lib/opcoesModelo.ts`), nunca importa `lib/catalogo.ts`. Componente de
+  cliente só pode importar `lib/content.ts` (site.json e FAQ).
 - Parcelamento pode aparecer ("em até 18x no cartão*") — parcelamento sem
   valor não é oferta de preço — **sempre** com asterisco e `*com juros`
   visível.
@@ -89,9 +106,35 @@ sinalize e peça confirmação explícita.
 - Sempre informar que autopropelido circula preferencialmente em ciclovias e,
   na ausência delas, em vias de até 40 km/h.
 
-### 3.6 Especificações
-- Nunca invente número de ficha técnica. Se não estiver em `content/modelos.json`
-  com `"confirmado": true`, escreva `[CONFIRMAR]` e liste em `docs/PENDENCIAS.md`.
+### 3.6 Especificações e catálogo orientado a dados
+- Nunca invente número de ficha técnica. `content/modelos.json` usa **campos
+  tipados** (`specs.potenciaW`, `specs.velocidadeMaxKmh`, `specs.bateria`…):
+  valor preenchido = confirmado; **`null` = não confirmado e a linha some**
+  (sem placeholder, sem "consulte-nos", sem "sob consulta"). Dúvida vai em
+  `pendencias` do modelo (não renderiza) e em `docs/PENDENCIAS.md`.
+- **Modelo novo entra só pelo JSON.** Card, `/modelos`, `/modelos/[slug]`,
+  `/lp/[slug]`, OG image, sitemap e o select do formulário são gerados de
+  `getModelos()`. Não crie página por modelo à mão.
+- **Publicação**: `publicado: true` exige `nome` e ao menos uma foto — o
+  build falha sem isso. Modelo sem nome comercial ou sem foto fica
+  `publicado: false`: fora do grid, sem rota (404), fora do sitemap e do
+  formulário. O admin ainda o vê no "modelo vendido" (`getModelosCatalogo`).
+- **Autonomia** renderiza só de `specs.autonomiaKm: {min, max}` (faixa
+  realista, §3.2). O número solto do fabricante fica em
+  `autonomiaDeclaradaKm` e **não renderiza**.
+- **Medidas** (`medidas.larguraCm`, `entreEixosCm`, `comprimentoCm`,
+  `alturaCm`) são privadas: validam o `"SIM"` no build e nunca vão ao site.
+  No site aparece só "Dentro do limite legal" (decisão do cliente, §9).
+- **Preço** (`precoBrl`) é só CRM (§3.4).
+- **Aferição na loja**: `npm run catalogo:ficha` gera
+  `docs/catalogo/ficha-afericao.pdf` (uma página por modelo PENDENTE, para
+  imprimir) e `docs/catalogo/afericao.csv`; preenchido o CSV,
+  `npm run catalogo:aferir` grava medidas/potência/velocidade/equipamentos e
+  liga `"SIM"` só em quem passa nos 4 limites e nos 5 equipamentos. Fusão de
+  registros duplicados: `npm run catalogo -- fundir <destino> <origem>`.
+- Categorias (`categorias` no JSON, ordem do grid): `citycoco`,
+  `scooter-urbano`, `scooter-retro`, `fat-bike`. Categoria sem modelo
+  publicado não aparece.
 
 ### 3.7 LGPD — dados pessoais de leads
 - O site coleta dados pessoais (formulário → banco do CRM). Isso cria obrigações:
@@ -187,8 +230,21 @@ escuras, aplique um halo radial sutil atrás da moto (as motos são pretas e
 somem no fundo escuro) — o mesmo tratamento usado no verso do flyer em
 `public/referencia/flyer-verso.png`.
 
-⚠️ **As fotos atuais são 384×512 px.** Servem para cards e thumbnails, **não
-para herói em desktop**. Ver `docs/PENDENCIAS.md`.
+Fotos em `public/images/modelos/<slug>/`, referenciadas em
+`content/modelos.json` com `largura`/`altura` reais (o `next/image`
+converte para AVIF/WebP e redimensiona sob demanda — não é preciso converter
+à mão).
+
+- **S60 e E30:** JPG 384×512 px. Servem para card, não para herói em desktop.
+- **Catálogo de 27/08/2026:** PNG 1122×1402 (4:5), **fundo branco, sem
+  alpha**, 1 a 1,8 MB. Decisão de 28/08/2026: sobre seção escura ficam em
+  **moldura clara arredondada** (`classesFotoNoEscuro` em `lib/catalogo.ts`).
+- **Recortes (PNG com alpha):** basta trocar o arquivo e rodar
+  `npm run catalogo:fotos` — ele marca `recortada: true` lendo o canal
+  alpha, e a foto passa a ficar solta sobre o escuro, com halo e sem moldura.
+  Nenhuma mudança de código.
+- Não use as fotos de showroom (marca do fornecedor); a colagem do lime foi
+  removida do repositório.
 
 ---
 
@@ -201,7 +257,8 @@ Espelha a estrutura da Unyflex Digital, adaptada para produto físico.
 | Rota | Objetivo | Prioridade |
 |---|---|---|
 | `/` | Home — conversão principal | P0 |
-| `/modelos/[slug]` | Página de cada modelo (S60, E30) | P0 |
+| `/modelos` | Catálogo completo por categoria, gerado do JSON — **no ar** | P0 |
+| `/modelos/[slug]` | Página de cada modelo publicado, gerada do JSON | P0 |
 | `/contato` | Formulário + mapa + horários | P0 |
 | `/precisa-de-cnh` | Conteúdo educativo sobre CONTRAN 996 (SEO) — **no ar** | P1 |
 | `/para-entregadores` | LP para motoboy / iFood — **no ar** | P1 |
@@ -276,9 +333,12 @@ components/
   WhatsAppFab.tsx
 lib/
   whatsapp.ts           gerador de link wa.me com mensagem por origem
-  content.ts            leitura tipada de content/*.json
-content/                site.json · modelos.json · faq.json
-public/                 brand/ · modelos/ · referencia/
+  content.ts            site.json e faq.json (seguro no cliente)
+  catalogo.ts           modelos.json tipado + validação de build (só servidor)
+  opcoesModelo.ts       lista "Modelo de interesse" para o formulário e o admin
+content/                site.json · modelos.json (catálogo tipado, §3.6) · faq.json
+public/                 brand/ · images/modelos/<slug>/ · referencia/
+docs/catalogo/          fonte do catálogo de 27/08/2026 (JSON + CSV de fotos)
 ```
 
 ### 6.2 Regras de código
@@ -411,7 +471,10 @@ Estão detalhadas em `docs/PENDENCIAS.md`. As críticas:
    27/08/2026: S60 e E30 dentro dos limites (≤ 70 cm e ≤ 130 cm), equipamentos
    obrigatórios atendidos.** Por decisão do cliente, o site mostra só
    "Dentro do limite legal", sem os números — não publique as medidas.
-3. **Fotos em alta resolução.** As atuais são 384×512.
+3. **Fotos.** S60/E30 seguem em 384×512. O catálogo novo (27/08/2026) tem
+   fotos 1122×1402 em fundo branco: falta decidir o tratamento sobre fundo
+   escuro. 8 modelos aguardam nome, foto ou confirmação — ver
+   `docs/PENDENCIAS.md`.
 
 ---
 
