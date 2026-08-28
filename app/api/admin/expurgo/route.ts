@@ -1,6 +1,6 @@
-import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { bearerValido } from "@/lib/apiToken";
 
 /*
   Expurgo LGPD — cumpre a retenção de 12 meses prometida em
@@ -21,15 +21,6 @@ import { prisma } from "@/lib/db";
 
 const MESES_DE_RETENCAO = 12;
 
-function tokenValido(cabecalho: string | null): boolean {
-  const segredo = process.env.CRON_SECRET;
-  if (!segredo || !cabecalho) return false;
-  const token = cabecalho.replace(/^Bearer\s+/i, "").trim();
-  const a = Buffer.from(token);
-  const b = Buffer.from(segredo);
-  return a.length === b.length && timingSafeEqual(a, b);
-}
-
 function dataLimite(): Date {
   const limite = new Date();
   limite.setUTCMonth(limite.getUTCMonth() - MESES_DE_RETENCAO);
@@ -37,7 +28,7 @@ function dataLimite(): Date {
 }
 
 export async function GET(request: Request) {
-  if (!tokenValido(request.headers.get("authorization"))) {
+  if (!bearerValido(request.headers.get("authorization"), process.env.CRON_SECRET)) {
     return NextResponse.json({ erro: "Não autorizado" }, { status: 401 });
   }
 

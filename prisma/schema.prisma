@@ -62,6 +62,7 @@ model Lead {
   criadoEm           DateTime      @default(now())
   atualizadoEm       DateTime      @updatedAt
   notas              Nota[]
+  consentimentos     Consentimento[]
 
   @@index([status])
   @@index([criadoEm])
@@ -74,6 +75,29 @@ model Nota {
   lead     Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
   texto    String
   criadoEm DateTime @default(now())
+
+  @@index([leadId])
+}
+
+/// Histórico de consentimento LGPD: um registro por manifestação, nunca
+/// sobrescrito — é o que se mostra se a pessoa questionar. Cai junto com o
+/// lead (eliminação em cascata).
+model Consentimento {
+  id           String   @id @default(cuid())
+  leadId       String
+  lead         Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  /// formulario (checkbox do site) · verbal (balcão/telefone) ·
+  /// whatsapp_automacao (/api/lead/externo) — rótulos em lib/crm.ts
+  tipo         String
+  /// Versão da política vigente na hora (POLITICA_VERSAO em lib/politica.ts,
+  /// a data ISO); "anterior-a-2026-08-28" nos registros do backfill
+  textoVersao  String
+  registradoEm DateTime @default(now())
+  /// De onde veio a manifestação: seção do site, campanha da automação, PRESENCIAL…
+  origem       String
+  /// Só quando a própria pessoa enviou (formulário): prova de quem consentiu
+  ip           String?
+  userAgent    String?
 
   @@index([leadId])
 }

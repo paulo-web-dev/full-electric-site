@@ -1,18 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { permitido, ipDoCliente } from "@/lib/rateLimit";
+import { novoConsentimento } from "@/lib/consentimento";
+import {
+  permitido,
+  ipDoCliente,
+  LIMITE_LEADS_POR_IP,
+  JANELA_LEADS_MS,
+} from "@/lib/rateLimit";
 
 /*
   Anti-spam em três camadas, todas com BLOQUEIO SILENCIOSO (o bot recebe o
   mesmo 200 {ok:true} de um envio real, sem pista de que foi filtrado):
   1. honeypot: campo "website" invisível — humano não preenche;
   2. tempo mínimo de preenchimento: menos de 3s do carregamento ao envio = bot;
-  3. rate limit por IP: 5 envios por hora (IP lido atrás do proxy, ver
-     TRUST_PROXY_HOPS em lib/rateLimit.ts).
+  3. rate limit por IP: LIMITE_LEADS_POR_IP por hora (IP lido atrás do proxy,
+     ver TRUST_PROXY_HOPS em lib/rateLimit.ts).
 */
 const TEMPO_MINIMO_MS = 3000;
-const LIMITE_POR_IP = 5;
-const JANELA_MS = 60 * 60 * 1000;
 
 const RESPOSTA_OK = { ok: true };
 
@@ -83,8 +87,8 @@ export async function POST(request: Request) {
     typeof c.tempoMs !== "number" || c.tempoMs < TEMPO_MINIMO_MS;
   const estourouLimite = !permitido(
     `lead:${ipDoCliente(request.headers)}`,
-    LIMITE_POR_IP,
-    JANELA_MS
+    LIMITE_LEADS_POR_IP,
+    JANELA_LEADS_MS
   );
 
   if (honeypotPreenchido || rapidoDemais || estourouLimite) {
@@ -101,6 +105,7 @@ export async function POST(request: Request) {
 
   // Registro principal: banco (Postgres). Falha aqui não pode travar a conversão —
   // o cliente já está sendo levado ao WhatsApp.
+  const origem = lead.origem ?? "formulario";
   try {
     await prisma.lead.create({
       data: {
@@ -110,10 +115,12 @@ export async function POST(request: Request) {
         modeloInteresse: lead.modelo,
         uso: lead.uso,
         horarioPreferido: lead.horario,
-        origem: lead.origem ?? "formulario",
+        origem,
         utmSource: lead.utmSource,
         utmMedium: lead.utmMedium,
         utmCampaign: lead.utmCampaign,
+        // Checkbox marcado (validado acima); IP e navegador provam quem marcou
+        consentimentos: { create: novoConsentimento("formulario", origem, request) },
       },
     });
   } catch {

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getSite } from "@/lib/content";
+import { politicaVersaoPorExtenso } from "@/lib/politica";
 import { waLink } from "@/lib/whatsapp";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -7,13 +8,18 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Política de Privacidade",
   description:
-    "Como a Full Electric — Motos Elétricas coleta, usa e protege os dados do formulário, do atendimento e dos cookies do site, conforme a LGPD (Lei 13.709/2018).",
+    "Como a Full Electric — Motos Elétricas coleta, usa e protege os dados do formulário, do atendimento presencial e automatizado no WhatsApp e dos cookies do site, conforme a LGPD (Lei 13.709/2018).",
 };
 
-const ATUALIZADA_EM = "26 de agosto de 2026";
+/* A data vem de POLITICA_VERSAO (lib/politica.ts) — a mesma string gravada
+   em cada registro de consentimento. */
+const ATUALIZADA_EM = politicaVersaoPorExtenso();
 
 /*
   Mantida em sincronia com o que o código coleta — CLAUDE.md §3.7.
+  Formulário: app/api/lead/route.ts. Balcão: app/admin/leads/actions.ts.
+  Atendimento automatizado no WhatsApp: app/api/lead/externo/route.ts
+  (docs/INTEGRACAO-WHATSAPP.md).
   Cookies: lib/consent.ts (fe_consent), lib/utm.ts (fe_utm),
   lib/adminAuth.ts (fe_admin_sessao), components/Analytics.tsx (GA4, Pixel).
 */
@@ -88,17 +94,21 @@ export default function PoliticaDePrivacidadePage() {
                 2. Quais dados coletamos e de onde eles vêm
               </h2>
               <p className="mt-3">
-                Os dados pessoais que tratamos vêm de você mesmo, de duas
+                Os dados pessoais que tratamos vêm de você mesmo, de três
                 formas:{" "}
                 <strong>
                   o formulário de test drive que você preenche no site
-                </strong>{" "}
-                ou{" "}
+                </strong>
+                ;{" "}
                 <strong>
                   o contato que você faz com a loja pessoalmente, por telefone
                   ou por indicação
                 </strong>
-                , quando registramos seus dados para retornar. São eles:
+                , quando registramos seus dados para retornar; ou{" "}
+                <strong>
+                  a conversa com o nosso atendimento automatizado no WhatsApp
+                </strong>
+                , descrito logo abaixo. São eles:
               </p>
               <ul className="mt-3 list-disc space-y-1.5 pl-5">
                 <li>Nome;</li>
@@ -117,11 +127,47 @@ export default function PoliticaDePrivacidadePage() {
                 </li>
                 <li>Data e hora do envio ou do contato;</li>
                 <li>
+                  O registro de cada vez que você nos autorizou a guardar
+                  esses dados: como (no formulário, verbalmente no atendimento
+                  ou na conversa do WhatsApp), quando, e qual versão desta
+                  política estava em vigor. No formulário, guardamos também o
+                  endereço IP e o navegador usados no envio, como prova de que
+                  foi você quem marcou a caixa;
+                </li>
+                <li>
                   Registros do atendimento: anotações da conversa, agendamento
                   do test drive, modelo e valor da compra e, se a negociação
                   não avançar, o motivo.
                 </li>
               </ul>
+
+              <h3 className="mt-6 font-semibold">
+                Atendimento automatizado no WhatsApp
+              </h3>
+              <p className="mt-2">
+                Quando você chama a loja no WhatsApp — em especial a partir de
+                um anúncio no Facebook ou no Instagram — a primeira resposta
+                pode vir de um{" "}
+                <strong>assistente automatizado (inteligência artificial)</strong>
+                , que se identifica como tal no início da conversa. Ele tira
+                dúvidas sobre as motos e, se você quiser retorno da equipe,
+                pergunta seu nome, o modelo de interesse e como pretende usar
+                a moto. <strong>Antes de pedir esses dados</strong>, ele diz
+                para que servem e aponta esta política;{" "}
+                <strong>só com a sua concordância</strong> ele registra no nosso
+                sistema de atendimento o seu nome, o número de WhatsApp, o que
+                você informou e um resumo curto do que foi conversado, para a
+                equipe continuar de onde o assistente parou. Se você não
+                concordar, a conversa segue normalmente no WhatsApp e nada é
+                registrado no sistema.
+              </p>
+              <p className="mt-2">
+                O assistente não decide nada sozinho sobre preço, crédito ou
+                venda — tudo isso é feito por uma pessoa da equipe. A conversa
+                em si fica no WhatsApp, sob a política de privacidade da
+                própria Meta; no nosso sistema entra apenas o resumo descrito
+                acima.
+              </p>
               <p className="mt-3">
                 Além disso, o site usa cookies — alguns essenciais, outros só
                 com o seu aceite. Estão descritos na{" "}
@@ -137,10 +183,15 @@ export default function PoliticaDePrivacidadePage() {
                 3. Para que usamos os dados
               </h2>
               <p className="mt-3">
-                Os dados de contato, exclusivamente para{" "}
+                Os dados de contato — venham do formulário, do balcão ou do
+                atendimento automatizado no WhatsApp — exclusivamente para{" "}
                 <strong>atendimento comercial</strong>: responder ao seu
                 contato, agendar e confirmar o test drive, acompanhar a
-                negociação e prestar suporte pós-venda. Os cookies opcionais,
+                negociação e prestar suporte pós-venda. O resumo gravado pelo
+                assistente automatizado serve só para a equipe continuar a
+                conversa sem você repetir tudo; não é usado para treinar
+                modelos de inteligência artificial nem para traçar perfil. Os
+                cookies opcionais,
                 se você aceitar, para{" "}
                 <strong>medir o site e os anúncios</strong> (seção 5). Não
                 vendemos nem alugamos seus dados, não enviamos spam e não
@@ -154,13 +205,23 @@ export default function PoliticaDePrivacidadePage() {
               </h2>
               <ul className="mt-3 list-disc space-y-1.5 pl-5">
                 <li>
-                  Dados do formulário e do atendimento: seu{" "}
-                  <strong>consentimento</strong> (art. 7º, I), dado no próprio
-                  formulário ou verbalmente no atendimento, e a execução de{" "}
+                  Dados do formulário e do atendimento presencial ou por
+                  telefone: seu <strong>consentimento</strong> (art. 7º, I),
+                  dado no próprio formulário ou verbalmente no atendimento, e
+                  a execução de{" "}
                   <strong>
                     procedimentos preliminares ao contrato de compra
                   </strong>{" "}
                   a seu pedido (art. 7º, V).
+                </li>
+                <li>
+                  Dados registrados pelo atendimento automatizado no WhatsApp:
+                  seu <strong>consentimento</strong> (art. 7º, I), manifestado
+                  na própria conversa depois de o assistente informar a
+                  finalidade — guardamos como e quando ele foi dado — e os
+                  mesmos{" "}
+                  <strong>procedimentos preliminares ao contrato</strong> (art.
+                  7º, V). Você pode revogá-lo a qualquer momento (seção 8).
                 </li>
                 <li>
                   Cookies essenciais: <strong>legítimo interesse</strong> (art.
@@ -270,10 +331,13 @@ export default function PoliticaDePrivacidadePage() {
               <p className="mt-3">
                 Com ninguém para fins comerciais. Os dados de contato ficam em
                 provedores de infraestrutura que atuam como operadores em nosso
-                nome (hospedagem do site e banco de dados), sujeitos a contrato
-                e a esta política. Google e Meta recebem apenas os dados de
-                navegação descritos na seção 5, e somente se você aceitar os
-                cookies de medição.
+                nome (hospedagem do site, banco de dados e a plataforma que
+                executa o atendimento automatizado no WhatsApp), sujeitos a
+                contrato e a esta política. As mensagens trocadas no WhatsApp
+                passam pela Meta, conforme a política de privacidade do próprio
+                WhatsApp. Google e Meta recebem também os dados de navegação
+                descritos na seção 5, e somente se você aceitar os cookies de
+                medição.
               </p>
             </section>
 

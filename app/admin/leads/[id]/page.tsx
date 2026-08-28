@@ -9,6 +9,7 @@ import {
   COMO_CONHECEU_ORDEM,
   COMO_CONHECEU_ROTULO,
   rotuloOrigem,
+  rotuloConsentimento,
   formatarData,
   formatarDataHora,
   paraInputDateTime,
@@ -32,7 +33,10 @@ export default async function FichaLeadPage({
   const { id } = await params;
   const lead = await prisma.lead.findUnique({
     where: { id },
-    include: { notas: { orderBy: { criadoEm: "desc" } } },
+    include: {
+      notas: { orderBy: { criadoEm: "desc" } },
+      consentimentos: { orderBy: { registradoEm: "desc" } },
+    },
   });
   if (!lead) notFound();
 
@@ -42,8 +46,8 @@ export default async function FichaLeadPage({
   const dados: { rotulo: string; valor: string }[] = [
     { rotulo: "Telefone", valor: lead.telefone },
     { rotulo: "E-mail", valor: lead.email ?? "—" },
-    { rotulo: "Modelo de interesse", valor: lead.modeloInteresse },
-    { rotulo: "Uso pretendido", valor: lead.uso },
+    { rotulo: "Modelo de interesse", valor: lead.modeloInteresse || "—" },
+    { rotulo: "Uso pretendido", valor: lead.uso || "—" },
     { rotulo: "Horário preferido", valor: lead.horarioPreferido ?? "—" },
     { rotulo: "Origem", valor: rotuloOrigem(lead.origem) },
     {
@@ -133,6 +137,32 @@ export default async function FichaLeadPage({
         </div>
 
         <div className="grid content-start gap-6">
+          <section className={`${CARTAO} p-6`}>
+            <h2 className="font-semibold">
+              Consentimento LGPD{" "}
+              <span className="font-normal text-text-2">({lead.consentimentos.length})</span>
+            </h2>
+            {lead.consentimentos.length === 0 ? (
+              <p className="mt-1 text-[13px] text-text-2">
+                Nenhum registro. Lead cadastrado à mão antes de 28/08/2026: o
+                consentimento foi verbal e não ficou gravado.
+              </p>
+            ) : (
+              <ul className="mt-3 grid gap-2.5">
+                {lead.consentimentos.map((c) => (
+                  <li key={c.id} className="rounded-[8px] border border-ink/10 bg-muted p-3 text-[13px]">
+                    <p className="font-medium">{rotuloConsentimento(c.tipo)}</p>
+                    <p className="mt-1 text-text-2">
+                      {formatarDataHora(c.registradoEm)} · política {c.textoVersao} · via{" "}
+                      {rotuloOrigem(c.origem)}
+                      {c.ip ? ` · IP ${c.ip}` : ""}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
           {lead.status === "VENDIDO" && (
             <section className={`${CARTAO} p-6`}>
               <h2 className="font-semibold">Venda</h2>

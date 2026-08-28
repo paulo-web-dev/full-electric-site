@@ -5,6 +5,18 @@
   nesse caso.
 */
 
+/* Formulário público: teto por IP de visitante. */
+export const LIMITE_LEADS_POR_IP = 5;
+export const JANELA_LEADS_MS = 60 * 60 * 1000;
+
+/* /api/lead/externo: teto por token, não por IP — a automação sai de um IP
+   só, então o limite é o da campanha inteira. 60/h = 1 por minuto: folga
+   de várias vezes sobre um pico realista de anúncio local, e ainda assim
+   um token vazado não passa de ~1.400 leads/dia, volume que se limpa pelo
+   filtro de origem. Raciocínio completo em docs/INTEGRACAO-WHATSAPP.md. */
+export const LIMITE_EXTERNO_POR_TOKEN = 60;
+export const JANELA_EXTERNO_MS = 60 * 60 * 1000;
+
 const janelas = new Map<string, number[]>();
 
 export function permitido(

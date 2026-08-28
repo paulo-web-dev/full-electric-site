@@ -57,6 +57,8 @@ X30 e Slim estão `PENDENTE` (sem selo "sem CNH").
       moldura clara (opção A).** Código pronto para PNG com alpha
       (`recortada`, marcado por `npm run catalogo:fotos`).
 - [ ] Recortes (PNG com alpha) das fotos principais — o dono manda depois.
+      As 7 principais do catálogo novo seguem em PNG (mesmo nome = troca
+      direta); as 25 de galeria viraram JPEG q90 em 28/08/2026 (42 MB → 9 MB).
 - [ ] Foto 3/4 frontal preta da S60 em alta (as novas 3/4 são vermelhas).
 - [ ] Foto landscape para herói, ou aceitar o split atual.
 
@@ -87,5 +89,13 @@ X30 e Slim estão `PENDENTE` (sem selo "sem CNH").
 - [ ] Blog com dicas de legislação
 - [x] ~~Rotina de expurgo dos leads sem contato há 12 meses~~ **Pronta
       (26/08/2026):** `/api/admin/expurgo` com `CRON_SECRET`, dry-run por
-      padrão, log em `ExpurgoLog`; falta só agendar o cron semanal na VPS
-      (`docs/DEPLOY.md §9`).
+      padrão, log em `ExpurgoLog`.
+- [ ] **Automação do WhatsApp (campanha click-to-WhatsApp):** gerar
+      `API_TOKEN` no `.env` da VPS (`docs/INTEGRACAO-WHATSAPP.md`), colar na
+      automação e fazer o roteiro dela cumprir o passo LGPD (se identificar
+      como automática, informar a finalidade, pedir concordância antes de
+      chamar a rota). O deploy aplica a migration `20260828120000_consentimento`
+      (tabela de histórico + backfill dos leads do site).
+- [ ] **Agendar backup + expurgo na VPS:** `cd /srv/full-electric && git pull
+      && scripts/cron.sh` (instalador idempotente, 28/08/2026). Antes, testar
+      `scripts/expurgo.sh` em simulação. Não dá para fazer daqui: exige SSH.

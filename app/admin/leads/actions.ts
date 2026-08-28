@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { COOKIE_SESSAO, tokenValido } from "@/lib/adminAuth";
+import { novoConsentimento } from "@/lib/consentimento";
 import {
   ehStatusValido,
   ehMotivoValido,
@@ -67,6 +68,7 @@ export async function criarLead(formData: FormData): Promise<void> {
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return;
   if (!modeloInteresse || !uso) return;
 
+  const origem = ehOrigemManual(origemBruta) ? origemBruta : "OUTRO";
   const lead = await prisma.lead.create({
     data: {
       nome,
@@ -75,8 +77,10 @@ export async function criarLead(formData: FormData): Promise<void> {
       modeloInteresse,
       uso,
       horarioPreferido: null,
-      origem: ehOrigemManual(origemBruta) ? origemBruta : "OUTRO",
+      origem,
       comoConheceu: ehComoConheceuValido(comoConheceu) ? comoConheceu : null,
+      // Cadastro manual: consentimento dado verbalmente no atendimento (política §4)
+      consentimentos: { create: novoConsentimento("verbal", origem) },
       notas: observacao ? { create: { texto: observacao } } : undefined,
     },
   });

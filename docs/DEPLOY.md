@@ -104,6 +104,9 @@ No `.env`, para este ambiente:
   a `DIRECT_URL` porque o pooler não suporta as sessões que a migration exige.
 - `ADMIN_PASSWORD` e `SESSION_SECRET` (`openssl rand -base64 48`)
 - `CRON_SECRET` (`openssl rand -hex 32`) — token do expurgo LGPD, ver §9
+- `API_TOKEN` (`openssl rand -hex 32`, outro valor) — token da automação do
+  WhatsApp que grava leads em `/api/lead/externo`, ver
+  `docs/INTEGRACAO-WHATSAPP.md`
 
 Confira que a rede do Traefik está lá antes de subir:
 
@@ -225,7 +228,14 @@ Para subir uma imagem pulando o `migrate deploy` em emergência, acrescente
 scripts/backup.sh
 ```
 
-Diário às 3h, via cron (`crontab -e`):
+Diário às 3h, via cron. `scripts/cron.sh` instala esta linha e a do expurgo
+(§9) de uma vez, sem duplicar se rodar de novo:
+
+```bash
+scripts/cron.sh
+```
+
+Equivale a, no `crontab -e`:
 
 ```cron
 0 3 * * * /srv/full-electric/scripts/backup.sh >> /srv/full-electric/backups/backup.log 2>&1
@@ -381,12 +391,15 @@ scripts/expurgo.sh              # simulação: {"simulacao":true,"candidatos":N,
 scripts/expurgo.sh --confirmar  # apaga de verdade
 ```
 
-Semanal, segunda-feira às 4h, via cron (`crontab -e`) — depois do backup das
-3h, para o dump da semana ainda conter o que foi apagado:
+Semanal, segunda-feira às 4h, via cron — depois do backup das 3h, para o
+dump da semana ainda conter o que foi apagado. `scripts/cron.sh` (§6)
+instala as duas linhas; a do expurgo é:
 
 ```cron
 0 4 * * 1 /srv/full-electric/scripts/expurgo.sh --confirmar >> /srv/full-electric/backups/expurgo.log 2>&1
 ```
+
+Conferir que ficou agendado: `crontab -l | grep full-electric`.
 
 Cada linha do `expurgo.log` traz data ISO, status HTTP e o JSON de resumo.
 Para conferir o histórico direto no banco:

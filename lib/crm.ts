@@ -49,9 +49,9 @@ export function statusExigeDados(status: LeadStatus): boolean {
 
 /* ---------- Origem ----------
    `Lead.origem` é texto livre: o site grava a seção de onde o formulário
-   partiu (formulario, contato, entregadores...). Leads cadastrados à mão no
-   admin usam estas constantes. Nos relatórios, "site" = qualquer origem que
-   não seja manual. */
+   partiu (formulario, contato, entregadores, lp-{slug}); a automação do
+   WhatsApp manda o nome da campanha (meta-whatsapp, meta-c1...); leads
+   cadastrados à mão no admin usam estas constantes. */
 export const ORIGENS_MANUAIS = [
   "PRESENCIAL",
   "TELEFONE",
@@ -75,7 +75,22 @@ export function ehOrigemManual(valor: string): valor is OrigemManual {
 }
 
 export function rotuloOrigem(origem: string): string {
-  return ORIGEM_ROTULO[origem] ?? `Site — ${origem}`;
+  if (ORIGEM_ROTULO[origem]) return ORIGEM_ROTULO[origem];
+  if (origem.startsWith("lp-")) return `Site — LP ${origem.slice(3)}`;
+  return origem;
+}
+
+/* ---------- Consentimento LGPD ----------
+   `Consentimento.tipo` diz como cada manifestação foi obtida (histórico
+   completo por lead, lib/consentimento.ts). Texto livre, como origem. */
+export const CONSENTIMENTO_ROTULO: Record<string, string> = {
+  formulario: "Checkbox do formulário do site",
+  verbal: "Verbal, no atendimento",
+  whatsapp_automacao: "Na conversa com o atendimento automatizado do WhatsApp",
+};
+
+export function rotuloConsentimento(tipo: string): string {
+  return CONSENTIMENTO_ROTULO[tipo] ?? tipo;
 }
 
 /* ---------- Motivo da perda ---------- */
@@ -207,6 +222,16 @@ export function janelaDoMesCorrente(): { inicio: Date; fim: Date } {
       ? new Date(`${ano + 1}-01-01T00:00:00-03:00`)
       : new Date(`${ano}-${mm(mes + 1)}-01T00:00:00-03:00`);
   return { inicio, fim };
+}
+
+/* Só dígitos, sem o DDI 55 — a chave para reconhecer o mesmo telefone gravado
+   com máscaras diferentes ("(41) 98888-1253", "5541988881253", "41 98888 1253") */
+export function telefoneChave(valor: string): string {
+  const digitos = valor.replace(/\D/g, "");
+  if ((digitos.length === 12 || digitos.length === 13) && digitos.startsWith("55")) {
+    return digitos.slice(2);
+  }
+  return digitos;
 }
 
 /* Máscara BR de telefone: (41) 98888-1253 */

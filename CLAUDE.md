@@ -153,6 +153,21 @@ sinalize e peça confirmação explícita.
     grava em `ExpurgoLog`). Cron semanal na VPS: `docs/DEPLOY.md §9`.
   - `/politica-de-privacidade` deve ser mantida em sincronia com o que o código
     efetivamente coleta. Mudou a coleta → muda a política, na mesma tarefa.
+  - **Histórico de consentimento**: tabela `Consentimento` (um registro por
+    manifestação, nunca sobrescrito, cascade com o lead). Todo lead novo
+    nasce com um: `formulario` (checkbox; grava IP e navegador como prova),
+    `verbal` (cadastro manual no admin) ou `whatsapp_automacao`
+    (`POST /api/lead/externo`, token `API_TOKEN`, usado pela automação de
+    IA das campanhas click-to-WhatsApp; contrato em
+    `docs/INTEGRACAO-WHATSAPP.md`). `textoVersao` = `POLITICA_VERSAO`
+    (`lib/politica.ts`, data ISO da política): **mudou a política → mude a
+    constante**, é ela que a página exibe e que diz com que texto a pessoa
+    concordou. Monte o registro sempre por `novoConsentimento()`
+    (`lib/consentimento.ts`); nunca crie caminho de gravação de lead sem
+    ele. A automação só pode chamar a rota depois de se identificar como
+    automática, informar a finalidade e a pessoa concordar — a política
+    descreve exatamente isso (seções 2 e 4). A ficha mostra o histórico
+    completo.
   - **Cookies**: GA4 e Meta Pixel só carregam após "Aceitar" na faixa de
     cookies (consentimento, art. 7º I). Essenciais, sem consentimento:
     `fe_consent` (a escolha, 6 meses), `fe_utm` (UTMs da visita, sessão) e
@@ -236,13 +251,18 @@ converte para AVIF/WebP e redimensiona sob demanda — não é preciso converter
 à mão).
 
 - **S60 e E30:** JPG 384×512 px. Servem para card, não para herói em desktop.
-- **Catálogo de 27/08/2026:** PNG 1122×1402 (4:5), **fundo branco, sem
-  alpha**, 1 a 1,8 MB. Decisão de 28/08/2026: sobre seção escura ficam em
-  **moldura clara arredondada** (`classesFotoNoEscuro` em `lib/catalogo.ts`).
+- **Catálogo de 27/08/2026:** 1122×1402 (4:5), **fundo branco, sem alpha**.
+  Decisão de 28/08/2026: sobre seção escura ficam em **moldura clara
+  arredondada** (`classesFotoNoEscuro` em `lib/catalogo.ts`).
+- **Formato no repositório:** a foto `principal` de cada modelo fica em
+  **PNG** (≈ 0,7 MB, recomprimido sem perda) para receber o recorte com alpha
+  no mesmo nome; as demais são **JPEG q90** (≈ 100–230 KB). Chegou lote novo
+  em PNG → `npm run catalogo:comprimir` faz essa separação sozinho e reescreve
+  os `src` no JSON. Nunca converta a principal para JPEG à mão.
 - **Recortes (PNG com alpha):** basta trocar o arquivo e rodar
   `npm run catalogo:fotos` — ele marca `recortada: true` lendo o canal
   alpha, e a foto passa a ficar solta sobre o escuro, com halo e sem moldura.
-  Nenhuma mudança de código.
+  Nenhuma mudança de código. (`comprimir` também preserva PNG com alpha.)
 - Não use as fotos de showroom (marca do fornecedor); a colagem do lime foi
   removida do repositório.
 
@@ -326,6 +346,7 @@ app/
   precisa-de-cnh/page.tsx
   para-entregadores/page.tsx
   api/lead/route.ts     recebe o formulário
+  api/lead/externo/route.ts  recebe lead da automação do WhatsApp (API_TOKEN)
   api/health/route.ts   healthcheck do container (sem tocar no banco)
 components/
   ui/                   Button, Card, Chip, Accordion, Section
@@ -387,16 +408,24 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
   horarioPreferido?, origem, utmSource?, utmMedium?, utmCampaign?, status,
   proximoContatoEm?, valorVenda?, dataVenda?, modeloVendido?, motivoPerda?,
   motivoPerdaDetalhe?, comoConheceu?, criadoEm, atualizadoEm), `Nota` (leadId,
-  texto, criadoEm, cascade no delete) e `ExpurgoLog` (executadoEm, simulacao,
-  limite, candidatos, apagados). Status: NOVO → CONTATADO →
+  texto, criadoEm, cascade no delete), `Consentimento` (leadId, tipo,
+  textoVersao, registradoEm, origem, ip?, userAgent?, cascade no delete —
+  §3.7) e `ExpurgoLog` (executadoEm, simulacao, limite, candidatos, apagados). Status: NOVO → CONTATADO →
   TEST_DRIVE_AGENDADO → NEGOCIANDO → VENDIDO | PERDIDO (`lib/crm.ts`).
   `MotivoPerda`: PRECO · OUTRA_LOJA · SUMIU · SEM_MODELO · OUTRO.
   `ComoConheceu` (só cadastro manual e ficha — lead do site já traz UTMs):
   PANFLETO · GOOGLE · INSTAGRAM · INDICACAO · PASSOU_NA_FRENTE · OUTRO.
 - **Origem é texto livre**, não enum: o site grava a seção do formulário
-  (`formulario`, `contato`, `entregadores`, `lp-{slug}`); leads manuais usam
-  `ORIGENS_MANUAIS` (`PRESENCIAL`, `TELEFONE`, `INDICACAO`, `OUTRO`) de
-  `lib/crm.ts`. "Site" nos relatórios = qualquer origem que não seja manual.
+  (`formulario`, `contato`, `entregadores`, `lp-{slug}`); a automação do
+  WhatsApp manda o nome da campanha (`meta-whatsapp`, `meta-c1`…, padrão
+  `whatsapp-automacao`); leads manuais usam `ORIGENS_MANUAIS`
+  (`PRESENCIAL`, `TELEFONE`, `INDICACAO`, `OUTRO`) de `lib/crm.ts`.
+- **Entrada externa (`POST /api/lead/externo`)**: token fixo `API_TOKEN`
+  (`lib/apiToken.ts`, o mesmo mecanismo do expurgo), rate limit **por
+  token** (`LIMITE_EXTERNO_POR_TOKEN` em `lib/rateLimit.ts`, 60/h) com
+  `429` explícito, idempotente por telefone (`telefoneChave` em
+  `lib/crm.ts`: mesmo número = mesmo lead; observação vira nota; só
+  preenche campos vazios). Contrato em `docs/INTEGRACAO-WHATSAPP.md`.
 - **Movimento de status com dados (`moverLead`):** TEST_DRIVE_AGENDADO exige
   data/hora (grava em `proximoContatoEm` — o próximo contato *é* o test
   drive); VENDIDO exige valor, data e modelo vendido; PERDIDO exige motivo.
@@ -416,7 +445,7 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
   permissões, automação de e-mail, calendário, faturamento.
 - **Env obrigatórias em produção:** `DATABASE_URL`, `DIRECT_URL`,
   `ADMIN_PASSWORD`, `SESSION_SECRET`, `TRUST_PROXY_HOPS` (=1 atrás do Traefik),
-  `CRON_SECRET` (expurgo LGPD).
+  `CRON_SECRET` (expurgo LGPD), `API_TOKEN` (automação do WhatsApp).
   Ver `.env.example`.
 - **`NEXT_PUBLIC_*` são de build**, não de runtime: entram como `ARG` no
   Dockerfile e exigem rebuild da imagem para mudar (README).
