@@ -10,6 +10,9 @@
                                       e atualiza o JSON: "SIM" só em quem passa
                                       nos 4 critérios + equipamentos
     npm run catalogo:fotos            relê largura/altura/alpha de cada foto
+    npm run catalogo:comprimir        PNG de galeria (não principal, sem alpha)
+                                      vira JPEG q90; principal fica PNG para
+                                      receber recorte com alpha no mesmo nome
     npm run catalogo -- fundir A B    funde o modelo B no modelo A (fotos,
                                       cores, campos vazios) e remove B
 
@@ -82,6 +85,65 @@ async function cmdFotos() {
   const n = await sincronizarFotos(catalogo);
   gravarCatalogo(catalogo);
   console.log(`${n} fotos sincronizadas (largura, altura, recortada).`);
+}
+
+/* -------------------------------------------------------------- comprimir */
+
+const JPEG = { quality: 90, mozjpeg: true, chromaSubsampling: "4:4:4" };
+
+function kb(bytes) {
+  return `${Math.round(bytes / 1024).toLocaleString("pt-BR")} KB`;
+}
+
+async function cmdComprimir() {
+  const catalogo = lerCatalogo();
+  let antes = 0, depois = 0;
+  const linhas = [];
+
+  for (const m of catalogo.modelos) {
+    for (const f of m.fotos) {
+      if (!/\.png$/i.test(f.src)) continue;
+      const abs = path.join(PUBLIC, f.src);
+      if (!fs.existsSync(abs)) falhar(`${m.slug}: foto não encontrada — ${f.src}`);
+      const tamanho = fs.statSync(abs).size;
+      antes += tamanho;
+      const meta = await sharp(abs).metadata();
+
+      if (f.principal || meta.hasAlpha) {
+        // Fica PNG (principal espera recorte; alpha já é recorte). Só recomprime sem perda.
+        const png = await sharp(abs).png({ compressionLevel: 9, adaptiveFiltering: true, effort: 10 }).toBuffer();
+        const ganho = png.length < tamanho * 0.95;
+        if (ganho) fs.writeFileSync(abs, png);
+        const novo = ganho ? png.length : tamanho;
+        depois += novo;
+        linhas.push([f.src, kb(tamanho), kb(novo), meta.hasAlpha ? "PNG (alpha)" : "PNG (principal)"]);
+        continue;
+      }
+
+      const jpgAbs = abs.replace(/\.png$/i, ".jpg");
+      if (fs.existsSync(jpgAbs)) falhar(`${m.slug}: já existe ${path.basename(jpgAbs)} — resolva antes`);
+      await sharp(abs).flatten({ background: "#ffffff" }).jpeg(JPEG).toFile(jpgAbs);
+      fs.unlinkSync(abs);
+      const novo = fs.statSync(jpgAbs).size;
+      depois += novo;
+      f.src = f.src.replace(/\.png$/i, ".jpg");
+      linhas.push([f.src, kb(tamanho), kb(novo), "JPEG q90"]);
+    }
+  }
+
+  if (linhas.length === 0) {
+    console.log("Nenhuma foto PNG no catálogo — nada a fazer.");
+    return;
+  }
+  await sincronizarFotos(catalogo);
+  gravarCatalogo(catalogo);
+
+  const larg = Math.max(...linhas.map((l) => l[0].length));
+  for (const [src, de, para, como] of linhas) {
+    console.log(`${src.padEnd(larg)}  ${de.padStart(9)} → ${para.padStart(9)}  ${como}`);
+  }
+  console.log(`\n${linhas.length} fotos: ${kb(antes)} → ${kb(depois)} (${Math.round((1 - depois / antes) * 100)}% menor).`);
+  console.log("JSON atualizado. Rode npm run build para validar.");
 }
 
 /* ----------------------------------------------------------------- fundir */
@@ -498,10 +560,13 @@ switch (comando) {
   case "fotos":
     await cmdFotos();
     break;
+  case "comprimir":
+    await cmdComprimir();
+    break;
   case "fundir":
     await cmdFundir(args[0], args[1]);
     break;
   default:
-    console.log("uso: node scripts/catalogo.mjs <ficha|aferir [csv]|fotos|fundir <destino> <origem>>");
+    console.log("uso: node scripts/catalogo.mjs <ficha|aferir [csv]|fotos|comprimir|fundir <destino> <origem>>");
     process.exit(comando ? 1 : 0);
 }

@@ -11,7 +11,8 @@
     "catalogo": "node scripts/catalogo.mjs",
     "catalogo:ficha": "node scripts/catalogo.mjs ficha",
     "catalogo:aferir": "node scripts/catalogo.mjs aferir",
-    "catalogo:fotos": "node scripts/catalogo.mjs fotos"
+    "catalogo:fotos": "node scripts/catalogo.mjs fotos",
+    "catalogo:comprimir": "node scripts/catalogo.mjs comprimir"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

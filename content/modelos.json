@@ -93,38 +93,38 @@
           "principal": true
         },
         {
-          "src": "/images/modelos/s60/citycoco-bolin-preto-frente.png",
+          "src": "/images/modelos/s60/citycoco-bolin-preto-frente.jpg",
           "alt": "Full Electric S60 preta, vista de frente",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/s60/citycoco-bolin-preto-34-traseira.png",
+          "src": "/images/modelos/s60/citycoco-bolin-preto-34-traseira.jpg",
           "alt": "Full Electric S60 preta, em três quartos, vista traseira",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/s60/citycoco-bolin-preto-traseira-plaqueta.png",
+          "src": "/images/modelos/s60/citycoco-bolin-preto-traseira-plaqueta.jpg",
           "alt": "Full Electric S60 preta, vista traseira, com a plaqueta de identificação",
           "largura": 1122,
           "altura": 1402,
           "uso": "compliance"
         },
         {
-          "src": "/images/modelos/s60/citycoco-bolin-vermelho-lateral.png",
+          "src": "/images/modelos/s60/citycoco-bolin-vermelho-lateral.jpg",
           "alt": "Full Electric S60 vermelha, vista de perfil",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/s60/citycoco-bolin-vermelho-34-frente.png",
+          "src": "/images/modelos/s60/citycoco-bolin-vermelho-34-frente.jpg",
           "alt": "Full Electric S60 vermelha, em três quartos, vista de frente",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/s60/citycoco-bolin-vermelho-34-traseira.png",
+          "src": "/images/modelos/s60/citycoco-bolin-vermelho-34-traseira.jpg",
           "alt": "Full Electric S60 vermelha, em três quartos, vista traseira",
           "largura": 1122,
           "altura": 1402
@@ -293,25 +293,25 @@
           "principal": true
         },
         {
-          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-lateral.png",
+          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-lateral.jpg",
           "alt": "Citycoco King Pro X30 azul com estampa Union Jack, vista de perfil",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-34-traseira.png",
+          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-34-traseira.jpg",
           "alt": "Citycoco King Pro X30 azul com estampa Union Jack, em três quartos, vista traseira",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-34-frente-alt.png",
+          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-34-frente-alt.jpg",
           "alt": "Citycoco King Pro X30 azul com estampa Union Jack, em três quartos, vista de frente",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-duplo.png",
+          "src": "/images/modelos/citycoco-king-pro-x30/citycoco-x30-unionjack-duplo.jpg",
           "alt": "Citycoco King Pro X30 azul com estampa Union Jack, duas unidades lado a lado",
           "largura": 1122,
           "altura": 1402
@@ -370,31 +370,31 @@
           "principal": true
         },
         {
-          "src": "/images/modelos/citycoco-slim/citycoco-slim-azul-lateral.png",
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-azul-lateral.jpg",
           "alt": "Citycoco Slim azul, vista de perfil",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/citycoco-slim/citycoco-slim-verde-oliva-lateral.png",
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-verde-oliva-lateral.jpg",
           "alt": "Citycoco Slim verde-oliva, vista de perfil",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/citycoco-slim/citycoco-slim-laranja-34-traseira.png",
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-laranja-34-traseira.jpg",
           "alt": "Citycoco Slim laranja, em três quartos, vista traseira",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/citycoco-slim/citycoco-slim-laranja-frente.png",
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-laranja-frente.jpg",
           "alt": "Citycoco Slim laranja, vista de frente",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/citycoco-slim/citycoco-slim-azul-34-traseira.png",
+          "src": "/images/modelos/citycoco-slim/citycoco-slim-azul-34-traseira.jpg",
           "alt": "Citycoco Slim azul, em três quartos, vista traseira",
           "largura": 1122,
           "altura": 1402
@@ -450,19 +450,19 @@
           "principal": true
         },
         {
-          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-34-frente-alt.png",
+          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-34-frente-alt.jpg",
           "alt": "Explorer II verde e branca, em três quartos, vista de frente",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-frente.png",
+          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-frente.jpg",
           "alt": "Explorer II verde e branca, vista de frente",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-lateral.png",
+          "src": "/images/modelos/konnan-explorer-ii/konnan-explorer-ii-verde-lateral.jpg",
           "alt": "Explorer II verde e branca, vista de perfil",
           "largura": 1122,
           "altura": 1402
@@ -569,26 +569,26 @@
           "principal": true
         },
         {
-          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-frente.png",
+          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-frente.jpg",
           "alt": "scooter-urbano-lime preta com detalhes verde-limão, vista de frente",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-34-frente-alt.png",
+          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-34-frente-alt.jpg",
           "alt": "scooter-urbano-lime preta com detalhes verde-limão, em três quartos, vista de frente",
           "largura": 1122,
           "altura": 1402
         },
         {
-          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-traseira-plaqueta.png",
+          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-traseira-plaqueta.jpg",
           "alt": "scooter-urbano-lime preta com detalhes verde-limão, vista traseira, com a plaqueta de identificação",
           "largura": 1122,
           "altura": 1402,
           "uso": "compliance"
         },
         {
-          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-lateral-HERO.png",
+          "src": "/images/modelos/scooter-urbano-lime/urbano-lime-lateral-HERO.jpg",
           "alt": "scooter-urbano-lime preta com detalhes verde-limão, vista de perfil",
           "largura": 1448,
           "altura": 1086,
@@ -647,7 +647,7 @@
           "principal": true
         },
         {
-          "src": "/images/modelos/scooter-urbano-grafite/urbano-grafite-frente.png",
+          "src": "/images/modelos/scooter-urbano-grafite/urbano-grafite-frente.jpg",
           "alt": "scooter-urbano-grafite grafite, vista de frente",
           "largura": 1122,
           "altura": 1402
@@ -704,7 +704,7 @@
           "principal": true
         },
         {
-          "src": "/images/modelos/scooter-urbano-branco-vermelho/urbano-branco-vermelho-traseira-plaqueta.png",
+          "src": "/images/modelos/scooter-urbano-branco-vermelho/urbano-branco-vermelho-traseira-plaqueta.jpg",
           "alt": "scooter-urbano-branco-vermelho branca e vermelha, vista traseira, com a plaqueta de identificação",
           "largura": 1122,
           "altura": 1402,
@@ -762,7 +762,7 @@
           "principal": true
         },
         {
-          "src": "/images/modelos/scooter-urbano-preto-amarelo/urbano-preto-amarelo-34-duplo.png",
+          "src": "/images/modelos/scooter-urbano-preto-amarelo/urbano-preto-amarelo-34-duplo.jpg",
           "alt": "scooter-urbano-preto-amarelo preta e amarela, duas unidades lado a lado",
           "largura": 1122,
           "altura": 1402
