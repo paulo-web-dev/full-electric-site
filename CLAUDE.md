@@ -157,8 +157,8 @@ sinalize e peça confirmação explícita.
     manifestação, nunca sobrescrito, cascade com o lead). Todo lead novo
     nasce com um: `formulario` (checkbox; grava IP e navegador como prova),
     `verbal` (cadastro manual no admin) ou `whatsapp_automacao`
-    (`POST /api/lead/externo`, token `API_TOKEN`, usado pela automação de
-    IA das campanhas click-to-WhatsApp; contrato em
+    (`POST /api/agent/leads`, token `API_TOKEN`, usado pelo agente de IA
+    das campanhas click-to-WhatsApp; contrato em
     `docs/INTEGRACAO-WHATSAPP.md`). `textoVersao` = `POLITICA_VERSAO`
     (`lib/politica.ts`, data ISO da política): **mudou a política → mude a
     constante**, é ela que a página exibe e que diz com que texto a pessoa
@@ -168,6 +168,13 @@ sinalize e peça confirmação explícita.
     automática, informar a finalidade e a pessoa concordar — a política
     descreve exatamente isso (seções 2 e 4). A ficha mostra o histórico
     completo.
+  - **Retomada automática e revogação**: o agente manda no máximo 3
+    mensagens de retomada por lead, uma a cada 24 h (`/api/agent/followups`,
+    `Lead.followupCount`/`ultimoFollowup`) — a política declara isso e diz
+    como parar. `Lead.optOut` é a revogação: só vira `true` (pela API ou
+    pela equipe) e **nunca volta a `false` por máquina**; lead com `optOut`
+    sai da fila e o agente não insiste. Mudou o número de mensagens ou o
+    intervalo → muda a política.
   - **Cookies**: GA4 e Meta Pixel só carregam após "Aceitar" na faixa de
     cookies (consentimento, art. 7º I). Essenciais, sem consentimento:
     `fe_consent` (a escolha, 6 meses), `fe_utm` (UTMs da visita, sessão) e
@@ -346,7 +353,8 @@ app/
   precisa-de-cnh/page.tsx
   para-entregadores/page.tsx
   api/lead/route.ts     recebe o formulário
-  api/lead/externo/route.ts  recebe lead da automação do WhatsApp (API_TOKEN)
+  api/agent/leads/route.ts      agente do WhatsApp: busca e upsert por telefone (API_TOKEN)
+  api/agent/followups/route.ts  agente do WhatsApp: fila de retomada e marcação de envio
   api/health/route.ts   healthcheck do container (sem tocar no banco)
 components/
   ui/                   Button, Card, Chip, Accordion, Section
@@ -407,7 +415,8 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
 - **Modelo de dados:** `Lead` (nome, telefone, email?, modeloInteresse, uso,
   horarioPreferido?, origem, utmSource?, utmMedium?, utmCampaign?, status,
   proximoContatoEm?, valorVenda?, dataVenda?, modeloVendido?, motivoPerda?,
-  motivoPerdaDetalhe?, comoConheceu?, criadoEm, atualizadoEm), `Nota` (leadId,
+  motivoPerdaDetalhe?, comoConheceu?, followupCount, ultimoFollowup?,
+  optOut, criadoEm, atualizadoEm), `Nota` (leadId,
   texto, criadoEm, cascade no delete), `Consentimento` (leadId, tipo,
   textoVersao, registradoEm, origem, ip?, userAgent?, cascade no delete —
   §3.7) e `ExpurgoLog` (executadoEm, simulacao, limite, candidatos, apagados). Status: NOVO → CONTATADO →
@@ -420,12 +429,19 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
   WhatsApp manda o nome da campanha (`meta-whatsapp`, `meta-c1`…, padrão
   `whatsapp-automacao`); leads manuais usam `ORIGENS_MANUAIS`
   (`PRESENCIAL`, `TELEFONE`, `INDICACAO`, `OUTRO`) de `lib/crm.ts`.
-- **Entrada externa (`POST /api/lead/externo`)**: token fixo `API_TOKEN`
-  (`lib/apiToken.ts`, o mesmo mecanismo do expurgo), rate limit **por
-  token** (`LIMITE_EXTERNO_POR_TOKEN` em `lib/rateLimit.ts`, 60/h) com
-  `429` explícito, idempotente por telefone (`telefoneChave` em
-  `lib/crm.ts`: mesmo número = mesmo lead; observação vira nota; só
-  preenche campos vazios). Contrato em `docs/INTEGRACAO-WHATSAPP.md`.
+- **Agente do WhatsApp (`/api/agent/leads`, `/api/agent/followups`)**:
+  token fixo `API_TOKEN` com mínimo de 32 caracteres (`exigirApiToken` em
+  `lib/apiToken.ts`; ausente → 500 e log, errado → 401), regras em
+  `lib/agente.ts`. GET por telefone devolve 200 `encontrado: false` para
+  contato novo. POST é upsert por telefone (`telefoneChave`; gravado com a
+  máscara de `formatarTelefone`, devolvido também em E.164): **só os campos
+  enviados mudam**; `origem` só na criação; mudança de status gera nota
+  `[agente]`. **`VENDIDO` e `PERDIDO` → 403** (`status_reservado_ao_humano`):
+  são registrados por pessoa, com valor/motivo. `TEST_DRIVE_AGENDADO` exige
+  `proximoContatoEm`. Erros trazem `error` (código) e `mensagem` (texto
+  para o modelo). Escrita divide um balde de rate limit por token
+  (`LIMITE_EXTERNO_POR_TOKEN`, 60/h, 429 explícito); GET sem limite.
+  Contrato e `curl` em `docs/INTEGRACAO-WHATSAPP.md`.
 - **Movimento de status com dados (`moverLead`):** TEST_DRIVE_AGENDADO exige
   data/hora (grava em `proximoContatoEm` — o próximo contato *é* o test
   drive); VENDIDO exige valor, data e modelo vendido; PERDIDO exige motivo.

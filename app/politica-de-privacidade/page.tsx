@@ -18,7 +18,7 @@ const ATUALIZADA_EM = politicaVersaoPorExtenso();
 /*
   Mantida em sincronia com o que o código coleta — CLAUDE.md §3.7.
   Formulário: app/api/lead/route.ts. Balcão: app/admin/leads/actions.ts.
-  Atendimento automatizado no WhatsApp: app/api/lead/externo/route.ts
+  Atendimento automatizado e retomada no WhatsApp: app/api/agent/*
   (docs/INTEGRACAO-WHATSAPP.md).
   Cookies: lib/consent.ts (fe_consent), lib/utm.ts (fe_utm),
   lib/adminAuth.ts (fe_admin_sessao), components/Analytics.tsx (GA4, Pixel).
@@ -137,7 +137,12 @@ export default function PoliticaDePrivacidadePage() {
                 <li>
                   Registros do atendimento: anotações da conversa, agendamento
                   do test drive, modelo e valor da compra e, se a negociação
-                  não avançar, o motivo.
+                  não avançar, o motivo;
+                </li>
+                <li>
+                  Quantas mensagens automáticas de retomada você recebeu e
+                  quando, e o seu pedido para não receber mais contato, se
+                  fizer.
                 </li>
               </ul>
 
@@ -168,6 +173,15 @@ export default function PoliticaDePrivacidadePage() {
                 própria Meta; no nosso sistema entra apenas o resumo descrito
                 acima.
               </p>
+              <p className="mt-2">
+                <strong>Mensagens de retomada.</strong> Se a conversa ficar em
+                aberto, o assistente pode enviar até{" "}
+                <strong>3 mensagens automáticas</strong> para retomá-la,
+                espaçadas por dias, e nunca mais de uma por dia. Para parar,
+                basta responder pedindo (por exemplo, &quot;não quero mais
+                contato&quot;) ou chamar a loja no WhatsApp: a partir daí
+                nenhuma mensagem automática é enviada, e isso fica registrado.
+              </p>
               <p className="mt-3">
                 Além disso, o site usa cookies — alguns essenciais, outros só
                 com o seu aceite. Estão descritos na{" "}
@@ -187,11 +201,12 @@ export default function PoliticaDePrivacidadePage() {
                 atendimento automatizado no WhatsApp — exclusivamente para{" "}
                 <strong>atendimento comercial</strong>: responder ao seu
                 contato, agendar e confirmar o test drive, acompanhar a
-                negociação e prestar suporte pós-venda. O resumo gravado pelo
-                assistente automatizado serve só para a equipe continuar a
-                conversa sem você repetir tudo; não é usado para treinar
-                modelos de inteligência artificial nem para traçar perfil. Os
-                cookies opcionais,
+                negociação e prestar suporte pós-venda — o que inclui as
+                mensagens de retomada da seção 2, limitadas a 3. O resumo
+                gravado pelo assistente automatizado serve só para a equipe
+                continuar a conversa sem você repetir tudo; não é usado para
+                treinar modelos de inteligência artificial nem para traçar
+                perfil. Os cookies opcionais,
                 se você aceitar, para{" "}
                 <strong>medir o site e os anúncios</strong> (seção 5). Não
                 vendemos nem alugamos seus dados, não enviamos spam e não
@@ -352,7 +367,11 @@ export default function PoliticaDePrivacidadePage() {
                 <li>Confirmar se tratamos seus dados e acessá-los;</li>
                 <li>Corrigir dados incompletos ou desatualizados;</li>
                 <li>Pedir a exclusão definitiva;</li>
-                <li>Revogar o consentimento (inclusive o dos cookies);</li>
+                <li>
+                  Revogar o consentimento (inclusive o dos cookies) e pedir
+                  para não receber mais mensagens — na própria conversa do
+                  WhatsApp já vale;
+                </li>
                 <li>Pedir informação sobre compartilhamentos.</li>
               </ul>
               <p className="mt-3">

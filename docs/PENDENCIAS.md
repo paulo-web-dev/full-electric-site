@@ -90,12 +90,18 @@ X30 e Slim estão `PENDENTE` (sem selo "sem CNH").
 - [x] ~~Rotina de expurgo dos leads sem contato há 12 meses~~ **Pronta
       (26/08/2026):** `/api/admin/expurgo` com `CRON_SECRET`, dry-run por
       padrão, log em `ExpurgoLog`.
-- [ ] **Automação do WhatsApp (campanha click-to-WhatsApp):** gerar
-      `API_TOKEN` no `.env` da VPS (`docs/INTEGRACAO-WHATSAPP.md`), colar na
-      automação e fazer o roteiro dela cumprir o passo LGPD (se identificar
-      como automática, informar a finalidade, pedir concordância antes de
-      chamar a rota). O deploy aplica a migration `20260828120000_consentimento`
-      (tabela de histórico + backfill dos leads do site).
+- [ ] **Agente do WhatsApp (campanha click-to-WhatsApp):** gerar
+      `API_TOKEN` (≥ 32 caracteres) no `.env` da VPS
+      (`docs/INTEGRACAO-WHATSAPP.md`), colar no n8n e fazer o roteiro do
+      agente cumprir o passo LGPD (se identificar como automático, informar
+      a finalidade e as mensagens de retomada, pedir concordância antes do
+      POST; `optOut: true` ao primeiro "pare"). O deploy aplica as
+      migrations `20260828120000_consentimento` (histórico + backfill) e
+      `20260828150000_followup_optout` (contador, último follow-up, optOut,
+      índice em telefone).
+- [ ] **`optOut` na ficha do admin:** hoje só a API marca a revogação; a
+      equipe precisa ver e marcar na ficha (pedido feito na loja ou por
+      telefone). Não incluído por restrição do pedido de 28/08/2026.
 - [ ] **Agendar backup + expurgo na VPS:** `cd /srv/full-electric && git pull
       && scripts/cron.sh` (instalador idempotente, 28/08/2026). Antes, testar
       `scripts/expurgo.sh` em simulação. Não dá para fazer daqui: exige SSH.

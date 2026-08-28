@@ -104,8 +104,8 @@ No `.env`, para este ambiente:
   a `DIRECT_URL` porque o pooler não suporta as sessões que a migration exige.
 - `ADMIN_PASSWORD` e `SESSION_SECRET` (`openssl rand -base64 48`)
 - `CRON_SECRET` (`openssl rand -hex 32`) — token do expurgo LGPD, ver §9
-- `API_TOKEN` (`openssl rand -hex 32`, outro valor) — token da automação do
-  WhatsApp que grava leads em `/api/lead/externo`, ver
+- `API_TOKEN` (`openssl rand -hex 32`, outro valor, mínimo 32 caracteres) —
+  token do agente do WhatsApp nas rotas `/api/agent/*`, ver
   `docs/INTEGRACAO-WHATSAPP.md`
 
 Confira que a rede do Traefik está lá antes de subir:

@@ -59,6 +59,13 @@ model Lead {
   motivoPerda        MotivoPerda?
   motivoPerdaDetalhe String?
   comoConheceu       ComoConheceu?
+  /// Follow-up automático pelo agente do WhatsApp (/api/agent/followups):
+  /// quantos já foram e quando foi o último. Máximo 3, intervalo de 24 h.
+  followupCount      Int           @default(0)
+  ultimoFollowup     DateTime?
+  /// Pessoa pediu para não ser mais contatada. Só vira true (pela API ou
+  /// pela equipe); nunca volta a false por máquina.
+  optOut             Boolean       @default(false)
   criadoEm           DateTime      @default(now())
   atualizadoEm       DateTime      @updatedAt
   notas              Nota[]
@@ -67,6 +74,7 @@ model Lead {
   @@index([status])
   @@index([criadoEm])
   @@index([proximoContatoEm])
+  @@index([telefone])
 }
 
 model Nota {
@@ -87,7 +95,7 @@ model Consentimento {
   leadId       String
   lead         Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
   /// formulario (checkbox do site) · verbal (balcão/telefone) ·
-  /// whatsapp_automacao (/api/lead/externo) — rótulos em lib/crm.ts
+  /// whatsapp_automacao (/api/agent/leads) — rótulos em lib/crm.ts
   tipo         String
   /// Versão da política vigente na hora (POLITICA_VERSAO em lib/politica.ts,
   /// a data ISO); "anterior-a-2026-08-28" nos registros do backfill
