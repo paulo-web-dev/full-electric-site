@@ -164,9 +164,57 @@ Resposta `{ ok: true, followupsEnviados: 2 }`; `404 lead_nao_encontrado` se o
 `leadId` não existe. Se o lead já estava com `optOut`, a resposta vem com
 `aviso` — a mensagem fica registrada, mas o agente deve parar.
 
+## `GET /api/agent/conversas?telefone=...` — estado da conversa
+
+A memória do n8n não persiste entre execuções; sem isto o agente se
+apresenta de novo a cada mensagem. Chame no início de **toda** mensagem
+recebida (sem rate limit). Sempre `200`, nunca `404` — conversa inexistente
+devolve o estado vazio:
+
+```json
+{ "historico": [], "pausado": false, "pausadoAte": null }
+```
+
+Com conversa gravada:
+
+```json
+{
+  "historico": [
+    { "role": "user", "content": "Quanto custa a S60?" },
+    { "role": "assistant", "content": "O valor eu consulto com a equipe..." }
+  ],
+  "pausado": true,
+  "pausadoAte": "2026-08-31T10:30:00.000Z"
+}
+```
+
+**`pausado` já vem calculado pelo servidor** (`pausadoAte` no futuro) — o
+n8n não compara datas. **Se `pausado: true`, o agente não responde**: um
+humano assumiu a conversa pelo celular.
+
+## `POST /api/agent/conversas` — gravar histórico, pausar, despausar
+
+Upsert por telefone (mesma máscara do CRM). Campos opcionais — envie ao
+menos um:
+
+| Campo | Regra |
+|---|---|
+| `historico` | array de `{role, content}`, `role` em `user`/`assistant`, `content` string. **Substitui o histórico inteiro** (mande a versão já podada). Máximo 100 KB serializado (→ `400 historico_grande`); o servidor ainda corta nos **16 itens mais recentes** |
+| `pausarMinutos` | número de 1 a 1440 (24 h). Seta `pausadoAte = agora + N min`. Use quando um humano assumir |
+| `despausar` | só `true`. Zera a pausa (`pausadoAte = null`) |
+
+`pausarMinutos` e `despausar` juntos → `400 pausa_conflitante`. Resposta:
+`{ ok: true, pausado, pausadoAte }`.
+
+Retenção: conversa sem mensagem há **90 dias** é apagada pelo expurgo
+semanal (`/api/admin/expurgo`) — prazo declarado na política de privacidade
+(seção 2). O histórico serve só de contexto: dado de cadastro continua indo
+para `/api/agent/leads`, com o passo de consentimento.
+
 ## Rate limit: 60 gravações por hora, por token
 
-Vale para os dois `POST`, num balde só; `GET` não tem limite (é consultado a
+Vale para todos os `POST` de `/api/agent/*` (leads, followups e conversas),
+num balde só; `GET` não tem limite (é consultado a
 cada mensagem e só lê). O limite é **por token**, não por IP
 (`LIMITE_EXTERNO_POR_TOKEN` em `lib/rateLimit.ts`): o agente sai de um IP
 só, então um limite por IP seria o teto da campanha inteira. O número:
@@ -247,6 +295,29 @@ curl -sS "$URL/api/agent/followups" -H "Authorization: Bearer $API_TOKEN"
 curl -sS -X POST "$URL/api/agent/followups" \
   -H "Authorization: Bearer $API_TOKEN" -H "Content-Type: application/json" \
   -d '{"leadId":"<leadId>","etapa":1,"mensagem":"Oi Maria, tudo bem? Ficou alguma dúvida sobre a S60?"}'
+
+# 5. Conversa inexistente → 200 com estado vazio
+curl -sS "$URL/api/agent/conversas?telefone=%2B5541988881253" \
+  -H "Authorization: Bearer $API_TOKEN"
+
+# 6. Gravar histórico (substitui o array inteiro)
+curl -sS -X POST "$URL/api/agent/conversas" \
+  -H "Authorization: Bearer $API_TOKEN" -H "Content-Type: application/json" \
+  -d '{"telefone":"+55 41 98888-1253","historico":[{"role":"user","content":"Quanto custa a S60?"},{"role":"assistant","content":"O valor eu consulto com a equipe e já te digo. Você pretende usar para trabalhar?"}]}'
+
+# 7. Pausar por 120 minutos (humano assumiu)
+curl -sS -X POST "$URL/api/agent/conversas" \
+  -H "Authorization: Bearer $API_TOKEN" -H "Content-Type: application/json" \
+  -d '{"telefone":"+55 41 98888-1253","pausarMinutos":120}'
+
+# 8. Conferir: o GET agora devolve pausado:true
+curl -sS "$URL/api/agent/conversas?telefone=%2B5541988881253" \
+  -H "Authorization: Bearer $API_TOKEN"
+
+# 9. Despausar
+curl -sS -X POST "$URL/api/agent/conversas" \
+  -H "Authorization: Bearer $API_TOKEN" -H "Content-Type: application/json" \
+  -d '{"telefone":"+55 41 98888-1253","despausar":true}'
 ```
 
 Depois do teste, exclua o lead de teste na ficha (`/admin/leads/<leadId>`).
@@ -256,5 +327,5 @@ Depois do teste, exclua o lead de teste na ficha (`/admin/leads/<leadId>`).
 - `/admin/leads` — filtro "Origem" lista `meta-whatsapp`, `meta-c1`… tal
   como enviados.
 - `/admin/leads/<id>` — notas `[agente] …` e `[follow-up n] …`; cartão
-  "Consentimento LGPD" com o histórico. `optOut` ainda não aparece na ficha
-  (pendência): hoje só a API marca.
+  "Consentimento LGPD" com o histórico; selo "Não contatar" e cartão de
+  revogação (marcar/desfazer o `optOut`) desde 31/08/2026.

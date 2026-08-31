@@ -17,14 +17,24 @@ import { bearerValido } from "@/lib/apiToken";
   Dry-run por padrão: só apaga com `?confirmar=true`. Toda execução (real ou
   simulada) grava uma linha em ExpurgoLog — é a prova de que a rotina roda.
   Agendamento semanal na VPS: docs/DEPLOY.md §9.
+
+  A mesma execução também apaga o estado de conversa do agente do WhatsApp
+  (ConversaAgente) sem mensagem há mais de 90 dias — a política (seção 2)
+  promete esse prazo. ExpurgoLog registra só os leads (colunas fixas); as
+  conversas aparecem na resposta JSON.
 */
 
 const MESES_DE_RETENCAO = 12;
+const DIAS_RETENCAO_CONVERSA = 90;
 
 function dataLimite(): Date {
   const limite = new Date();
   limite.setUTCMonth(limite.getUTCMonth() - MESES_DE_RETENCAO);
   return limite;
+}
+
+function dataLimiteConversas(): Date {
+  return new Date(Date.now() - DIAS_RETENCAO_CONVERSA * 24 * 60 * 60 * 1000);
 }
 
 export async function GET(request: Request) {
@@ -55,6 +65,19 @@ export async function GET(request: Request) {
     apagados = resultado.count;
   }
 
+  // Conversas do agente do WhatsApp paradas há mais de 90 dias
+  const limiteConversas = dataLimiteConversas();
+  const conversasCandidatas = await prisma.conversaAgente.count({
+    where: { atualizadoEm: { lt: limiteConversas } },
+  });
+  let conversasApagadas = 0;
+  if (confirmar && conversasCandidatas > 0) {
+    const resultado = await prisma.conversaAgente.deleteMany({
+      where: { atualizadoEm: { lt: limiteConversas } },
+    });
+    conversasApagadas = resultado.count;
+  }
+
   const log = await prisma.expurgoLog.create({
     data: {
       simulacao: !confirmar,
@@ -74,6 +97,11 @@ export async function GET(request: Request) {
       acc[c.status] = (acc[c.status] ?? 0) + 1;
       return acc;
     }, {}),
+    conversas: {
+      limite: limiteConversas,
+      candidatas: conversasCandidatas,
+      apagadas: conversasApagadas,
+    },
     ...(confirmar
       ? {}
       : { aviso: "Simulação — nada foi apagado. Use ?confirmar=true para apagar." }),

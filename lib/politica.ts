@@ -5,7 +5,7 @@
   para se saber com que texto a pessoa concordou. Mudou a política → mude
   aqui, na mesma tarefa (CLAUDE.md §3.7).
 */
-export const POLITICA_VERSAO = "2026-08-28";
+export const POLITICA_VERSAO = "2026-08-31";
 
 /* "28 de agosto de 2026", para a página */
 export function politicaVersaoPorExtenso(): string {

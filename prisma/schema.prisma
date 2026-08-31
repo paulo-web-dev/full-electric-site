@@ -110,6 +110,24 @@ model Consentimento {
   @@index([leadId])
 }
 
+/// Estado da conversa do agente do WhatsApp (n8n): o histórico recente, para
+/// o assistente não se apresentar de novo a cada mensagem, e a pausa quando
+/// um humano assume pelo celular. Sem vínculo com Lead — a conversa existe
+/// antes de haver consentimento de cadastro. Apagada após 90 dias sem
+/// mensagem (/api/admin/expurgo).
+model ConversaAgente {
+  id           String    @id @default(cuid())
+  /// Mesma máscara do Lead (formatarTelefone), para consultar pela mesma chave
+  telefone     String    @unique
+  /// Array de {role: "user"|"assistant", content: string} — no máximo 16 itens
+  /// (poda em /api/agent/conversas)
+  historico    Json      @default("[]")
+  /// Agente pausado até este instante (humano assumiu). null = ativo
+  pausadoAte   DateTime?
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+}
+
 /// Registro de cada execução do expurgo LGPD (/api/admin/expurgo) — prova de
 /// que a retenção de 12 meses prometida na política está sendo cumprida.
 model ExpurgoLog {

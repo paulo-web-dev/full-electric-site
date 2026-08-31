@@ -96,9 +96,10 @@ X30 e Slim estão `PENDENTE` (sem selo "sem CNH").
       agente cumprir o passo LGPD (se identificar como automático, informar
       a finalidade e as mensagens de retomada, pedir concordância antes do
       POST; `optOut: true` ao primeiro "pare"). O deploy aplica as
-      migrations `20260828120000_consentimento` (histórico + backfill) e
+      migrations `20260828120000_consentimento` (histórico + backfill),
       `20260828150000_followup_optout` (contador, último follow-up, optOut,
-      índice em telefone).
+      índice em telefone) e `20260831120000_conversa_agente` (estado de
+      conversa: histórico + pausa).
 - [x] ~~`optOut` na ficha do admin~~ **Pronto (31/08/2026):** a ficha mostra
       o selo "Não contatar", marca a revogação (com nota) e desfaz quando a
       própria pessoa reautorizar — o desfazer grava novo `Consentimento`

@@ -150,7 +150,9 @@ sinalize e peça confirmação explícita.
   - **Retenção**: a política promete apagar após 12 meses do último contato.
     Cumprida por `/api/admin/expurgo` (token `CRON_SECRET`, dry-run por
     padrão, `?confirmar=true` apaga; VENDIDO nunca é apagado; cada execução
-    grava em `ExpurgoLog`). Cron semanal na VPS: `docs/DEPLOY.md §9`.
+    grava em `ExpurgoLog`). A mesma rota apaga `ConversaAgente` sem mensagem
+    há 90 dias — prazo declarado na política (seção 2); mudou o prazo → muda
+    a política. Cron semanal na VPS: `docs/DEPLOY.md §9`.
   - `/politica-de-privacidade` deve ser mantida em sincronia com o que o código
     efetivamente coleta. Mudou a coleta → muda a política, na mesma tarefa.
   - **Histórico de consentimento**: tabela `Consentimento` (um registro por
@@ -356,6 +358,7 @@ app/
   api/lead/route.ts     recebe o formulário
   api/agent/leads/route.ts      agente do WhatsApp: busca e upsert por telefone (API_TOKEN)
   api/agent/followups/route.ts  agente do WhatsApp: fila de retomada e marcação de envio
+  api/agent/conversas/route.ts  agente do WhatsApp: histórico da conversa e pausa (humano assumiu)
   api/health/route.ts   healthcheck do container (sem tocar no banco)
 components/
   ui/                   Button, Card, Chip, Accordion, Section
@@ -443,6 +446,15 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
   para o modelo). Escrita divide um balde de rate limit por token
   (`LIMITE_EXTERNO_POR_TOKEN`, 60/h, 429 explícito); GET sem limite.
   Contrato e `curl` em `docs/INTEGRACAO-WHATSAPP.md`.
+- **Estado de conversa do agente (`/api/agent/conversas`)**: model
+  `ConversaAgente` (telefone único com a máscara do Lead, `historico` Json,
+  `pausadoAte`), sem vínculo com `Lead` — existe antes do consentimento de
+  cadastro. GET devolve sempre 200 (inexistente = estado vazio) com
+  `pausado` calculado no servidor; POST é upsert: `historico` substitui o
+  array inteiro (validação de `role`/`content`, teto de 100 KB, poda nos 16
+  itens mais recentes), `pausarMinutos` (1–1440) pausa o agente quando um
+  humano assume, `despausar: true` reativa. Retenção de 90 dias pelo
+  expurgo.
 - **Movimento de status com dados (`moverLead`):** TEST_DRIVE_AGENDADO exige
   data/hora (grava em `proximoContatoEm` — o próximo contato *é* o test
   drive); VENDIDO exige valor, data e modelo vendido; PERDIDO exige motivo.

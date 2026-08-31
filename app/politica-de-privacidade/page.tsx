@@ -142,7 +142,13 @@ export default function PoliticaDePrivacidadePage() {
                 <li>
                   Quantas mensagens automáticas de retomada você recebeu e
                   quando, e o seu pedido para não receber mais contato, se
-                  fizer.
+                  fizer;
+                </li>
+                <li>
+                  No atendimento automatizado do WhatsApp, as mensagens
+                  recentes trocadas com o assistente, ligadas ao seu número,
+                  para ele manter o fio da conversa — guardadas por até 90
+                  dias, como descrito logo abaixo.
                 </li>
               </ul>
 
@@ -168,10 +174,15 @@ export default function PoliticaDePrivacidadePage() {
               </p>
               <p className="mt-2">
                 O assistente não decide nada sozinho sobre preço, crédito ou
-                venda — tudo isso é feito por uma pessoa da equipe. A conversa
-                em si fica no WhatsApp, sob a política de privacidade da
-                própria Meta; no nosso sistema entra apenas o resumo descrito
-                acima.
+                venda — tudo isso é feito por uma pessoa da equipe. Para
+                manter o fio da conversa — sem se apresentar de novo nem
+                repetir perguntas a cada mensagem — nosso sistema guarda as{" "}
+                <strong>mensagens recentes</strong> trocadas com o assistente,
+                ligadas ao seu número, por até <strong>90 dias após a última
+                mensagem</strong>; depois disso são apagadas automaticamente.
+                Elas servem só para dar contexto ao atendimento. A conversa
+                completa segue no WhatsApp, sob a política de privacidade da
+                própria Meta.
               </p>
               <p className="mt-2">
                 <strong>Mensagens de retomada.</strong> Se a conversa ficar em
@@ -236,7 +247,11 @@ export default function PoliticaDePrivacidadePage() {
                   finalidade — guardamos como e quando ele foi dado — e os
                   mesmos{" "}
                   <strong>procedimentos preliminares ao contrato</strong> (art.
-                  7º, V). Você pode revogá-lo a qualquer momento (seção 8).
+                  7º, V). Você pode revogá-lo a qualquer momento (seção 8). As
+                  mensagens recentes guardadas para manter o contexto da
+                  conversa (seção 2): <strong>legítimo interesse</strong> (art.
+                  7º, IX) em atender de forma coerente quem nos escreve, pelo
+                  prazo curto da seção 6.
                 </li>
                 <li>
                   Cookies essenciais: <strong>legítimo interesse</strong> (art.
@@ -333,9 +348,12 @@ export default function PoliticaDePrivacidadePage() {
                 <strong>12 meses após o último contato</strong>. Depois disso,
                 ou a qualquer momento se você pedir a exclusão, os dados são
                 apagados definitivamente — há uma rotina semanal que faz isso.
-                Dados ligados a uma venda concluída podem ser mantidos pelo
-                prazo exigido por obrigações fiscais e de garantia. Cookies
-                duram o prazo indicado na seção 5.
+                As mensagens recentes do atendimento automatizado no WhatsApp
+                (seção 2) duram menos: são apagadas pela mesma rotina após{" "}
+                <strong>90 dias sem nova mensagem</strong>. Dados ligados a uma
+                venda concluída podem ser mantidos pelo prazo exigido por
+                obrigações fiscais e de garantia. Cookies duram o prazo
+                indicado na seção 5.
               </p>
             </section>
 
