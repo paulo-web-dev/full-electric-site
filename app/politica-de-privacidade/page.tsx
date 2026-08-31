@@ -364,9 +364,14 @@ export default function PoliticaDePrivacidadePage() {
               <p className="mt-3">
                 Com ninguém para fins comerciais. Os dados de contato ficam em
                 provedores de infraestrutura que atuam como operadores em nosso
-                nome (hospedagem do site, banco de dados e a plataforma que
-                executa o atendimento automatizado no WhatsApp), sujeitos a
-                contrato e a esta política. As mensagens trocadas no WhatsApp
+                nome (hospedagem do site, banco de dados, a plataforma que
+                executa o atendimento automatizado no WhatsApp e o provedor do
+                modelo de inteligência artificial que gera o resumo do
+                atendimento a partir das mensagens da seção 2, atuando como
+                operador, sem uso dos dados para treinar modelos), sujeitos a
+                contrato e a esta política. Esse processamento do resumo ocorre
+                em servidores localizados fora do Brasil (transferência
+                internacional, art. 33 da LGPD). As mensagens trocadas no WhatsApp
                 passam pela Meta, conforme a política de privacidade do próprio
                 WhatsApp. Google e Meta recebem também os dados de navegação
                 descritos na seção 5, e somente se você aceitar os cookies de

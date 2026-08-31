@@ -32,6 +32,8 @@
 */
 
 import { PrismaClient } from "@prisma/client";
+// Fonte única com lib/crm.ts (o Dockerfile copia o arquivo para a imagem)
+import { telefoneChave, formatarTelefone } from "../lib/telefone.mjs";
 
 const MODELO = "claude-sonnet-4-6";
 const MAX_TOKENS = 400;
@@ -43,23 +45,6 @@ const NOME_DESCONHECIDO = "Sem nome"; // = NOME_DESCONHECIDO em lib/agente.ts
 // Preço do claude-sonnet-4-6 (US$ por 1M de tokens), só para a estimativa
 const PRECO_ENTRADA_USD_1M = 3;
 const PRECO_SAIDA_USD_1M = 15;
-
-/* Copiadas literalmente de lib/crm.ts (o .mjs não importa TypeScript).
-   Mudou lá → mude aqui. */
-function telefoneChave(valor) {
-  const digitos = valor.replace(/\D/g, "");
-  if ((digitos.length === 12 || digitos.length === 13) && digitos.startsWith("55")) {
-    return digitos.slice(2);
-  }
-  return digitos;
-}
-
-function formatarTelefone(valor) {
-  const digitos = valor.replace(/\D/g, "").slice(0, 11);
-  if (digitos.length <= 2) return digitos;
-  if (digitos.length <= 7) return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
-  return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
-}
 
 const PROMPT = `Você extrai dados de conversas de WhatsApp entre clientes e o atendimento de uma loja de motos elétricas em Curitiba.
 
@@ -201,7 +186,9 @@ async function main() {
         tokensSaida += r.tokensSaida;
         extraido = r.dados;
       } catch (erro) {
-        // Um lead problemático não aborta o lote
+        // Um lead problemático não aborta o lote. O continue vem ANTES do
+        // update: falha de API ou JSON inválido NÃO grava resumoAtualizado,
+        // então o lead volta a ser elegível na próxima execução.
         erros++;
         console.error(`✗ ${conversa.telefone}: ${erro.message}`);
         continue;

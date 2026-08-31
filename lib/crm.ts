@@ -224,20 +224,7 @@ export function janelaDoMesCorrente(): { inicio: Date; fim: Date } {
   return { inicio, fim };
 }
 
-/* Só dígitos, sem o DDI 55 — a chave para reconhecer o mesmo telefone gravado
-   com máscaras diferentes ("(41) 98888-1253", "5541988881253", "41 98888 1253") */
-export function telefoneChave(valor: string): string {
-  const digitos = valor.replace(/\D/g, "");
-  if ((digitos.length === 12 || digitos.length === 13) && digitos.startsWith("55")) {
-    return digitos.slice(2);
-  }
-  return digitos;
-}
-
-/* Máscara BR de telefone: (41) 98888-1253 */
-export function formatarTelefone(valor: string): string {
-  const digitos = valor.replace(/\D/g, "").slice(0, 11);
-  if (digitos.length <= 2) return digitos;
-  if (digitos.length <= 7) return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
-  return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
-}
+/* Normalização de telefone: fonte única em lib/telefone.mjs (também usada
+   por scripts/enriquecer-leads.mjs, que roda com node puro). Reexportadas
+   aqui para os importadores TypeScript continuarem usando "@/lib/crm". */
+export { telefoneChave, formatarTelefone } from "./telefone.mjs";

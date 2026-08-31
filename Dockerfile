@@ -75,6 +75,7 @@ COPY --from=prisma-cli --chown=nextjs:nodejs /opt/prisma/node_modules /opt/prism
 # Enriquecimento de leads por IA, sob demanda (usa o @prisma/client que o
 # standalone já rastreia): docker compose exec app node scripts/enriquecer-leads.mjs
 COPY --from=builder --chown=nextjs:nodejs /app/scripts/enriquecer-leads.mjs ./scripts/enriquecer-leads.mjs
+COPY --from=builder --chown=nextjs:nodejs /app/lib/telefone.mjs ./lib/telefone.mjs
 
 COPY --chown=nextjs:nodejs docker-entrypoint.sh ./docker-entrypoint.sh
 # Cache de imagens otimizadas: montado como volume nomeado (docker-compose.yml);
