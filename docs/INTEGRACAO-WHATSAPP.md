@@ -88,6 +88,7 @@ perguntar e encerre.** `telefone` é como o CRM grava (máscara); `telefoneE164`
 |---|---|---|
 | `telefone` | sim | chave do upsert; 10–11 dígitos nacionais, com ou sem +55; inválido → `400 telefone_invalido` |
 | `nome` | não | até 120. Lead criado sem nome fica como "Sem nome" até o agente descobrir |
+| `pushName` | não | até 120; nome de perfil do WhatsApp (a uazapi manda junto). Usado como nome inicial **só na criação e só se `nome` não veio**; nunca sobrescreve nome existente |
 | `modeloInteresse` | não | até 120; nome comercial como no site (S60, E30…) ou "Ainda não sei" |
 | `uso` | não | até 60; o CRM usa `Ir ao trabalho`, `Delivery`, `Uso pessoal` |
 | `origem` | não | até 40, livre (`meta-whatsapp`, `meta-c1`…), padrão `whatsapp-automacao`. **Só na criação**: lead existente mantém a origem original |
@@ -210,6 +211,17 @@ Retenção: conversa sem mensagem há **90 dias** é apagada pelo expurgo
 semanal (`/api/admin/expurgo`) — prazo declarado na política de privacidade
 (seção 2). O histórico serve só de contexto: dado de cadastro continua indo
 para `/api/agent/leads`, com o passo de consentimento.
+
+## Enriquecimento offline (`scripts/enriquecer-leads.mjs`)
+
+Fora das rotas: um script sob demanda (sem cron) lê o histórico de
+`ConversaAgente` e preenche, via API da Anthropic (`claude-sonnet-4-6`),
+o nome (só se o atual é vazio ou "Sem nome"), o `resumoAgente` (exibido na
+ficha como "Resumo da conversa (gerado por IA)") e o `uso` (só se vazio).
+Dry-run por padrão; `--confirmar` grava; `--limite=N` e `--telefone=X` para
+depurar. Na VPS: `docker compose exec app node scripts/enriquecer-leads.mjs`.
+Requer `ANTHROPIC_API_KEY` no `.env`. Conversa sem lead é pulada — o script
+nunca cria lead (sem consentimento não há cadastro).
 
 ## Rate limit: 60 gravações por hora, por token
 

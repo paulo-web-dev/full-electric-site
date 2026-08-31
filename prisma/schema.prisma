@@ -66,6 +66,13 @@ model Lead {
   /// Pessoa pediu para não ser mais contatada. Só vira true (pela API ou
   /// pela equipe); nunca volta a false por máquina.
   optOut             Boolean       @default(false)
+  /// Resumo gerado por IA a partir do histórico de ConversaAgente
+  /// (scripts/enriquecer-leads.mjs). Dado derivado, reescrito a cada
+  /// execução — por isso é coluna, não Nota (nota é histórico e não se
+  /// sobrescreve).
+  resumoAgente       String?
+  /// Última análise do histórico pelo script (controla o reprocesso)
+  resumoAtualizado   DateTime?
   criadoEm           DateTime      @default(now())
   atualizadoEm       DateTime      @updatedAt
   notas              Nota[]

@@ -120,6 +120,18 @@ export default async function FichaLeadPage({
             )}
           </section>
 
+          {lead.resumoAgente && (
+            <section className={`${CARTAO} p-6`}>
+              <h2 className="font-semibold">Resumo da conversa (gerado por IA)</h2>
+              <p className="mt-3 whitespace-pre-wrap text-sm">{lead.resumoAgente}</p>
+              {lead.resumoAtualizado && (
+                <p className="mt-2 text-[12px] text-text-2">
+                  Atualizado em {formatarDataHora(lead.resumoAtualizado)}
+                </p>
+              )}
+            </section>
+          )}
+
           <section className={`${CARTAO} p-6`}>
             <h2 className="font-semibold">
               Notas <span className="font-normal text-text-2">({lead.notas.length})</span>

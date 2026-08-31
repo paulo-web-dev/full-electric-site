@@ -420,7 +420,7 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
   horarioPreferido?, origem, utmSource?, utmMedium?, utmCampaign?, status,
   proximoContatoEm?, valorVenda?, dataVenda?, modeloVendido?, motivoPerda?,
   motivoPerdaDetalhe?, comoConheceu?, followupCount, ultimoFollowup?,
-  optOut, criadoEm, atualizadoEm), `Nota` (leadId,
+  optOut, resumoAgente?, resumoAtualizado?, criadoEm, atualizadoEm), `Nota` (leadId,
   texto, criadoEm, cascade no delete), `Consentimento` (leadId, tipo,
   textoVersao, registradoEm, origem, ip?, userAgent?, cascade no delete —
   §3.7) e `ExpurgoLog` (executadoEm, simulacao, limite, candidatos, apagados). Status: NOVO → CONTATADO →
@@ -455,6 +455,14 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
   itens mais recentes), `pausarMinutos` (1–1440) pausa o agente quando um
   humano assume, `despausar: true` reativa. Retenção de 90 dias pelo
   expurgo.
+- **Enriquecimento por IA (`scripts/enriquecer-leads.mjs`)**: sob demanda,
+  sem cron; dry-run por padrão, `--confirmar` grava. Extrai do histórico de
+  `ConversaAgente` (API da Anthropic, `claude-sonnet-4-6`,
+  `ANTHROPIC_API_KEY`): nome (só se vazio ou "Sem nome" — nome de humano
+  nunca é sobrescrito), `resumoAgente` (dado derivado, reescrito; por isso
+  coluna e não Nota) e `uso` (só se vazio). Nunca grava null por cima de
+  valor; nunca cria lead (conversa sem lead = sem consentimento). A ficha
+  mostra o resumo em bloco só leitura.
 - **Movimento de status com dados (`moverLead`):** TEST_DRIVE_AGENDADO exige
   data/hora (grava em `proximoContatoEm` — o próximo contato *é* o test
   drive); VENDIDO exige valor, data e modelo vendido; PERDIDO exige motivo.

@@ -44,6 +44,9 @@ const NOTAS_NA_RESPOSTA = 10;
 interface Corpo {
   telefone: string; // chave: só dígitos, DDD + número
   nome?: string;
+  /* Nome de perfil do WhatsApp (a uazapi manda junto). Só vira nome na
+     CRIAÇÃO, quando `nome` não veio — nunca sobrescreve nome existente. */
+  pushName?: string;
   modeloInteresse?: string;
   uso?: string;
   origem?: string;
@@ -195,6 +198,7 @@ function validar(corpo: unknown): { entrada: Corpo } | { resposta: NextResponse 
     entrada: {
       telefone,
       nome: texto(c.nome, 120),
+      pushName: texto(c.pushName, 120),
       modeloInteresse: texto(c.modeloInteresse, 120),
       uso: texto(c.uso, 60),
       origem: texto(c.origem, 40),
@@ -256,7 +260,7 @@ export async function POST(request: Request) {
     const origem = e.origem ?? ORIGEM_AGENTE;
     const lead = await prisma.lead.create({
       data: {
-        nome: e.nome ?? NOME_DESCONHECIDO,
+        nome: e.nome ?? e.pushName ?? NOME_DESCONHECIDO,
         telefone: formatarTelefone(e.telefone),
         modeloInteresse: e.modeloInteresse ?? "",
         uso: e.uso ?? "",
