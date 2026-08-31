@@ -220,6 +220,58 @@ export async function salvarMotivoPerda(formData: FormData): Promise<void> {
   revalidar(id);
 }
 
+/* ---------- Revogação de contato (optOut) ----------
+   A API do agente só liga a revogação; desligar é daqui (docs/INTEGRACAO-WHATSAPP.md).
+   Desfazer exige manifestação nova da pessoa → grava Consentimento verbal. */
+export async function marcarOptOut(formData: FormData): Promise<void> {
+  await exigirSessao();
+  const id = texto(formData.get("id"), 40);
+  if (!id) return;
+
+  const lead = await prisma.lead.findUnique({ where: { id }, select: { optOut: true } });
+  if (!lead || lead.optOut) return;
+
+  await prisma.lead.update({
+    where: { id },
+    data: {
+      optOut: true,
+      notas: {
+        create: {
+          texto:
+            "Revogação registrada no painel: pediu para não receber mais contato. O assistente do WhatsApp não envia mais nada.",
+        },
+      },
+    },
+  });
+  revalidar(id);
+}
+
+export async function desfazerOptOut(formData: FormData): Promise<void> {
+  await exigirSessao();
+  const id = texto(formData.get("id"), 40);
+  const origemBruta = texto(formData.get("origem"), 40);
+  if (!id) return;
+
+  const lead = await prisma.lead.findUnique({ where: { id }, select: { optOut: true } });
+  if (!lead || !lead.optOut) return;
+
+  const origem = ehOrigemManual(origemBruta) ? origemBruta : "OUTRO";
+  await prisma.lead.update({
+    where: { id },
+    data: {
+      optOut: false,
+      consentimentos: { create: novoConsentimento("verbal", origem) },
+      notas: {
+        create: {
+          texto:
+            "Revogação desfeita no painel: a própria pessoa voltou a autorizar o contato (consentimento verbal registrado).",
+        },
+      },
+    },
+  });
+  revalidar(id);
+}
+
 export async function excluirLead(formData: FormData): Promise<void> {
   await exigirSessao();
   const id = texto(formData.get("id"), 40);

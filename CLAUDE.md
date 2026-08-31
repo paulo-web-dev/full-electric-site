@@ -172,9 +172,10 @@ sinalize e peça confirmação explícita.
     mensagens de retomada por lead, uma a cada 24 h (`/api/agent/followups`,
     `Lead.followupCount`/`ultimoFollowup`) — a política declara isso e diz
     como parar. `Lead.optOut` é a revogação: só vira `true` (pela API ou
-    pela equipe) e **nunca volta a `false` por máquina**; lead com `optOut`
-    sai da fila e o agente não insiste. Mudou o número de mensagens ou o
-    intervalo → muda a política.
+    pela equipe, na ficha) e **nunca volta a `false` por máquina**; lead com
+    `optOut` sai da fila e o agente não insiste. Desfazer é só na ficha,
+    quando a própria pessoa reautorizar — grava novo `Consentimento` verbal
+    e nota. Mudou o número de mensagens ou o intervalo → muda a política.
   - **Cookies**: GA4 e Meta Pixel só carregam após "Aceitar" na faixa de
     cookies (consentimento, art. 7º I). Essenciais, sem consentimento:
     `fe_consent` (a escolha, 6 meses), `fe_utm` (UTMs da visita, sessão) e
@@ -455,7 +456,8 @@ com `X-Robots-Tag: noindex` (também bloqueadas no `robots.txt`).
   lead") · `/admin/leads/novo` (cadastro manual: balcão/telefone/indicação;
   observação inicial vira a primeira nota) · `/admin/leads/[id]` (ficha,
   notas, status, próximo contato, venda com modelo, motivo da perda,
-  WhatsApp, exclusão LGPD) · `/admin/leads/[id]/mover`.
+  WhatsApp, revogação de contato/optOut, exclusão LGPD) ·
+  `/admin/leads/[id]/mover`.
 - **Sem analytics de tráfego no admin** — isso é do Google Analytics.
 - **Fora do escopo da v1 (não construir sem pedido):** múltiplos usuários,
   permissões, automação de e-mail, calendário, faturamento.

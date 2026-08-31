@@ -99,9 +99,11 @@ X30 e Slim estão `PENDENTE` (sem selo "sem CNH").
       migrations `20260828120000_consentimento` (histórico + backfill) e
       `20260828150000_followup_optout` (contador, último follow-up, optOut,
       índice em telefone).
-- [ ] **`optOut` na ficha do admin:** hoje só a API marca a revogação; a
-      equipe precisa ver e marcar na ficha (pedido feito na loja ou por
-      telefone). Não incluído por restrição do pedido de 28/08/2026.
+- [x] ~~`optOut` na ficha do admin~~ **Pronto (31/08/2026):** a ficha mostra
+      o selo "Não contatar", marca a revogação (com nota) e desfaz quando a
+      própria pessoa reautorizar — o desfazer grava novo `Consentimento`
+      verbal com o canal (presencial/telefone). Sem migration: usa as colunas
+      de 28/08/2026.
 - [ ] **Agendar backup + expurgo na VPS:** `cd /srv/full-electric && git pull
       && scripts/cron.sh` (instalador idempotente, 28/08/2026). Antes, testar
       `scripts/expurgo.sh` em simulação. Não dá para fazer daqui: exige SSH.

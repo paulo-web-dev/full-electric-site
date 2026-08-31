@@ -14,12 +14,15 @@ import {
   formatarDataHora,
   paraInputDateTime,
 } from "@/lib/crm";
+import { MAX_FOLLOWUPS } from "@/lib/agente";
 import {
   definirProximoContato,
   adicionarNota,
   salvarVenda,
   salvarMotivoPerda,
   salvarComoConheceu,
+  marcarOptOut,
+  desfazerOptOut,
   excluirLead,
 } from "@/app/admin/leads/actions";
 import SeletorStatus from "@/components/admin/SeletorStatus";
@@ -58,6 +61,13 @@ export default async function FichaLeadPage({
       rotulo: "UTM (source / medium / campaign)",
       valor: [lead.utmSource ?? "—", lead.utmMedium ?? "—", lead.utmCampaign ?? "—"].join(" / "),
     },
+    {
+      rotulo: "Retomadas automáticas (WhatsApp)",
+      valor:
+        lead.followupCount > 0
+          ? `${lead.followupCount} de ${MAX_FOLLOWUPS}${lead.ultimoFollowup ? ` · última em ${formatarDataHora(lead.ultimoFollowup)}` : ""}`
+          : "Nenhuma",
+    },
     { rotulo: "Criado em", valor: formatarDataHora(lead.criadoEm) },
     { rotulo: "Atualizado em", valor: formatarDataHora(lead.atualizadoEm) },
   ];
@@ -71,6 +81,11 @@ export default async function FichaLeadPage({
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-extrabold tracking-[-0.025em]">{lead.nome}</h1>
         <SeletorStatus id={lead.id} status={lead.status} voltar={fichaUrl} />
+        {lead.optOut && (
+          <span className="rounded-full border border-[#8f2c1e]/40 bg-[#8f2c1e]/10 px-3 py-1 text-[12px] font-semibold text-[#8f2c1e]">
+            Não contatar
+          </span>
+        )}
       </div>
       <p className="mt-1 text-[13px] text-text-2">
         Mudar para test drive, vendido ou perdido pede os dados do movimento
@@ -97,6 +112,12 @@ export default async function FichaLeadPage({
             >
               Chamar no WhatsApp
             </a>
+            {lead.optOut && (
+              <p className="mt-2 text-[12px] font-medium text-[#8f2c1e]">
+                Pediu para não ser contatado — use o WhatsApp só para responder
+                quando a pessoa procurar.
+              </p>
+            )}
           </section>
 
           <section className={`${CARTAO} p-6`}>
@@ -162,6 +183,64 @@ export default async function FichaLeadPage({
               </ul>
             )}
           </section>
+
+          {lead.optOut ? (
+            <section className="rounded-[14px] border border-[#8f2c1e]/30 bg-paper p-6">
+              <h2 className="font-semibold text-[#8f2c1e]">Não contatar</h2>
+              <p className="mt-1 text-[13px] text-text-2">
+                Pediu para não receber mais contato. O assistente do WhatsApp
+                não envia mais nada; a equipe só responde se a pessoa procurar.
+              </p>
+              <details className="mt-3">
+                <summary className="cursor-pointer text-sm text-text-2 underline-offset-2 hover:underline">
+                  Desfazer — a pessoa voltou a autorizar
+                </summary>
+                <p className="mt-3 text-sm text-text-2">
+                  Só desfaça se a própria pessoa pedir para voltar a receber
+                  contato. Fica gravado um novo consentimento verbal e uma nota
+                  com a data.
+                </p>
+                <form action={desfazerOptOut} className="mt-3 grid gap-3">
+                  <input type="hidden" name="id" value={lead.id} />
+                  <div>
+                    <label htmlFor="origem-reautorizacao" className={ROTULO}>
+                      Como ela autorizou
+                    </label>
+                    <select
+                      id="origem-reautorizacao"
+                      name="origem"
+                      defaultValue="PRESENCIAL"
+                      className={CAMPO}
+                    >
+                      <option value="PRESENCIAL">{rotuloOrigem("PRESENCIAL")}</option>
+                      <option value="TELEFONE">{rotuloOrigem("TELEFONE")}</option>
+                      <option value="OUTRO">{rotuloOrigem("OUTRO")}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button type="submit" className={BOTAO_INK}>
+                      Desfazer revogação
+                    </button>
+                  </div>
+                </form>
+              </details>
+            </section>
+          ) : (
+            <section className={`${CARTAO} p-6`}>
+              <h2 className="font-semibold">Revogação de contato</h2>
+              <p className="mt-1 text-[13px] text-text-2">
+                A pessoa pediu — na loja, por telefone ou no WhatsApp — para
+                não receber mais contato? Marque aqui: o assistente do WhatsApp
+                para na hora e o pedido fica registrado nas notas.
+              </p>
+              <form action={marcarOptOut} className="mt-4">
+                <input type="hidden" name="id" value={lead.id} />
+                <button type="submit" className={BOTAO_INK}>
+                  Marcar &quot;não contatar&quot;
+                </button>
+              </form>
+            </section>
+          )}
 
           {lead.status === "VENDIDO" && (
             <section className={`${CARTAO} p-6`}>
